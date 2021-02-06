@@ -33,7 +33,7 @@
 
     
     <!-- Custom styles for this template -->
-    <link href="starter-template.css" rel="stylesheet">
+    <link href="css/starter-template.css" rel="stylesheet">
   </head>
   <body>
     <?php
