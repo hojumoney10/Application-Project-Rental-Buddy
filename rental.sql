@@ -133,11 +133,11 @@ CREATE TABLE IF NOT EXISTS `landlords` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `landlord_properties`
+-- Table structure for table `landlord_rental_properties`
 --
 
-DROP TABLE IF EXISTS `landlord_properties`;
-CREATE TABLE IF NOT EXISTS `landlord_properties` (
+DROP TABLE IF EXISTS `landlord_rental_properties`;
+CREATE TABLE IF NOT EXISTS `landlord_rental_properties` (
   `landlord_rental_property_id` int NOT NULL AUTO_INCREMENT,
   `landlord_id` int NOT NULL,
   `rental_property_id` int NOT NULL,
@@ -271,9 +271,9 @@ INSERT INTO `users` (`user_id`, `password`, `email`, `user_type_code`, `status_c
 --
 
 --
--- Constraints for table `landlord_properties`
+-- Constraints for table `landlord_rental_properties`
 --
-ALTER TABLE `landlord_properties`
+ALTER TABLE `landlord_rental_properties`
   ADD CONSTRAINT `fk_landlord_rental_properties_landlords` FOREIGN KEY (`landlord_id`) REFERENCES `landlords` (`landlord_id`),
   ADD CONSTRAINT `fk_landlord_rental_properties_rental_properties` FOREIGN KEY (`rental_property_id`) REFERENCES `rental_properties` (`rental_property_id`);
 
