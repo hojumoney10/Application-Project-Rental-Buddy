@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Feb 09, 2021 at 09:27 AM
+-- Generation Time: Feb 10, 2021 at 08:40 AM
 -- Server version: 8.0.23-0ubuntu0.20.04.1
 -- PHP Version: 7.4.3
 
@@ -16,12 +16,12 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `rental`
 --
-CREATE DATABASE IF NOT EXISTS `rental` DEFAULT CHARACTER SET utf8;
+CREATE DATABASE IF NOT EXISTS `rental` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `rental`;
 
 -- --------------------------------------------------------
@@ -41,16 +41,16 @@ CREATE TABLE IF NOT EXISTS `codes` (
   `is_enabled` tinyint(1) NOT NULL DEFAULT (1),
   PRIMARY KEY (`code_id`),
   UNIQUE KEY `uk_codes_code_type_value` (`code_type`,`code_value`)
-) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `codes`
 --
 
 INSERT INTO `codes` (`code_id`, `code_type`, `code_value`, `description`, `is_default`, `sort_order`, `is_enabled`) VALUES
-(1, 'user_type', 'tenant', 'Tenant', 1, 0, 1),
-(2, 'user_type', 'landlord', 'Landlord', 0, 0, 1),
-(3, 'user_type', 'admin', 'Administrator', 0, 0, 1),
+(1, 'user_role', 'tenant', 'Tenant', 1, 0, 1),
+(2, 'user_role', 'landlord', 'Landlord', 0, 0, 1),
+(3, 'user_role', 'admin', 'Administrator', 0, 0, 1),
 (4, 'user_status', 'enabled', 'Enabled', 0, 0, 1),
 (5, 'user_status', 'disabled', 'Disabled', 0, 0, 1),
 (6, 'user_status', 'pending', 'Pending', 1, 0, 1),
@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS `landlords` (
   `address_1` varchar(50) NOT NULL,
   `address_2` varchar(50) DEFAULT NULL,
   `city` varchar(50) NOT NULL,
-  `province_code` varchar(2) NOT NULL DEFAULT (_utf8'ON'),
+  `province_code` varchar(2) NOT NULL DEFAULT (_utf8mb4'ON'),
   `postal_code` varchar(10) NOT NULL,
   `phone` varchar(20) NOT NULL,
   `fax` varchar(20) NOT NULL,
@@ -143,7 +143,7 @@ CREATE TABLE IF NOT EXISTS `landlords` (
   `last_updated` datetime NOT NULL DEFAULT (now()),
   `last_updated_user_id` varchar(50) NOT NULL,
   PRIMARY KEY (`landlord_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS `landlord_rental_properties` (
   PRIMARY KEY (`landlord_rental_property_id`),
   KEY `fk_landlord_rental_properties_rental_properties` (`rental_property_id`),
   KEY `fk_landlord_rental_properties_landlords` (`landlord_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -193,7 +193,7 @@ CREATE TABLE IF NOT EXISTS `leases` (
   PRIMARY KEY (`lease_id`),
   KEY `fk_leases_rental_properties` (`rental_property_id`),
   KEY `fk_leases_tenants` (`tenant_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -207,7 +207,7 @@ CREATE TABLE IF NOT EXISTS `rental_properties` (
   `address_1` varchar(50) NOT NULL,
   `address_2` varchar(50) DEFAULT NULL,
   `city` varchar(50) NOT NULL,
-  `province_code` varchar(2) NOT NULL DEFAULT (_utf8'ON'),
+  `province_code` varchar(2) NOT NULL DEFAULT (_utf8mb4'ON'),
   `postal_code` varchar(10) NOT NULL,
   `latitude` varchar(20) NOT NULL,
   `longitude` varchar(20) NOT NULL,
@@ -215,14 +215,14 @@ CREATE TABLE IF NOT EXISTS `rental_properties` (
   `property_type_code` varchar(20) NOT NULL,
   `parking_space_type_code` varchar(20) NOT NULL,
   `number_parking_space` int NOT NULL DEFAULT (0),
-  `rental_duration_code` varchar(20) NOT NULL DEFAULT (_utf8'monthly'),
+  `rental_duration_code` varchar(20) NOT NULL DEFAULT (_utf8mb4'monthly'),
   `smoking_allowed` tinyint(1) NOT NULL DEFAULT (0),
   `insurance_required` tinyint(1) NOT NULL DEFAULT (1),
   `status_code` varchar(20) NOT NULL,
   `last_updated` datetime NOT NULL DEFAULT (now()),
   `last_updated_user_id` varchar(50) NOT NULL,
   PRIMARY KEY (`rental_property_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -238,7 +238,7 @@ CREATE TABLE IF NOT EXISTS `requests` (
   `tenant_id` int NOT NULL,
   `request_type_code` varchar(20) NOT NULL,
   `description` varchar(1024) NOT NULL,
-  `status_code` varchar(20) NOT NULL DEFAULT (_utf8'new'),
+  `status_code` varchar(20) NOT NULL DEFAULT (_utf8mb4'new'),
   `priority_code` varchar(20) NOT NULL,
   `solution_date` datetime NOT NULL,
   `solution_code` varchar(20) NOT NULL,
@@ -248,7 +248,7 @@ CREATE TABLE IF NOT EXISTS `requests` (
   PRIMARY KEY (`request_id`),
   KEY `fk_requests_rental_properties` (`rental_property_id`),
   KEY `fk_requests_tenants` (`tenant_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -265,7 +265,7 @@ CREATE TABLE IF NOT EXISTS `tenants` (
   `address_1` varchar(50) NOT NULL,
   `address_2` varchar(50) DEFAULT NULL,
   `city` varchar(50) NOT NULL,
-  `province_code` varchar(2) NOT NULL DEFAULT (_utf8'ON'),
+  `province_code` varchar(2) NOT NULL DEFAULT (_utf8mb4'ON'),
   `postal_code` varchar(10) NOT NULL,
   `phone` varchar(20) NOT NULL,
   `fax` varchar(20) NOT NULL,
@@ -277,7 +277,7 @@ CREATE TABLE IF NOT EXISTS `tenants` (
   `last_updated` datetime NOT NULL DEFAULT (now()),
   `last_updated_user_id` varchar(50) NOT NULL,
   PRIMARY KEY (`tenant_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -290,22 +290,26 @@ CREATE TABLE IF NOT EXISTS `users` (
   `user_id` varchar(255) NOT NULL,
   `password` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
-  `user_type_code` varchar(10) NOT NULL,
-  `status_code` varchar(10) NOT NULL,
+  `user_role_code` varchar(20) NOT NULL,
+  `status_code` varchar(20) NOT NULL,
+  `tenant_id` int DEFAULT NULL,
+  `landlord_id` int DEFAULT NULL,
   `last_login` datetime NOT NULL DEFAULT (now()),
   `last_updated` datetime NOT NULL DEFAULT (now()),
   `last_updated_user_id` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`user_id`),
+  KEY `fk_users_tenants` (`tenant_id`),
+  KEY `fk_users_landlords` (`landlord_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `password`, `email`, `user_type_code`, `status_code`, `last_login`, `last_updated`, `last_updated_user_id`) VALUES
-('admin', 'admin', 'admin@localhost', 'admin', 'enabled', '2021-02-06 18:06:45', '2021-02-06 18:06:45', NULL),
-('landlord', 'tenant', 'landlord@localhost', 'admin', 'enabled', '2021-02-06 18:06:45', '2021-02-06 18:06:45', NULL),
-('tenant', 'tenant', 'tenant@localhost', 'admin', 'enabled', '2021-02-06 18:06:45', '2021-02-06 18:06:45', NULL);
+INSERT INTO `users` (`user_id`, `password`, `email`, `user_role_code`, `status_code`, `tenant_id`, `landlord_id`, `last_login`, `last_updated`, `last_updated_user_id`) VALUES
+('admin', 'admin', 'admin@localhost', 'admin', 'enabled', NULL, NULL, '2021-02-10 08:31:13', '2021-02-10 08:31:13', NULL),
+('landlord', 'landlord', 'landlord@localhost', 'landlord', 'enabled', NULL, NULL, '2021-02-10 08:31:13', '2021-02-10 08:31:13', NULL),
+('tenant', 'tenant', 'tenant@localhost', 'tenant', 'enabled', NULL, NULL, '2021-02-10 08:31:13', '2021-02-10 08:31:13', NULL);
 
 --
 -- Constraints for dumped tables
@@ -324,6 +328,13 @@ ALTER TABLE `leases`
 ALTER TABLE `requests`
   ADD CONSTRAINT `fk_requests_rental_properties` FOREIGN KEY (`rental_property_id`) REFERENCES `rental_properties` (`rental_property_id`),
   ADD CONSTRAINT `fk_requests_tenants` FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`tenant_id`);
+
+--
+-- Constraints for table `users`
+--
+ALTER TABLE `users`
+  ADD CONSTRAINT `fk_users_landlords` FOREIGN KEY (`landlord_id`) REFERENCES `landlords` (`landlord_id`),
+  ADD CONSTRAINT `fk_users_tenants` FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`tenant_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
