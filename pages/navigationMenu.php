@@ -12,7 +12,7 @@ $base_URL .= $_SERVER['HTTP_HOST'];
 ?>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="<?php echo $base_URL."/index.php"?>">Application Project</a>
+    <a class="navbar-brand" href="<?php echo $base_URL."/index.php"?>">RentalBuddy</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -23,13 +23,15 @@ $base_URL .= $_SERVER['HTTP_HOST'];
           <a class="nav-link" aria-current="page" href="<?php echo $base_URL."/index.php"?>">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="<?php echo $base_URL.""?>">Blank</a>
+          <a class="nav-link" href="<?php echo $base_URL.""?>">Tenants</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="<?php echo $base_URL.""?>">Blank</a>
+          <a class="nav-link" href="<?php echo $base_URL."/pages/landlords.php"?>">Landlords</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="<?php echo $base_URL.""?>">Properties</a>
         </li>
       </ul>
-
     </div>
   </div>
 </nav>
