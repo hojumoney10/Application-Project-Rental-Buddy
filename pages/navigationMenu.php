@@ -23,11 +23,10 @@ $base_URL .= $_SERVER['HTTP_HOST'];
           <a class="nav-link" aria-current="page" href="<?php echo $base_URL."/index.php"?>">Home</a>
         </li>
         <li class="nav-item">
-<<<<<<< Updated upstream
+
           <a class="nav-link" href="<?php echo $base_URL.""?>">Tenants</a>
-=======
-          <a class="nav-link" href="<?php echo $base_URL."/pages/service_request.php"?>">Service Request</a>
->>>>>>> Stashed changes
+
+          <a class="nav-link" href="<?php echo $base_URL."/pages/service_request.php"?>">Service Request</a>>>>>>>> Stashed changes
         </li>
         <li class="nav-item">
           <a class="nav-link" href="<?php echo $base_URL."/pages/landlords.php"?>">Landlords</a>
