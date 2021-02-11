@@ -1,5 +1,6 @@
 {
     "require": {
-        "twbs/bootstrap": "5.0.0-beta1"
+        "twbs/bootstrap": "5.0.0-beta1",
+        "symfony/var-dumper": "^5.2"
     }
 }
