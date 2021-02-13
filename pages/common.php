@@ -63,7 +63,7 @@ function format_date($time)
     }
 }
 
-// put code number, reture code value
+// put code number, return code value
 function selectCodeValue($codeId)
 {
     $db_conn = connectDB();
