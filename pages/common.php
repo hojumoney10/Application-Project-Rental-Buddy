@@ -7,6 +7,9 @@
 
     20210213    GPB     Added UnformatPhone (untested) 
                         formatPhone: do not format empty phone
+
+    20210214    TK      Added format_date function ex : last updated almost 4hours ago.
+                        Added selectCodeValue function                    
 -->
 
 <?php

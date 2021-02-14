@@ -1,3 +1,10 @@
+<!-- 
+    Title:       common.php
+    Application: RentalBuddy
+    Purpose:     Handling Service request 
+    Author:      T. Kim, Group 5, INFO-5139-01-21W
+    Date:        February 10th, 2021 
+-->
 <!doctype html>
 <html lang="en">
 
@@ -84,33 +91,49 @@
             }
         }
         // change priority or status
-        else if (isset($_POST['low']) || isset($_POST['medium']) || isset($_POST['high']) || isset($_POST['received']) || isset($_POST['inprogress']) || isset($_POST['completed'])) {
+        else if (isset($_POST['priority'])) {
             $key = array_keys($_POST);
-            updateRequest($key[2]);
+            updateRequest($key[3], 'priority');
         }
-
+        else if (isset($_POST['status'])) {
+            $key = array_keys($_POST);
+            updateRequest($key[3], 'status');
+        }
         // view list page
         else {
             viewPage();
         }
-        // Change Priority 와 Change Status 항목을 동적으로 뿌리고,
-        // 그것을 클릭해서 Requests가 업데이트 될 때는 Code_id가 입력되도록 변경한다.
-        // 그 뒤 디테일 뷰에서 코드로 표시되는 Priority와 Status를 문구가 표시되도록 변경
 
         // 솔루션에 히스토리 기능을 부여하는 것을 고려
 
         // 리스트에 필터 기능 부여를 고려
         
-        function updateRequest($value)
+        function updateRequest($value, $type)
         {
             global $db_conn;
+
+            if($type == 'priority'){
+                $stmt = $db_conn->prepare("select code_id from codes where code_type='request_priority' and code_value ='".$value."' and is_enabled='1'");
+            } else if($type =='status'){
+                $stmt = $db_conn->prepare("select code_id from codes where code_type='request_status' and code_value ='".$value."' and is_enabled='1'");
+            }
+            try{
+                $stmt->execute();
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $code_id = $row['code_id'];
+                }
+            } catch (Exception $e) {
+                $db_conn->rollback();
+                echo $e->getMessage();
+            }
+
+            unset($sql);
             $sql = "UPDATE requests SET";
-            if ($value == 'low' || $value == 'medium' || $value == 'high') {
-                
-                $data = ['priorityCode' => $value];
+            if ($type == 'priority') {
+                $data = ['priorityCode' => $code_id];
                 $sql .= " priority_code=:priorityCode";
-            } else if ($value == 'received' || $value == 'inprogress' || $value == 'completed') {
-                $data = ['statusCode' => $value];
+            } else if ($type == 'status') {
+                $data = ['statusCode' => $code_id];
                 $sql .= " status_code=:statusCode";
             }
 
@@ -125,21 +148,23 @@
             } catch (Exception $e) {
                 $db_conn->rollback();
                 echo $e->getMessage();
-            }
+            } 
         }
 
         function updateSolution()
         {
             global $db_conn;
+            global $user_id;
             global $msg;
             $data = [
                 'solutionType' => $_POST['solType'],
                 'solContent' => $_POST['solContent'],
                 'requestId' => $_POST['request_id'],
-                'updateTime' => date("Y-m-d H:i:s")
+                'updateTime' => date("Y-m-d H:i:s"),
+                'userId'=> $user_id
             ];
             try {
-                $sql = "UPDATE requests SET solution_code=:solutionType, solution_description=:solContent, solution_date=:updateTime, last_updated=:updateTime  WHERE request_id=:requestId";
+                $sql = "UPDATE requests SET solution_code=:solutionType, solution_description=:solContent, solution_date=:updateTime, last_updated=:updateTime, last_updated_user_id=:userId  WHERE request_id=:requestId";
                 $stmt = $db_conn->prepare($sql);
                 $stmt->execute($data);
 
@@ -150,21 +175,22 @@
             }
         }
 
-
         function showRequestDetail()
         {
             global $db_conn;
             global $tenant_id;
             global $property_id;
 
-
             $tenants = loadTenantsInfo();
 
             $html = "";
-            $stmt = $db_conn->prepare("Select r.request_id, r.request_date, r.rental_property_id, r.tenant_id, c.code_value, r.status_code, r.priority_code, r.last_updated, r.description, r.solution_description, r.solution_date, r.solution_code
+            $stmt = $db_conn->prepare("Select r.request_id, r.request_date, r.rental_property_id, r.tenant_id, c.description as 'typeValue', r.status_code, r.priority_code, r.last_updated, r.description, r.solution_description, r.solution_date, r.solution_code, p.description as 'priorityValue', s.description as 'statusValue'
+            
             from requests r 
             join codes c 
-            on c.code_id = r.request_type_code
+            join codes p
+            join codes s
+            on c.code_id = r.request_type_code and p.code_id = r.priority_code and s.code_id = r.status_code
             
             where r.tenant_id='" . $tenant_id . "' and r.rental_property_id = " . $property_id . " and r.request_id =" . $_POST['requestId']);
             try {
@@ -190,7 +216,7 @@
                 </div>
 
                 <div class="col-sm">
-                    <?php echo $row['code_value'] ?>
+                    <?php echo $row['typeValue'] ?>
                 </div>
 
                 <div class="col-sm ps-4">
@@ -198,7 +224,8 @@
                 </div>
 
                 <div class="col-sm">
-                    <?php echo $row['priority_code'] ?>
+                    <?php //echo $row['priority_code']
+                    echo $row['priorityValue'] ?>
                 </div>
 
                 <div class="col-sm ps-4">
@@ -206,7 +233,7 @@
                 </div>
 
                 <div class="col-sm">
-                    <?php echo $row['status_code'] ?>
+                    <?php echo $row['statusValue'] ?>
                 </div>
             </div>
 
@@ -227,27 +254,44 @@
 
         <?php if ($row['status_code'] != 'completed') {
                         global $user_id;
+                        $priorities = loadCode('request_priority');
+                        $status = loadCode('request_status');
                     ?>
         <br>
-        <form method="POST">
-            <input type="hidden" class="form-control" id="request_id" name='request_id'
-                value=<?php echo $_POST['requestId']; ?>>
-            <input type="hidden" class="form-control" id="user_id" name='user_id' value=<?php echo $user_id; ?>>
-            <div class="row mb-3">
-                <label for="priority" class="col-sm-2 col-form-label">Change Priority</label>
-                <div class="btn-group col-sm-4" role="group" id="priority" aria-label="PriorityChange">
-                    <button type="submit" class="btn btn-success" name="low">Low</button>
-                    <button type="submit" class="btn btn-warning" name="medium">Medium</button>
-                    <button type="submit" class="btn btn-danger" name="high">High</button>
-                </div>
-                <label for="status" class="col-sm-2 col-form-label">Change Status </label>
-                <div class="btn-group col-sm-4" id="status" role="group" aria-label="PriorityChange">
-                    <button type="submit" class="btn btn-outline-primary" name="received">Received</button>
-                    <button type="submit" class="btn btn-outline-primary" name="inprogress">In progress</button>
-                    <button type="submit" class="btn btn-outline-primary" name="completed">Completed</button>
-                </div>
+
+        <div class="row mb-3">
+
+
+            <label for="priority" class="col-sm-2 col-form-label">Change Priority</label>
+            <div class="btn-group col-sm-4" role="group" id="priority" aria-label="PriorityChange">
+                <form method="POST">
+                    <input type="hidden" class="form-control" id="request_id" name='request_id'
+                        value=<?php echo $_POST['requestId']; ?>>
+                    <input type="hidden" class="form-control" id="user_id" name='user_id' value=<?php echo $user_id; ?>>
+                    <input type="hidden" class="form-control" id="user_id" name='priority' value=''>
+                    <?php foreach ($priorities as $v1){
+                    $html ="<button type='submit' class='btn btn-outline-primary' name='".$v1[1]."'>".$v1[2]."</button>";
+                    echo $html;
+                } ?>
+                </form>
             </div>
-        </form>
+
+            <label for="status" class="col-sm-2 col-form-label">Change Status </label>
+            <div class="btn-group col-sm-4" id="status" role="group" aria-label="StatusChange">
+                <form method="POST">
+                    <input type="hidden" class="form-control" id="request_id" name='request_id'
+                        value=<?php echo $_POST['requestId']; ?>>
+                    <input type="hidden" class="form-control" id="user_id" name='user_id' value=<?php echo $user_id; ?>>
+                    <input type="hidden" class="form-control" id="user_id" name='status' value=''>
+                    <?php foreach ($status as $v1){
+                    $html ="<button type='submit' class='btn btn-outline-primary' name='".$v1[1]."'>".$v1[2]."</button>";
+                    echo $html;
+                } ?>
+                </form>
+            </div>
+
+        </div>
+
         <?php
                     } ?>
         <br>
@@ -263,7 +307,7 @@
 
             <div class="row">
                 <div class="col-sm ps-4 pt-3">
-                    <p class="text-start">Completed by Manager almost
+                    <p class="text-start">Completed almost
                         <?php echo (format_date(strtotime($row['solution_date']))) ?>.</p>
                 </div>
             </div>
@@ -380,7 +424,7 @@
 
             global $db_conn;
             $results = [];
-            $stmt = $db_conn->prepare("Select code_id, code_value, description from codes where code_type='" . $codeId . "' and is_enabled = 1");
+            $stmt = $db_conn->prepare("Select code_id, code_value, description from codes where code_type='" . $codeId . "' and is_enabled = 1 Order by sort_order");
             try {
                 $stmt->execute();
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
