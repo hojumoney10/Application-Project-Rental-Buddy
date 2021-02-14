@@ -1,3 +1,14 @@
+<!-- 
+    Title:       common.php
+    Application: RentalBuddy
+    Purpose:     Common functions and code
+    Author:      T. Kim, G. Blandford, Group 5, INFO-5139-01-21W
+    Date:        February 10th, 2021 (February 13th, 2021) 
+
+    20210213    GPB     Added UnformatPhone (untested) 
+                        formatPhone: do not format empty phone
+-->
+
 <?php
 // time and date correction.
 date_default_timezone_set('America/Toronto');
@@ -9,19 +20,20 @@ define("DBDB",   "rental");
 define("DBUSER", "rental");
 define("DBPW",   "SScAGAMfi4g0gwgp");
 
-
 //Connect to database using PDO method
 function connectDB()
 {
-    try {
-        $dbconn = new PDO('mysql:host=' . DBHOST . ';dbname=' . DBDB  . ';charset=utf8', DBUSER, DBPW);
-
+    try{
+        $dbconn = new PDO('mysql:host=' . DBHOST . ';dbname=' . DBDB  .';charset=utf8', DBUSER, DBPW);
+    
         $dbconn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         return $dbconn;
-    } catch (Exception $e) {
-        echo 'Failed to obtain database handle : ' . $e->getMessage();
     }
+    catch(Exception $e) {
+        echo 'Failed to obtain database handle : '.$e->getMessage();
+    }
+
 }
 
 function sanitize_html($arg)
@@ -35,13 +47,24 @@ function sanitize_html($arg)
 }
 
 // Function to format phones
-function formatPhone($phone)
-{
+function formatPhone($phone) {
 
     $fPhone = trim($phone);
+    if ($fPhone == "") {
+        return $fPhone;
+    }
+
     $fPhone = "(" . substr($fPhone, 0, 3) . ") " . substr($fPhone, 3, 3) . "-" . substr($fPhone, 6, 4);
     return $fPhone;
-};
+}
+
+// Unformat phone
+function unformatPhone($phone)
+{
+    // Only returns characters
+    $uPhone = preg_replace('/[^0-9]+/', '', $phone);
+    return $uPhone; 
+}
 
 // Calculate Time difference 
 function format_date($time)
