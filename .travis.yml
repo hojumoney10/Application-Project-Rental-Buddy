@@ -2,10 +2,6 @@ language: php
 php:
   - 7.4.3
 
-branches:
-  only:
-    - main
-
 cache:
   directories:
     - node_modules
@@ -24,6 +20,9 @@ deploy:
   skip_cleanup: true
   on: &2
     repo: TaehyungAlexKim/Application-Project-Rental-Buddy
+    branches:
+      only:
+        - main
   bucket: rentalbuddy
   region: us-east-2
 - provider: codedeploy
