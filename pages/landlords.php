@@ -447,15 +447,7 @@ function validateLandlord() {
 	}
         
     $_SESSION['rowdata'] = $rowdata;
-
 	return $err_msgs;
-}
-
-function displayErrors($err_msgs) {
-
-    echo var_dump($err_msgs);
-
-    // Display errors, bootstrap modal?
 }
 
 function formDisplayLandlords()
