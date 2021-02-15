@@ -18,8 +18,8 @@ function getSearch($fvalue)
                         <td>
                             <label for="searchtext" style="max-width: 60px">Search</label>
                             <input type="text" id="text-search" style="width: 200px" class="form-inline" name="text-search" value=" <?php echo $fvalue ?>">
-                            <input type="submit" class="btn btn-primary" name="btn-search" value="Search">
-                            <input type="submit" class="btn btn-secondary" name="btn-search-clear" value="Clear">
+                            <input type="submit" class="btn btn-primary" name="btn-search btn-crud" value="Search">
+                            <input type="submit" class="btn btn-secondary" name="btn-search-clear btn-crud" value="Clear">
                         </td>
                     </div>
                 </tr>
