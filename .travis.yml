@@ -20,9 +20,7 @@ deploy:
   skip_cleanup: true
   on: &2
     repo: TaehyungAlexKim/Application-Project-Rental-Buddy
-    branches:
-      only:
-        - main
+    branch: main
   bucket: rentalbuddy
   region: us-east-2
 - provider: codedeploy
