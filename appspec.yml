@@ -6,9 +6,9 @@ os: linux
 files:
 
   - source: ./
-    destination: /var/www/html/rental
+    destination: ./var/www/html/rental
     overwrite : yes
-    
+
 permissions:
   - object: /
     pattern: "**"
