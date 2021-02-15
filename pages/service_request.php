@@ -4,7 +4,6 @@
     Purpose:     Handling Service request 
     Author:      T. Kim, Group 5, INFO-5139-01-21W
     Date:        February 10th, 2021 
-
 -->
 <!doctype html>
 <html lang="en">
