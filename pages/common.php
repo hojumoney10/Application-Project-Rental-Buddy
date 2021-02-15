@@ -9,7 +9,10 @@
                         formatPhone: do not format empty phone
 
     20210214    TK      Added format_date function ex : last updated almost 4hours ago.
-                        Added selectCodeValue function                    
+                        Added selectCodeValue function 
+                                          
+    20210215    GPB     Added displayErrors function : displays array of error messages in a dismissible bootstrap alert
+                          
 -->
 
 <?php
@@ -104,3 +107,27 @@ function selectCodeValue($codeId)
         echo $e->getMessage();
     }
 }
+
+// Display errors using a dismissible alert
+function displayErrors($err_msgs) {
+
+    ?>
+        <div class="container-fluid">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <?php
+    
+        foreach( $err_msgs as $value ) {
+            ?>
+            <?php echo $value; ?></br>
+            <?php
+        }
+    ?>
+                </br>
+                <button type="button" class="btn btn-danger close" data-bs-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div> 
+    <?php
+}
+?>
