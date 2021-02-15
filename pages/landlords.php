@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+// session_unset();
 $_SESSION['PAGE'] = "landlords";
 if (!isset($_SESSION['PAGEMODE'])){
     $_SESSION['PAGEMODE'] = "LIST";
@@ -182,6 +183,7 @@ if (!isset($_SESSION['PAGEMODE'])){
     } else {
 
     }
+
     // var_dump( $_SERVER['REQUEST_METHOD'] );
     // var_dump( $_SESSION );
     // var_dump( $_POST );
@@ -193,14 +195,25 @@ if (!isset($_SESSION['PAGEMODE'])){
         // Display Landlords
         formDisplayLandlords();
 
-    } else if ($_SESSION['PAGEMODE'] == "VIEW" || $_SESSION['PAGEMODE'] == "EDIT") {
+    } else if ( $_SESSION['PAGEMODE'] == "ADD" || $_SESSION['PAGEMODE'] == "EDIT" || $_SESSION['PAGEMODE'] == "VIEW" ) {
 
         switch ($_SESSION['PAGENUM']) {
 
             case 0: // Show Form
                 $_SESSION['PAGENUM'] = 1; // Set to validate
 
-                if (isset($_POST['selected']) && strlen($_POST['selected'][0] > 0 ) ) {
+                // ADD record
+                if ($_SESSION['PAGEMODE'] == "ADD") {
+
+                    // Empty record
+                    $_SESSION['landlord_id'] = 0;
+                    $_SESSION['rowdata'] = array();
+
+                    // Show landlord page
+                    formLandlord();
+
+                // EDIT RECORD
+                } else if (isset($_POST['selected']) && strlen($_POST['selected'][0] > 0 ) ) {
 
                     // Get Selected Landlord 
                     $_SESSION['landlord_id'] = $_POST['selected'][0];
@@ -210,6 +223,8 @@ if (!isset($_SESSION['PAGEMODE'])){
 
                     // Show landlord
                     formLandlord();
+
+                // LIST RECORDS
                 } else {
 
                     formDisplayLandlords(); 
@@ -223,13 +238,11 @@ if (!isset($_SESSION['PAGEMODE'])){
                     $err_msgs = validateLandlord();
 
                     if (count($err_msgs) > 0) {
+
                         displayErrors($err_msgs);
                         formLandlord();
                     } else {
                         
-                        // Save $_POST variables
-                        savePostVariables();
-
                         // Save to database                     
                         saveLandlord();
                         $_SESSION['PAGENUM'] = 0;
@@ -255,66 +268,10 @@ if (!isset($_SESSION['PAGEMODE'])){
                 break;
             default:
         }
-    } else if ($_SESSION['PAGEMODE'] == "ADD" ) {
+    } else if ($_SESSION['PAGEMODE'] == "LIST") {
 
-        switch ($_SESSION['PAGENUM']) {
-
-            case 0: // Show Form
-                $_SESSION['PAGENUM'] = 1; // Set to validate
-
-                // Empty record
-                $_SESSION['landlord_id'] = 0;
-                $_SESSION['rowdata'] = array();
-
-                // Show landlord page
-                formLandlord();
-
-                break;
-
-            case 1: // Save
-                if ( ( isset($_POST['btn-save'] ) ) && ( $_POST['btn-save'] == "Save" ) ) {
-
-                    // Validate
-                    $err_msgs = validateLandlord();
-
-                    if (count($err_msgs) > 0) {
-                        displayErrors($err_msgs);
-                        formLandlord();
-
-                    } else {                      
-                        // Save $_POST variables
-                        savePostVariables();
-
-                        // Save to database                     
-                        saveLandlord();
-                        $_SESSION['PAGENUM'] = 0;
-
-                        // Clear row
-                        unset($_SESSION['rowdata']);
-
-                        $_SESSION['PAGEMODE'] = "LIST";
-                        formDisplayLandlords();
-                    }
-
-                } else if ( ( isset($_POST['btn-cancel'] ) ) && ( $_POST['btn-cancel'] == "Cancel" || $_POST['btn-cancel'] == "OK" ) ) {
-
-                    $_SESSION['PAGEMODE'] = "LIST";
-                    $_SESSION['PAGENUM'] = 0;
-
-                    // Clear current data
-                    unset($_SESSION['landord_id']);
-                    unset($_SESSION['rowdata']);
-
-                    formDisplayLandlords();
-                }
-                break;
-            default:
-        }
+        formDisplayLandlords();
     }
-    //  else if ($_SESSION['PAGEMODE'] == "LIST") {
-
-    //     formDisplayLandlords();
-    // }
 
     // We can do anything here AFTER the form has loaded
     ?>
@@ -334,44 +291,176 @@ if (!isset($_SESSION['PAGEMODE'])){
 
 function validateLandlord() {
 
+    $rowdata = $_SESSION['rowdata'];
+
+    $rowdata['landlord_id'] = $_POST['landlord-id'];
+    $rowdata['salutation_code'] = $_POST['salutation'];
+
     $err_msgs = [];
 
-    // Do data validation here
-    return $err_msgs;
+    // Legal name
+	if( !isset($_POST['legal-name'] ) ) {
+		$err_msgs[] = "A legal name is required";
+	} else {
+		$rowdata['legal_name'] = $_POST['legal-name'];
+		if (strlen($rowdata['legal_name']) == 0){
+			$err_msgs[] = "A legal name is required";
+		} else if (strlen( $rowdata['legal_name'] ) > 50 ) {
+			$err_msgs[] = "The legal name exceeds 50 characters";
+		}
+	}
+
+    // First name
+	if( !isset($_POST['first-name'] ) ) {
+		$err_msgs[] = "The first name is required";
+	} else {
+		$rowdata['first_name'] = $_POST['first-name'];
+		if (strlen($rowdata['first_name']) == 0){
+			$err_msgs[] = "A first name is required";
+		} else if (strlen( $rowdata['first_name'] ) > 50 ){
+			$err_msgs[] = "The first name exceeds 50 characters";
+		}
+	}
+
+    // Last name
+	if( !isset($_POST['last-name'] ) ) {
+		$err_msgs[] = "The last name is required";
+	} else {
+		$rowdata['last_name'] = $_POST['last-name'];
+		if (strlen($rowdata['last_name']) == 0){
+			$err_msgs[] = "A last name is required";
+		} else if (strlen( $rowdata['last_name'] ) > 50 ) {
+			$err_msgs[] = "The last name exceeds 50 characters";
+		}
+	}
+
+    // address 1
+	if( !isset($_POST['address-1'] ) ) {
+		$err_msgs[] = "An address is required";
+	} else {
+		$rowdata['address_1'] = $_POST['address-1'];
+		if (strlen($rowdata['address_1']) == 0){
+			$err_msgs[] = "An address is required";
+		} else if (strlen( $rowdata['address_1']) > 50 ){
+			$err_msgs[] = "The address exceeds 50 characters";
+		}
+	}
+
+    // address 2
+	if( isset($_POST['address-2'] ) ) {
+		$rowdata['address_2'] = $_POST['address-2'];
+		if ( strlen($rowdata['address_2'] ) > 50 ) {
+			$err_msgs[] = "The address exceeds 50 characters";
+		}
+	}
+
+    // city
+	if( !isset($_POST['city'] ) ) {
+		$err_msgs[] = "The city is required";
+	} else {
+		$rowdata['city'] = $_POST['city'];
+		if (strlen($rowdata['city']) == 0){
+			$err_msgs[] = "The city is required";
+		} else if (strlen( $rowdata['city']) > 50 ){
+			$err_msgs[] = "The city exceeds 50 characters";
+		}
+	}
+
+    // province code
+	if( !isset($_POST['province'] ) ) {
+		$err_msgs[] = "A province is required";
+	} else {
+		$rowdata['province_code'] = $_POST['province'];
+		if (strlen($rowdata['province_code']) == 0){
+			$err_msgs[] = "A province is required";
+		} else if (strlen($rowdata['province_code']) > 2 ){
+			$err_msgs[] = "The province exceeds 2 characters";
+		}
+	}
+
+    // postal code - use REGEX
+	if( !isset($_POST['postal-code'] ) ) {
+		$err_msgs[] = "A postal code is required";
+	} else {
+		$rowdata['postal_code'] = $_POST['postal-code'];
+        if (strlen($rowdata['postal_code']) == 0){
+			$err_msgs[] = "A postal code is required";
+		} else if ( !preg_match('/^([a-zA-Z]\d[a-zA-Z])\ {0,1}(\d[a-zA-Z]\d)$/', trim($rowdata['postal_code'] ) ) ) {
+			$err_msgs[] = "The postal code is not valid";
+        }
+	}
+
+    // phone
+	if( !isset($_POST['phone'] ) ) {
+		$err_msgs[] = "A phone number is required";
+	} else {
+		$rowdata['phone'] = unformatPhone($_POST['phone']);
+		if (strlen($rowdata['phone']) == 0){
+			$err_msgs[] = "A phone number is required";
+		} else if (strlen( $rowdata['phone']) > 20 ){
+			$err_msgs[] = "The phone number exceeds 20 characters";
+		}
+	}
+
+    // fax
+	if( isset($_POST['phone'] ) ) {
+		$rowdata['fax'] = unformatPhone($_POST['fax']);
+		if (strlen( $rowdata['fax']) > 20 ){
+			$err_msgs[] = "The fax number exceeds 20 characters";
+		}
+	}    
+
+    // sms
+	if( !isset($_POST['sms'] ) ) {
+		$err_msgs[] = "An SMS number is required";
+	} else {
+		$rowdata['sms'] = unformatPhone($_POST['sms']);
+		if (strlen($rowdata['sms']) == 0){
+			$err_msgs[] = "An SMS number is required";
+		} else if (strlen( $rowdata['sms']) > 20 ){
+			$err_msgs[] = "The SMS number exceeds 20 characters";
+		}
+	}
+
+    // email
+	if( !isset($_POST['email'] ) ) {
+		$err_msgs[] = "An email address is required";
+	} else {
+		$rowdata['email'] = $_POST['email'];
+		if (strlen($rowdata['email']) == 0){
+			$err_msgs[] = "An email address is required";
+		} else if (strlen( $rowdata['email']) > 100 ){
+			$err_msgs[] = "The email address exceeds 100 characters";
+		}
+	}
+
+    // status code
+	if( !isset($_POST['status-code'] ) ) {
+		$err_msgs[] = "A status is required";
+	} else {
+		$rowdata['status_code'] = $_POST['status-code'];
+		if (strlen($rowdata['status_code']) == 0){
+			$err_msgs[] = "A status is required";
+		} else if (strlen($rowdata['status_code']) > 10 ){
+			$err_msgs[] = "The status exceeds 10 characters";
+		}
+	}
+        
+    $_SESSION['rowdata'] = $rowdata;
+
+	return $err_msgs;
 }
 
 function displayErrors($err_msgs) {
 
+    echo var_dump($err_msgs);
+
     // Display errors, bootstrap modal?
-}
-
-// Save $_POST variables to row
-function savePostVariables() {
-
-// print_r($_POST);
-    $rowdata = $_SESSION['rowdata'];
-
-    $rowdata['landlord_id'] = $_POST['landlord-id'];
-    $rowdata['legal_name'] = $_POST['legal-name'];
-    $rowdata['salutation_code'] = $_POST['salutation'];
-    $rowdata['first_name'] = $_POST['first-name'];
-    $rowdata['last_name'] = $_POST['last-name'];
-    $rowdata['address_1'] = $_POST['address-1'];
-    $rowdata['address_2'] = $_POST['address-2'];
-    $rowdata['city'] = $_POST['city'];
-    $rowdata['province_code'] = $_POST['province'];
-    $rowdata['postal_code'] = $_POST['postal-code'];
-    $rowdata['phone'] = unformatPhone($_POST['phone']);
-    $rowdata['fax'] = unformatPhone($_POST['fax']);
-    $rowdata['email'] = $_POST['email'];
-    $rowdata['sms'] = unformatPhone($_POST['sms']);
-    $rowdata['status_code'] = $_POST['status-code'];
-
-    $_SESSION['rowdata'] = $rowdata;
 }
 
 function formDisplayLandlords()
 {
+
     $fvalue = "";
     if (isset($_POST['btn-search']) && isset($_POST['text-search'])) {
         $_SESSION['text-search'] = trim($_POST['text-search']);
@@ -408,7 +497,6 @@ function formLandlord()
 ?>
     <div class="container-fluid">
 
-        <!-- <form class="form form-inline" method="POST" style="max-height: 450px; padding-right: 30px;overflow-y:scroll"> -->
         <form class="form form-inline" method="POST" style="padding-right: 30px;">
             <fieldset class="bg-light">
                 <legend class="text-light bg-dark">
@@ -435,14 +523,14 @@ function formLandlord()
                 <!-- Legal name -->
                 <div class="input-group">
                     <label for="legal-name">Legal Name</label>
-                    <input type="text" size="30" maxlength="50" class="form-control" id="legal-name" name="legal-name" aria-describedby="legal-name-help" placeholder="Enter legal name" value="<?php echo $row['legal_name']; ?>">
+                    <input type="text" size="30" maxlength="50" class="form-control" id="legal-name" name="legal-name" aria-describedby="legal-name-help" placeholder="Enter legal name" value="<?php echo $row['legal_name']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="legal-name-help" class="form-text text-muted"></small>
                 </div>
 
                 <!--Salutation -->
                 <div class="input-group">
                     <label for="salutation">Salutation</label>
-                    <select class="selectpicker form-control" style="max-width: 100px" id="salutation" name="salutation" aria-describedby="salutation-help" placeholder="Enter salutation" value="<?php echo $row['salutation_code']; ?>">
+                    <select class="selectpicker form-control" style="max-width: 100px" id="salutation" name="salutation" aria-describedby="salutation-help" placeholder="Enter salutation" value="<?php echo $row['salutation_code']; ?>"<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                         <?php
                         getCodes('salutation', $row['salutation_code']);
                         ?>
@@ -453,80 +541,76 @@ function formLandlord()
                 <!-- first name -->
                 <div class="input-group">
                     <label for="first-name">First Name</label>
-                    <input type="text" size="30" maxlength="50" class="form-control" id="first-name" name="first-name" aria-describedby="first-name-help" placeholder="Enter first name" value="<?php echo $row['first_name']; ?>">
+                    <input type="text" size="30" maxlength="50" class="form-control" id="first-name" name="first-name" aria-describedby="first-name-help" placeholder="Enter first name" value="<?php echo $row['first_name']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="first-name-help" class="form-text text-muted"></small>
                 </div>
 
                 <!-- last name -->
                 <div class="input-group">
                     <label for="last-name">Last Name</label>
-                    <input type="text" size="30" maxlength="50" class="form-control" id="last-name" name="last-name" aria-describedby="last-name-help" placeholder="Enter last name" value="<?php echo $row['last_name']; ?>">
+                    <input type="text" size="30" maxlength="50" class="form-control" id="last-name" name="last-name" aria-describedby="last-name-help" placeholder="Enter last name" value="<?php echo $row['last_name']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="last-name-help" class="form-text text-muted"></small>
                 </div>
 
                 <!-- address_1 -->
                 <div class="input-group">
                     <label for="address-1">Address 1</label>
-                    <input type="text" size="30" maxlength="50" class="form-control" id="address-1" name="address-1" aria-describedby="address-1-help" placeholder="Enter address" value="<?php echo $row['address_1']; ?>">
+                    <input type="text" size="30" maxlength="50" class="form-control" id="address-1" name="address-1" aria-describedby="address-1-help" placeholder="Enter address" value="<?php echo $row['address_1']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="address-1-help" class="form-text text-muted"></small>
                 </div>
 
                 <!-- address_2 -->
                 <div class="input-group">
                     <label for="address-2">Address 2</label>
-                    <input type="text" size="30" maxlength="50" class="form-control" id="address-2" name="address-2" aria-describedby="address-2-help" placeholder="Enter address, e.g. unit no." value="<?php echo $row['address_2']; ?>">
+                    <input type="text" size="30" maxlength="50" class="form-control" id="address-2" name="address-2" aria-describedby="address-2-help" placeholder="Enter address, e.g. unit no." value="<?php echo $row['address_2']; ?>"<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="address-2-help" class="form-text text-muted"></small>
                 </div>
 
                 <!-- city -->
                 <div class="input-group">
                     <label for="city">City</label>
-                    <input type="text" size="30" maxlength="50" class="form-control" id="city" name="city" aria-describedby="city-help" placeholder="Enter city" value="<?php echo $row['city']; ?>">
+                    <input type="text" size="30" maxlength="50" class="form-control" id="city" name="city" aria-describedby="city-help" placeholder="Enter city" value="<?php echo $row['city']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="city-help" class="form-text text-muted"></small>
                 </div>
 
-                <!-- province --><!-- postal code -->
+                <!-- province & postal code -->
                 <div class="input-group">
                     <label for="province">Province/Postal Code</label>
-                    <select class="selectpicker form-control" style="max-width: 220px;" id="province" name="province" aria-describedby="province-help" placeholder="Enter province">
+                    <select class="selectpicker form-control" style="max-width: 220px;" id="province" name="province" aria-describedby="province-help" placeholder="Enter province" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                         <?php
                         getCodes('province', $row['province_code']);
                         ?>
                     </select>
                     <small id="province-help" class="form-text text-muted"></small>
 
-                    <input type="text" style="max-width: 100px;" class="form-control" id="postal-code" name="postal-code" aria-describedby="postal-help" placeholder="Enter postal code" value="<?php echo $row['postal_code']; ?>">
+                    <input type="text" style="max-width: 100px;" class="form-control" id="postal-code" name="postal-code" aria-describedby="postal-help" placeholder="Enter postal code" value="<?php echo $row['postal_code']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="postal-code-help" class="form-text text-muted"></small>
                 </div>
 
-                <!-- phone -->
+                <!-- phone & fax & sms -->
                 <div class="input-group">
                     <label for="phone">Phone/Fax/SMS</label>
-                    <input type="tel" size="15" maxlength="15" style="max-width: 33%;" class="form-control" id="phone" name="phone" aria-describedby="phone-help" placeholder="Enter main phone number" value="<?php echo formatPhone($row['phone']); ?>">
+                    <input type="tel" size="15" maxlength="15" style="max-width: 33%;" class="form-control" id="phone" name="phone" aria-describedby="phone-help" placeholder="Enter main phone number" value="<?php echo formatPhone($row['phone']); ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="phone-code-help" class="form-text text-muted"></small>
 
-                    <input type="tel" size="15" maxlength="15" style="max-width: 33%;" class="form-control" id="fax" name="fax" aria-describedby="fax-help" placeholder="Enter fax number" value="<?php echo formatPhone($row['fax']); ?>">
+                    <input type="tel" size="15" maxlength="15" style="max-width: 33%;" class="form-control" id="fax" name="fax" aria-describedby="fax-help" placeholder="Enter fax number" value="<?php echo formatPhone($row['fax']); ?>"<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="fax-code-help" class="form-text text-muted"></small>
-                <!-- </div> -->
 
-                <!-- sms -->
-                <!-- <div class="input-group"> -->
-                    <!-- <label for="sms">SMS</label> -->
-                    <input type="tel" size="15" maxlength="15" style="max-width: 33%;" class="form-control" id="sms" name="sms" aria-describedby="sms-help" placeholder="Enter number for SMS" value="<?php echo formatPhone($row['sms']); ?>">
+                    <input type="tel" size="15" maxlength="15" style="max-width: 33%;" class="form-control" id="sms" name="sms" aria-describedby="sms-help" placeholder="Enter number for SMS" value="<?php echo formatPhone($row['sms']); ?>"<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="sms-help" class="form-text text-muted"></small>
                 </div>
 
                 <!-- email -->
                 <div class="input-group">
                     <label for="email">Email</label>
-                    <input type="email" size="30" maxlength="50" class="form-control" id="email" name="email" aria-describedby="email-help" placeholder="Enter email address" value="<?php echo $row['email']; ?>">
+                    <input type="email" size="30" maxlength="50" class="form-control" id="email" name="email" aria-describedby="email-help" placeholder="Enter email address" value="<?php echo $row['email']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="email-help" class="form-text text-muted"></small>
                 </div>
 
-                <!--Salutation -->
+                <!--status  -->
                 <div class="input-group">
                     <label for="status-code">Status</label>
-                    <select class="selectpicker form-control" style="max-width: 100px" id="status-code" name="status-code" aria-describedby="status-code-help" placeholder="Enter status">
+                    <select class="selectpicker form-control" style="max-width: 100px" id="status-code" name="status-code" aria-describedby="status-code-help" placeholder="Enter status" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                         <?php
                         getCodes('landlord_status', $row['status_code']);
                         ?>
