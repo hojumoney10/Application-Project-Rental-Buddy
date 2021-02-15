@@ -18,7 +18,7 @@ if (!isset($_SESSION['PAGEMODE'])){
         Application: RentalBuddy
         Purpose:     Handles the crud functions of landlords
         Author:      G. Blandford, Group 5, INFO-5139-01-21W
-        Date:        February 14th, 2021 (February 10th, 2021) 
+        Date:        February 15th, 2021 (February 10th, 2021)
     -->
 
     <title>RentalBuddy - Landlords</title>
