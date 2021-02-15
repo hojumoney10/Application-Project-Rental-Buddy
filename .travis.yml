@@ -1,45 +1,44 @@
 language: php
-php:
+  php:
   - 7.4.3
 
-  branches:
+branches:
   only:
     - main
 
+cache:
+  directories:
+    - node_modules
+    - vendor
 
 notifications:
   email:
     recipients:
       - taehyungkim@outlook.com
 
-before_deploy:
-  - mkdir -p before-deploy
-  - cp scripts/*.sh before-deploy/
-  - cp appspec.yml before-deploy/
-  - cp build/libs/*.jar before-deploy/
-  - cd before-deploy && zip -r before-deploy * # before-deploy로 이동 후 전체 압축
-  - cd ../ && mkdir -p deploy
-  - mv before-deploy/before-deploy.zip deploy/rental.zip
-
-
 deploy:
-  - provider: s3
-    access_key_id: $AWS_ACCESS_KEY
-    secret_access_key: $AWS_SECRET_KEY
-    bucket: rentalbuddy
-    region: ap-northeast-2
-    skip_cleanup: true
-    acl: private
-    local_dir: deploy
-    wait-until-deployed: true
+- provider: s3
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
+  local_dir: dpl_cd_upload
+  skip_cleanup: true
+  on: &2
+    repo: TaehyungAlexKim/Application-Project-Rental-Buddy
+  bucket: rentalbuddy
+  region: us-east-2
+- provider: codedeploy
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
+  bucket: rentalbuddy
+  key: latest.zip
+  bundle_type: zip
+  application: rentalbuddy-codedeploy
+  deployment_group: rentalGrp
+  region: us-east-2a
+  on: *2
 
-  - provider: codedeploy
-    access_key_id: $AWS_ACCESS_KEY
-    secret_access_key: $AWS_SECRET_KEY
-    bucket: rentalbuddy
-    key: rental.zip
-    bundle_type: zip
-    application: rentalbuddy-codedeploy # 웹 콘솔에서 등록한 코드디플로이 애플리케이션
-    deployment_group: rentalGrp
-    region: ap-northeast-2
-    wait-until-deployed: true    
+
+script:
+  - zip -r latest *
+  - mkdir -p dpl_cd_upload
+  - mv latest.zip dpl_cd_upload/latest.zip    
