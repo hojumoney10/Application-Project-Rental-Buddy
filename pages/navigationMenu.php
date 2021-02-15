@@ -27,7 +27,7 @@ $base_URL .= $_SERVER['HTTP_HOST'];
                     <a class="nav-link" href="<?php echo $base_URL.""?>">Tenants</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?php echo $base_URL."/pages/service_request.php"?>">Service Request(TEMP)</a>
+                    <a class="nav-link" href="<?php echo $base_URL."/pages/service_request.php"?>">Service Request(TEMP.)</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="<?php echo $base_URL."/pages/landlords.php"?>">Landlords</a>

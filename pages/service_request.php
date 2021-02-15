@@ -103,10 +103,6 @@
         else {
             viewPage();
         }
-
-        // 솔루션에 히스토리 기능을 부여하는 것을 고려
-
-        // 리스트에 필터 기능 부여를 고려
         
         function updateRequest($value, $type)
         {
