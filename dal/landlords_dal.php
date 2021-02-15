@@ -22,14 +22,16 @@ function getLandlords()
     $querySQL = "select
             l.landlord_id
             , l.legal_name
-            , l.city
-            , l.postal_code
+            , trim( concat(ifnull(salutations.description, ''), ' ', l.first_name, ' ', l.last_name ) ) as full_name
+            , trim( concat(l.address_1, ' ', ifnull(l.address_2, ''), ', ', l.city, ' ', l.postal_code) ) as address
             , l.phone
+            , l.sms
             , l.email
             , status_codes.description as status_code
             
         from landlords l
-        inner join codes status_codes on status_codes.code_value = l.status_code  and status_codes.code_type = 'landlord_status'";
+        inner join codes salutations on salutations.code_value = l.salutation_code and salutations.code_type = 'salutation'
+        inner join codes status_codes on status_codes.code_value = l.status_code and status_codes.code_type = 'landlord_status'";
 
     if (isset($_SESSION['text-search'])) {
         if ((strlen($_SESSION['text-search']) > 0)) {
@@ -64,7 +66,10 @@ function getLandlords()
                         <th scope="col"></th>
                         <th scope="col">No.</th>
                         <th scope="col">Name</th>
+                        <th scope="col">Contact</th>             
+                        <th scope="col">Address</th>             
                         <th scope="col">Phone</th>
+                        <th scope="col">SMS</th>
                         <th scope="col">Email</th>
                         <th scope="col">Status</th>
                     </tr>
@@ -88,7 +93,10 @@ function getLandlords()
                                     <th><input type="radio" style="width:10px;" name="selected[]" value="<?php echo $row['landlord_id']; ?>"></th>
                                     <td><?php echo $row["landlord_id"]; ?></td>
                                     <td><?php echo $row["legal_name"]; ?></td>
+                                    <td><?php echo $row["full_name"]; ?></td>
+                                    <td><?php echo $row["address"]; ?></td>
                                     <td><?php echo formatPhone($row["phone"]); ?></td>
+                                    <td><?php echo formatPhone($row["sms"]); ?></td>
                                     <td><?php echo $row["email"]; ?></td>
                                     <td style=" <?php echo ($row["status_code"] === "Active" ? "color: green" : "color: red"); ?>">
                                         <?php echo $row["status_code"] ?> </td>

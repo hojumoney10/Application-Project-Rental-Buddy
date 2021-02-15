@@ -69,10 +69,16 @@ $_SESSION['PAGE'] = "landlords";
             margin-top: 20px;
         }
 
+        .container-crud {
+            margin-left: 10px;
+        }
+        .btn-crud {
+            min-width: 100px;
+        }
+
         .btn-crud img {
             color: white;
         }
-
 
         .form-inline {
             /* margin-top: 10px; */
@@ -261,7 +267,7 @@ echo 'Add clicked';
                 // Empty record
                 $_SESSION['landlord_id'] = 0;
                 $_SESSION['rowdata'] = array();
-echo 'adding...';
+
                 // Show landlord page
                 formLandlord();
 
@@ -270,8 +276,6 @@ echo 'adding...';
             case 1: // Save
                 if ( ( isset($_POST['btn-save'] ) ) && ( $_POST['btn-save'] == "Save" ) ) {
 
- echo 'save clicked...';
-
                     // Validate
                     $err_msgs = validateLandlord();
 
@@ -279,9 +283,7 @@ echo 'adding...';
                         displayErrors($err_msgs);
                         formLandlord();
 
-                    } else {
-echo 'validated ok...';
-                        
+                    } else {                      
                         // Save $_POST variables
                         savePostVariables();
 
@@ -540,7 +542,7 @@ function formLandlord()
                         <td><input type="submit" class="btn btn-success btn-crud" name="btn-save" value="Save"></td>
 <?php            }
 ?>
-                        <td><input type="submit" class="btn btn-secondary btn-crud" name="btn-cancel" value="<?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD' ) ? 'Cancel' : 'OK'; ?>"></td>
+                        <td><input type="submit" class="btn <?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD' ) ? 'btn-secondary' : 'btn-primary'; ?> btn-crud" name="btn-cancel" value="<?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD' ) ? 'Cancel' : 'OK'; ?>"></td>
                     </tr>
                 </table>
             </fieldset>

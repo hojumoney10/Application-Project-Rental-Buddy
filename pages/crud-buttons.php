@@ -10,14 +10,16 @@
     
     function getCRUDButtons() {
 ?>
+    <div class="container-fluid container-crud">
         <table>
                 <tr>
                     <td><input type="submit" class="btn btn-success btn-crud" name="btn-add" value="Add"></td>
-                    <td><input type="submit" class="btn btn-secondary btn-warning" name="btn-edit" value="Edit"></td>
+                    <td><input type="submit" class="btn btn-secondary btn-warning btn-crud" name="btn-edit" value="Edit"></td>
                     <td><input type="submit" class="btn btn-secondary btn-crud" name="btn-view" value="View"></td>
                     <!-- <td><input type="submit" class="btn btn-danger btn-crud" name="btn-delete" value="Delete"></td> -->
                 </tr>
         </table>
+    </div>        
 <?php
     }
 ?>
