@@ -65,37 +65,47 @@
 
         dump($_POST);
 
-        // input page
+        // input form page
         if (isset($_POST['request'])) {
             inputPage();
         }
         // write function
         else if (isset($_POST['submit'])) {
-            if ($_POST['reqType'] != 'Request Type') {
+            if ($_POST['reqType'] != 'Request Type'&&$_POST['reqContent'] != '') {
                 insertRequest();
             } else {
-                $msg = "Please select Request Type";
+                if($_POST['reqType'] == 'Request Type'){
+                    $msg = "Please select Request Type";
+                }else if($_POST['reqContent'] == ''){
+                    $msg = "Please insert Request description";
+                }
                 msgHeader('red');
                 inputPage();
             }
             // view detail page
         } else if (isset($_POST['requestId'])) {
             showRequestDetail();
-        } else if (isset($_POST['solutionSubmit'])) {
-            if ($_POST['solType'] != 'Solution Type') {
+        } 
+            // solution update
+        else if (isset($_POST['solutionSubmit'])) {
+            if ($_POST['solType'] != 'Solution Type'&&$_POST['solContent']!='') {
                 updateSolution();
             } else {
-                $msg = "Please select Solution Type";
+                if($_POST['solType'] == 'Solution Type'){
+                    $msg = "Please select Solution Type";
+                } else if($_POST['solContent']==''){
+                    $msg = "Please insert Solution description";
+                }
                 msgHeader('red');
-                viewPage();
+                //viewPage();
+                showRequestDetail($_POST['request_id']);
             }
         }
         // change priority or status
         else if (isset($_POST['priority'])) {
             $key = array_keys($_POST);
             updateRequest($key[3], 'priority');
-        }
-        else if (isset($_POST['status'])) {
+        } else if (isset($_POST['status'])) {
             $key = array_keys($_POST);
             updateRequest($key[3], 'status');
         }
@@ -103,17 +113,17 @@
         else {
             viewPage();
         }
-        
+
         function updateRequest($value, $type)
         {
             global $db_conn;
-
-            if($type == 'priority'){
-                $stmt = $db_conn->prepare("select code_id from codes where code_type='request_priority' and code_value ='".$value."' and is_enabled='1'");
-            } else if($type =='status'){
-                $stmt = $db_conn->prepare("select code_id from codes where code_type='request_status' and code_value ='".$value."' and is_enabled='1'");
+            global $msg;
+            if ($type == 'priority') {
+                $stmt = $db_conn->prepare("select code_id from codes where code_type='request_priority' and code_value ='" . $value . "' and is_enabled='1'");
+            } else if ($type == 'status') {
+                $stmt = $db_conn->prepare("select code_id from codes where code_type='request_status' and code_value ='" . $value . "' and is_enabled='1'");
             }
-            try{
+            try {
                 $stmt->execute();
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     $code_id = $row['code_id'];
@@ -140,11 +150,13 @@
             try {
                 $stmt = $db_conn->prepare($sql);
                 $stmt->execute($data);
+                $msg = $type . " has been updated.";
+                msgHeader('green');
                 viewPage();
             } catch (Exception $e) {
                 $db_conn->rollback();
                 echo $e->getMessage();
-            } 
+            }
         }
 
         function updateSolution()
@@ -157,13 +169,14 @@
                 'solContent' => $_POST['solContent'],
                 'requestId' => $_POST['request_id'],
                 'updateTime' => date("Y-m-d H:i:s"),
-                'userId'=> $user_id
+                'userId' => $user_id
             ];
             try {
                 $sql = "UPDATE requests SET solution_code=:solutionType, solution_description=:solContent, solution_date=:updateTime, last_updated=:updateTime, last_updated_user_id=:userId  WHERE request_id=:requestId";
                 $stmt = $db_conn->prepare($sql);
                 $stmt->execute($data);
-
+                $msg = "Solution has been updated.";
+                msgHeader('green');
                 viewPage();
             } catch (Exception $e) {
                 $db_conn->rollback();
@@ -171,8 +184,11 @@
             }
         }
 
-        function showRequestDetail()
+        function showRequestDetail($reqId ="")
         {
+            if($reqId ==""){
+                $reqId = $_POST['requestId'];
+            }
             global $db_conn;
             global $tenant_id;
             global $property_id;
@@ -188,7 +204,7 @@
             join codes s
             on c.code_id = r.request_type_code and p.code_id = r.priority_code and s.code_id = r.status_code
             
-            where r.tenant_id='" . $tenant_id . "' and r.rental_property_id = " . $property_id . " and r.request_id =" . $_POST['requestId']);
+            where r.tenant_id='" . $tenant_id . "' and r.rental_property_id = " . $property_id . " and r.request_id =" . $reqId );
             try {
                 $stmt->execute();
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -212,7 +228,7 @@
                 </div>
 
                 <div class="col-sm">
-                    <?php echo $row['typeValue'] ?>
+                    <span class="badge bg-primary"><?php echo $row['typeValue'] ?></span>
                 </div>
 
                 <div class="col-sm ps-4">
@@ -220,8 +236,7 @@
                 </div>
 
                 <div class="col-sm">
-                    <?php //echo $row['priority_code']
-                    echo $row['priorityValue'] ?>
+                    <span class="badge bg-warning text-dark"><?php echo $row['priorityValue'] ?></span>
                 </div>
 
                 <div class="col-sm ps-4">
@@ -229,7 +244,7 @@
                 </div>
 
                 <div class="col-sm">
-                    <?php echo $row['statusValue'] ?>
+                    <span class="badge bg-info text-dark"><?php echo $row['statusValue'] ?></span>
                 </div>
             </div>
 
@@ -262,13 +277,13 @@
             <div class="btn-group col-sm-4" role="group" id="priority" aria-label="PriorityChange">
                 <form method="POST">
                     <input type="hidden" class="form-control" id="request_id" name='request_id'
-                        value=<?php echo $_POST['requestId']; ?>>
+                        value=<?php echo $reqId;  ?>>
                     <input type="hidden" class="form-control" id="user_id" name='user_id' value=<?php echo $user_id; ?>>
                     <input type="hidden" class="form-control" id="user_id" name='priority' value=''>
-                    <?php foreach ($priorities as $v1){
-                    $html ="<button type='submit' class='btn btn-outline-primary' name='".$v1[1]."'>".$v1[2]."</button>";
-                    echo $html;
-                } ?>
+                    <?php foreach ($priorities as $v1) {
+                                        $html = "<button type='submit' class='btn btn-outline-primary' name='" . $v1[1] . "'>" . $v1[2] . "</button>";
+                                        echo $html;
+                                    } ?>
                 </form>
             </div>
 
@@ -276,13 +291,13 @@
             <div class="btn-group col-sm-4" id="status" role="group" aria-label="StatusChange">
                 <form method="POST">
                     <input type="hidden" class="form-control" id="request_id" name='request_id'
-                        value=<?php echo $_POST['requestId']; ?>>
+                        value=<?php echo $reqId;  ?>>
                     <input type="hidden" class="form-control" id="user_id" name='user_id' value=<?php echo $user_id; ?>>
                     <input type="hidden" class="form-control" id="user_id" name='status' value=''>
-                    <?php foreach ($status as $v1){
-                    $html ="<button type='submit' class='btn btn-outline-primary' name='".$v1[1]."'>".$v1[2]."</button>";
-                    echo $html;
-                } ?>
+                    <?php foreach ($status as $v1) {
+                                        $html = "<button type='submit' class='btn btn-outline-primary' name='" . $v1[1] . "'>" . $v1[2] . "</button>";
+                                        echo $html;
+                                    } ?>
                 </form>
             </div>
 
@@ -314,7 +329,7 @@
                 </div>
 
                 <div class="col-sm">
-                    <?php echo selectCodeValue($row['solution_code']); ?>
+                    <span class="badge bg-success"><?php echo selectCodeValue($row['solution_code']); ?></span>
                 </div>
                 <div class="col-sm">
 
@@ -369,8 +384,10 @@
                 </div>
             </div>
             <input type="hidden" class="form-control" id="request_id" name='request_id'
-                value=<?php echo $_POST['requestId']; ?>>
-            <button type="submit" class="btn btn-primary" name="solutionSubmit">Update</button>
+                value=<?php echo $reqId  ?>>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary" name="solutionSubmit">Update</button>
+            </div>
         </form>
         <?php
 
@@ -561,8 +578,9 @@
                     <textarea class="form-control" id="reqContent" name='reqContent' rows="3"></textarea>
                 </div>
             </div>
-
-            <button type="submit" class="btn btn-primary" name="submit">Request</button>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary" name="submit">Request</button>
+            </div>
         </form>
 
         <?php
@@ -572,14 +590,13 @@
         {
 
         ?>
+
         <form method="POST">
-            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                <button type="button" class="btn btn-danger">Left</button>
-                <button type="button" class="btn btn-warning">Middle</button>
-                <button type="submit" class="btn btn-success" id="request" name="request">Request
-                    Maintenance</button>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-success" id="request" name="request">Request Maintenance</button>
             </div>
         </form>
+
 
         <?php
             global $db_conn;
@@ -610,7 +627,7 @@
                   ";
                 $stmt->execute();
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                   
+
                     $html .= "<tr>
                     <th scope='row'>
                         <form id='requestTable" . $row['request_id'] . "' method='POST'>
@@ -623,7 +640,7 @@
                     <td><form id='requestTable" . $row['request_id'] . "' method='POST'>
                     <a href='javascript:;' onclick='document.getElementById(\"requestTable" . $row['request_id'] . "\").submit();'>" . $row['request_date'] . "<input type='hidden' name='requestId' value=" . $row['request_id'] . ">
                     </form></td>
-                    <td>" . selectCodeValue($row['status_code']). "</td>
+                    <td>" . selectCodeValue($row['status_code']) . "</td>
                     <td>" . selectCodeValue($row['priority_code']) . "</td>
                     <td>" . $row['last_updated'] . "</td></tr>";
                 }
