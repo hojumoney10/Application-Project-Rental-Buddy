@@ -2,6 +2,10 @@
 session_start();
 
 $_SESSION['PAGE'] = "landlords";
+if (!isset($_SESSION['PAGEMODE'])){
+    $_SESSION['PAGEMODE'] = "LIST";
+    $_SESSION['PAGENUM'] = 0;
+}
 
 ?>
 <!DOCTYPE html>
@@ -81,7 +85,6 @@ $_SESSION['PAGE'] = "landlords";
         }
 
         .form-inline {
-            /* margin-top: 10px; */
             display: inline-block;
         }
 
@@ -113,7 +116,6 @@ $_SESSION['PAGE'] = "landlords";
 
         select {
             min-width: 285px;
-            /* margin-right: 10px !important; */
         }
 
         fieldset {
@@ -158,43 +160,39 @@ $_SESSION['PAGE'] = "landlords";
     require_once("../dal/codes_dal.php");
     require_once("../dal/landlords_dal.php");
 
-    // Check POSTS 
+    // Check POST ACTIONS first
     if ( isset( $_POST['btn-add'] ) && ( $_POST['btn-add'] == "Add") ) { // Add clicked
         $_SESSION['PAGEMODE'] = "ADD";
         $_SESSION['PAGENUM'] = 0;
-echo 'Add clicked';
 
     } else if ( isset( $_POST['btn-edit'] ) && ($_POST['btn-edit'] == "Edit") ) { // Edit clicked
         $_SESSION['PAGEMODE'] = "EDIT";
         $_SESSION['PAGENUM'] = 0;
-// echo 'Edit clicked';
 
     } else if ( isset($_POST['btn-delete'] ) && ( $_POST['btn-delete'] == "Delete") ) { //
         $_SESSION['mode'] = "DELETE";
-// echo 'Delete clicked';
 
     } else if ( isset($_POST['btn-view'] ) && ($_POST['btn-view'] == "View") ) {
         $_SESSION['PAGEMODE'] = "VIEW";
         $_SESSION['PAGENUM'] = 0;
-// echo 'View clicked';
-    } else if ( isset($_POST['btn-cancel'] ) && ( $_POST['btn-cancel'] == "Cancel") ) {
-        // if ( $_SESSION['PAGEMODE'] == "ADD"  ) {
-            $_SESSION['PAGENUM'] = 0;
-//echo 'Cancel clicked';
-//         } else {
-// echo 'Cancel clicked';
-//         }
-        $_SESSION['PAGEMODE'] = "LIST";
-    }
 
-    if (($_SESSION['PAGEMODE'] == "ADD") && ($_SERVER['REQUEST_METHOD'] == "GET")) {
-        switch ($_SESSION['PAGENUM']) {
-            case 0:
-            case 1:
-                formLandlord();
-                break;
-            default:
-        }
+    } else if ( isset($_POST['btn-cancel'] ) && ( $_POST['btn-cancel'] == "Cancel") ) {
+        $_SESSION['PAGENUM'] = 0;
+        $_SESSION['PAGEMODE'] = "LIST";
+    } else {
+
+    }
+    // var_dump( $_SERVER['REQUEST_METHOD'] );
+    // var_dump( $_SESSION );
+    // var_dump( $_POST );
+    // var_dump( $_GET );
+
+    // $_ POSTing or $_GETting?
+    IF ($_SERVER['REQUEST_METHOD'] == 'GET' || $_SESSION['PAGEMODE'] == "LIST" ) {
+
+        // Display Landlords
+        formDisplayLandlords();
+
     } else if ($_SESSION['PAGEMODE'] == "VIEW" || $_SESSION['PAGEMODE'] == "EDIT") {
 
         switch ($_SESSION['PAGENUM']) {
@@ -204,8 +202,8 @@ echo 'Add clicked';
 
                 if (isset($_POST['selected']) && strlen($_POST['selected'][0] > 0 ) ) {
 
-                    //$landlord_id = 
-                    $_SESSION['landlord_id'] = $_POST['selected'][0]; //$landlord_id;
+                    // Get Selected Landlord 
+                    $_SESSION['landlord_id'] = $_POST['selected'][0];
 
                     // Get landlord data
                     getLandlord();
@@ -312,10 +310,11 @@ echo 'Add clicked';
                 break;
             default:
         }
-    } else if ($_SESSION['PAGEMODE'] == "LIST") {
-
-        formDisplayLandlords();
     }
+    //  else if ($_SESSION['PAGEMODE'] == "LIST") {
+
+    //     formDisplayLandlords();
+    // }
 
     // We can do anything here AFTER the form has loaded
     ?>
