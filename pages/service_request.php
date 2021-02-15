@@ -1,5 +1,5 @@
 <!-- 
-    Title:       common.php
+    Title:       service_request.php
     Application: RentalBuddy
     Purpose:     Handling Service request 
     Author:      T. Kim, Group 5, INFO-5139-01-21W
