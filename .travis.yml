@@ -31,7 +31,7 @@ deploy:
   bundle_type: zip
   application: rentalbuddy-codedeploy
   deployment_group: rentalGrp
-  region: us-east-2a
+  region: us-east-2
   on: *2
 
 
