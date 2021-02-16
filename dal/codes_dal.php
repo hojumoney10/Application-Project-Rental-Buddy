@@ -24,6 +24,7 @@ function getCodes($code_type, $current_value = "") {
                 , codes.code_value
                 , codes.description
                 , codes.is_default
+                , codes.css_styling
         from codes
                 
         where codes.code_type = :code_type
@@ -52,7 +53,14 @@ function getCodes($code_type, $current_value = "") {
         
     ?>
     
-                        <option value="<?php echo $row['code_value'];?>" id="<?php echo $code_type . '-' . $row['description']; ?>" 
+                        <option value="<?php echo $row['code_value'];?>" id="<?php 
+                                                            echo $code_type . '-' . $row['description'];
+                                                            ?>"
+                                                            style="<?php 
+                                                                if (!empty($row['css_styling'])) {
+                                                                    echo $row['css_styling'];
+                                                                 };
+                                                            ?>"
                         
             <?php
                 if ($row['code_value'] == $current_value) {

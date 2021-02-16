@@ -4,6 +4,17 @@
     Date: Jan 30, 2021
     Description: Menu file. 
 -->
+
+<!-- 
+    Title:       navigationMenu.php
+    Application: RentalBuddy
+    Purpose:     Handles navigation for the RentalBuddy site
+    Author:      T. Kim, Group 5, INFO-5139-01-21W
+    Date:        February 16th, 2021 (January 30th, 2021) 
+
+    20210216    GPB     Added rental_properties.php to menu
+-->
+
 <?php 
 
 $base_URL = ($_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://';
@@ -33,7 +44,7 @@ $base_URL .= $_SERVER['HTTP_HOST'];
                     <a class="nav-link" href="<?php echo $base_URL."/pages/landlords.php"?>">Landlords</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?php echo $base_URL.""?>">Properties</a>
+                    <a class="nav-link" href="<?php echo $base_URL."/pages/rental_properties.php"?>">Properties</a>
                 </li>
             </ul>
         </div>

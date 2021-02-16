@@ -12,7 +12,7 @@ define('__ROOT__', dirname(__FILE__));
 require_once("../pages/common.php");
 
 // Get landloards
-function getProperties()
+function getRentalProperties()
 {
 
     // create database connection
@@ -21,6 +21,7 @@ function getProperties()
     // SQL query
     $querySQL = "select
             rp.rental_property_id
+            , rp.listing_reference
             , trim( concat(rp.address_1, ' ', ifnull(rp.address_2, ''), ', ', rp.city, ' ', rp.postal_code) ) as address
             , rp.latitude
             , rp.longitude
@@ -35,7 +36,7 @@ function getProperties()
 
             , status_codes.description as status_code
             
-        from landlords l
+        from rental_properties rp
         inner join codes property_types on property_types.code_value = rp.property_type_code and property_types.code_type = 'property_type'
         inner join codes parking_space_types on parking_space_types.code_value = rp.parking_space_type_code and parking_space_types.code_type = 'parking_space'
         inner join codes rental_durations on rental_durations.code_value = rp.rental_duration_code and rental_durations.code_type = 'rental_duration'
@@ -69,6 +70,7 @@ function getProperties()
                     <tr>
                         <th scope="col"></th>
                         <th scope="col">No.</th>
+                        <th scope="col">Ref.</th>
                         <th scope="col">Address</th>
                         <th scope="col">Bedrooms</th>
                         <th scope="col">Type</th>
@@ -88,17 +90,21 @@ function getProperties()
 
                             // Display rental properties
                             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
                                 // Rental property per row
                     ?>
                                 <tr>
                                     <th><input type="radio" style="width:10px;" name="selected[]" value="<?php echo $row['rental_property_id']; ?>"></th>
                                     <td><?php echo $row["rental_property_id"]; ?></td>
+                                    <td><?php echo $row["listing_reference"]; ?></td>
                                     <td><?php echo $row["address"]; ?></td>
                                     <td><?php echo $row["number_bedrooms"]; ?></td>
                                     <td><?php echo $row["property_type_code"]; ?></td>
                                     <td><?php echo $row["rental_duration_type_code"]; ?></td>
-                                    <td style=" <?php echo ($row["status_code"] === "Active" ? "color: green" : "color: red"); ?>">
+                                    <td style=" <?php 
+                                            echo 
+                                            
+                                                ($row["status_code"] === "Leased" ? "color: red" : "color: green"); 
+                                            ?>">
                                         <?php echo $row["status_code"] ?> </td>
                                 </tr>
                             <?php
@@ -132,7 +138,7 @@ function getProperties()
                 }
 
 // Get a rental property
-function getProperty() {
+function getRentalProperty() {
 
     // landlord
     $rental_property_id = $_SESSION['rental_property_id'];
@@ -144,6 +150,7 @@ function getProperty() {
     $querySQL = "select
             rp.rental_property_id
             
+            , rp.listing_reference
             , rp.address_1
             , rp.address_2
             , rp.city
@@ -204,7 +211,7 @@ function getProperty() {
 }
 
 // Save a rental property
-function saveProperty() {
+function saveRentalProperty() {
 
     $rental_property_id = $_SESSION['rental_property_id'];
     $rowdata = $_SESSION['rowdata'];
@@ -222,7 +229,8 @@ function saveProperty() {
 
         // Add
         $querySQL = "insert into rental_properties (
-                        address_1
+                        listing_reference
+                        , address_1
                         , address_2
                         , city
                         , province_code
@@ -239,7 +247,8 @@ function saveProperty() {
                         , status_code
                         , last_updated_user_id
                 ) values (
-                        :address_1
+                        :listing_reference
+                        , :address_1
                         , :address_2
                         , :city
                         , :province_code
@@ -258,7 +267,8 @@ function saveProperty() {
                 )";
 
         // assign data values
-        $data = array(  ":address_1" => $rowdata['address_1'],
+        $data = array(  ":listing_reference" => $rowdata['listing_reference'],
+                        ":address_1" => $rowdata['address_1'],
                         ":address_2" => $rowdata['address_2'],
                         ":city" => $rowdata['city'],
                         ":province_code" => $rowdata['province_code'],
@@ -319,7 +329,8 @@ function saveProperty() {
         // Update
         $querySQL = "update rental_properties as rp
                 set 
-                    rp.address_1                = :address_1
+                    rp.listing_reference        = :listing_reference
+                    , rp.address_1              = :address_1
                     , rp.address_2              = :address_2
                     , rp.city                   = :city
                     , rp.province_code          = :province_code
@@ -339,10 +350,11 @@ function saveProperty() {
                     , rp.last_updated            = now()
                     , rp.last_updated_user_id    = :session_user_id
 
-            where l.landlord_id = :landlord_id";
+            where rp.rental_property_id = :rental_property_id";
 
         // assign data values
         $data = array(  ":rental_property_id" => $rental_property_id,
+                        ":listing_reference" => $rowdata['listing_reference'],
                         ":address_1" => $rowdata['address_1'],
                         ":address_2" => $rowdata['address_2'],
                         ":city" => $rowdata['city'],
@@ -360,8 +372,7 @@ function saveProperty() {
                         ":status_code" => $rowdata['status_code'],
                         ":session_user_id" => $session_user_id
                     );
-
-        // Transaction Start
+       // Transaction Start
        $db_conn->beginTransaction(); 
                             
             // prepare query

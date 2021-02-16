@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS `codes` (
   `is_default` int NOT NULL DEFAULT (0),
   `sort_order` int NOT NULL DEFAULT (0),
   `is_enabled` tinyint(1) NOT NULL DEFAULT (1),
+  `css_styling` varchar(200) DEFAULT NULL,  
   PRIMARY KEY (`code_id`),
   UNIQUE KEY `uk_codes_code_type_value` (`code_type`,`code_value`)
 ) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -204,13 +205,14 @@ CREATE TABLE IF NOT EXISTS `leases` (
 DROP TABLE IF EXISTS `rental_properties`;
 CREATE TABLE `rental_properties` (
   `rental_property_id` int NOT NULL,
+  `listing_reference` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,  
   `address_1` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `address_2` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `city` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `province_code` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT (_utf8mb4'ON'),
   `postal_code` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `latitude` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `longitude` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `latitude` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `longitude` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `number_bedrooms` int NOT NULL,
   `property_type_code` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
   `parking_space_type_code` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
