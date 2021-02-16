@@ -135,6 +135,8 @@
                 $db_conn->rollback();
                 echo $e->getMessage();
             }
+            msgHeader('green');
+            showRequestDetail($requestId);
         }
 
 
@@ -176,12 +178,12 @@
                 $stmt = $db_conn->prepare($sql);
                 $stmt->execute($data);
                 $msg = $type . " has been updated.";
-                msgHeader('green');
+                //msgHeader('green');
 
                 //update request detail
                 insertRequestDetail($_POST['request_id'], $type . ' is changed to ' . $value);
 
-                viewPage();
+                //viewPage();
             } catch (Exception $e) {
                 $db_conn->rollback();
                 echo $e->getMessage();
@@ -194,10 +196,11 @@
             global $msg;
             
             $desc = 'Task: ' . $_POST['solContent'];
-            insertRequestDetail($_POST['request_id'], $desc);
             $msg = "Task contents has been updated.";
-            msgHeader('green');
-            viewPage();
+            insertRequestDetail($_POST['request_id'], $desc);
+            
+            
+            //viewPage();
         }
 
         function showRequestDetail($reqId = "")
@@ -350,14 +353,14 @@
             $stmt = $db_conn->prepare("Select description, create_date, create_user_id, last_updated_date, last_user_id
             from requests_detail
             where request_id=" . $reqId . " order by request_detail_id");
-
+            $i = 1;
             try {
                 $stmt->execute();
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
                     $html .= "<br><div class=\"card\">
                     <div class=\"card-header\">
-                      Created at " . $row['create_date'] . ", Last Modified " . $row['last_updated_date'] . "
+                      #".$i.".&nbsp;Created at " . $row['create_date'] . ", Last Modified " . $row['last_updated_date'] . "
                     </div>
                     <div class=\"card-body\">
                     <pre><h5 class=\"card-title\">" . $row['description'] . "</h5></pre>
@@ -365,6 +368,7 @@
                     </div>
                   </div>
                   ";
+                  $i++;
                 }
                 echo $html;
             } catch (Exception $e) {
