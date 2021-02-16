@@ -114,6 +114,32 @@
             viewPage();
         }
 
+
+
+        function insertRequestDetail($requestId, $desc){
+            global $db_conn;
+            global $user_id;
+
+            $stmt = $db_conn->prepare("INSERT INTO requests_detail (request_id, description, create_user_id, last_user_id) values(?, ?, ?, ?)");
+            try {
+                $array = [
+                    $requestId,
+                    $desc,
+                    $user_id,
+                    $user_id
+                ];
+
+                $db_conn->beginTransaction();
+                $stmt->execute($array);
+                $db_conn->commit();
+            } catch (Exception $e) {
+                $db_conn->rollback();
+                echo $e->getMessage();
+            }
+        }
+
+
+
         function updateRequest($value, $type)
         {
             global $db_conn;
@@ -152,11 +178,17 @@
                 $stmt->execute($data);
                 $msg = $type . " has been updated.";
                 msgHeader('green');
+
+                //update request detail
+                insertRequestDetail($_POST['request_id'], $type.' is changed to '.$value);
+
                 viewPage();
             } catch (Exception $e) {
                 $db_conn->rollback();
                 echo $e->getMessage();
             }
+            
+
         }
 
         function updateSolution()
@@ -297,6 +329,7 @@
                     <?php foreach ($status as $v1) {
                                         $html = "<button type='submit' class='btn btn-outline-primary' name='" . $v1[1] . "'>" . $v1[2] . "</button>";
                                         echo $html;
+                                        unset($html);
                                     } ?>
                 </form>
             </div>
@@ -399,6 +432,35 @@
                 $db_conn->rollback();
                 echo $e->getMessage();
             }
+
+            // History
+            $stmt = $db_conn->prepare("Select description, create_date, create_user_id, last_updated_date, last_user_id
+            from requests_detail
+            where request_id=" . $reqId ." order by request_detail_id" );
+
+            try {
+                $stmt->execute();
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
+                    $html.="<br><div class=\"card\">
+                    <div class=\"card-header\">
+                      Created at ".$row['create_date'].", Last Modified ".$row['last_updated_date']."
+                    </div>
+                    <div class=\"card-body\">
+                      <h5 class=\"card-title\">".$row['description']."</h5>
+                      <p class=\"card-text\">Created by ".$row['create_user_id'].", Last Modified ".$row['last_user_id']."</p>
+                    </div>
+                  </div>
+                  ";
+                }
+                echo $html;
+            }catch (Exception $e) {
+                $db_conn->rollback();
+                echo $e->getMessage();
+            }
+
+
+
         }
 
         function insertRequest()
