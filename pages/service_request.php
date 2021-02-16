@@ -570,7 +570,7 @@
 
         function viewPage()
         {
-
+            
         ?>
         <form method="POST">
             <div class="btn-group" role="group" aria-label="Basic mixed styles example">
