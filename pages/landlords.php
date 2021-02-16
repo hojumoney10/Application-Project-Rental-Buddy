@@ -617,11 +617,15 @@ function formLandlord()
                         <td><input type="submit" class="btn btn-success btn-crud" name="btn-save" value="Save"></td>
 <?php            }
 ?>
-                        <td><input type="submit" class="btn <?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD' ) ? 'btn-secondary' : 'btn-primary'; ?> btn-crud" name="btn-cancel" value="<?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD' ) ? 'Cancel' : 'OK'; ?>"></td>
+                        <td>
+                                <input type="submit" form="form-cancel" class="btn <?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD' ) ? 'btn-secondary' : 'btn-primary'; ?> btn-crud" name="btn-cancel" value="<?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD' ) ? 'Cancel' : 'OK'; ?>">
+                        </td>
                     </tr>
                 </table>
             </fieldset>
         </form>
+        <!-- empty form for cancel button -->
+        <form id="form-cancel" hidden><form>
     </div>
 <?php
 }
