@@ -1,2 +1,2 @@
-# Application Project Rental Buddy test
+# Application Project Rental Buddy
  
