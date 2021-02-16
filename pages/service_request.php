@@ -192,14 +192,14 @@
 
         function updateSolution()
         {
-            
+
             global $msg;
-            
+
             $desc = 'Task: ' . $_POST['solContent'];
             $msg = "Task contents has been updated.";
             insertRequestDetail($_POST['request_id'], $desc);
-            
-            
+
+
             //viewPage();
         }
 
@@ -360,7 +360,7 @@
 
                     $html .= "<br><div class=\"card\">
                     <div class=\"card-header\">
-                      #".$i.".&nbsp;Created at " . $row['create_date'] . ", Last Modified " . $row['last_updated_date'] . "
+                      #" . $i . ".&nbsp;Created at " . $row['create_date'] . ", Last Modified " . $row['last_updated_date'] . "
                     </div>
                     <div class=\"card-body\">
                     <pre><h5 class=\"card-title\">" . $row['description'] . "</h5></pre>
@@ -368,7 +368,7 @@
                     </div>
                   </div>
                   ";
-                  $i++;
+                    $i++;
                 }
                 echo $html;
             } catch (Exception $e) {
