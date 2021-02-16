@@ -5,7 +5,7 @@
     Application: RentalBuddy
     Purpose:     Common search-bar for use in CRUD pages
     Author:      G. Blandford, Group 5, INFO-5139-01-21W
-    Date:        February 13th, 2021 (February 13th, 2021) 
+    Date:        February 16th, 2021 (February 13th, 2021) 
 */
 
 function getSearch($fvalue)
