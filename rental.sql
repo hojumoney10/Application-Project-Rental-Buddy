@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS `landlords` (
   `email` varchar(100) NOT NULL,
   `sms` varchar(20) NOT NULL,
   `status_code` varchar(10) NOT NULL,
-  `last_updated` datetime NOT NULL DEFAULT (now()),
+  `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_updated_user_id` varchar(50) NOT NULL,
   PRIMARY KEY (`landlord_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -188,7 +188,7 @@ CREATE TABLE IF NOT EXISTS `leases` (
   `include_water` tinyint(1) NOT NULL DEFAULT (0),
   `insurancy_policy_number` varchar(50) DEFAULT NULL,
   `status_code` varchar(20) NOT NULL,
-  `last_updated` datetime NOT NULL DEFAULT (now()),
+  `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_updated_user_id` varchar(50) NOT NULL,
   PRIMARY KEY (`lease_id`),
   KEY `fk_leases_rental_properties` (`rental_property_id`),
@@ -202,27 +202,27 @@ CREATE TABLE IF NOT EXISTS `leases` (
 --
 
 DROP TABLE IF EXISTS `rental_properties`;
-CREATE TABLE IF NOT EXISTS `rental_properties` (
-  `rental_property_id` int NOT NULL AUTO_INCREMENT,
-  `address_1` varchar(50) NOT NULL,
-  `address_2` varchar(50) DEFAULT NULL,
-  `city` varchar(50) NOT NULL,
-  `province_code` varchar(2) NOT NULL DEFAULT (_utf8mb4'ON'),
-  `postal_code` varchar(10) NOT NULL,
-  `latitude` varchar(20) NOT NULL,
-  `longitude` varchar(20) NOT NULL,
+CREATE TABLE `rental_properties` (
+  `rental_property_id` int NOT NULL,
+  `address_1` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address_2` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `city` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `province_code` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT (_utf8mb4'ON'),
+  `postal_code` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `latitude` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `longitude` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
   `number_bedrooms` int NOT NULL,
-  `property_type_code` varchar(20) NOT NULL,
-  `parking_space_type_code` varchar(20) NOT NULL,
-  `number_parking_space` int NOT NULL DEFAULT (0),
-  `rental_duration_code` varchar(20) NOT NULL DEFAULT (_utf8mb4'monthly'),
+  `property_type_code` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `parking_space_type_code` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `number_parking_spaces` int NOT NULL DEFAULT '0',
+  `rental_duration_code` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT (_utf8mb4'monthly'),
   `smoking_allowed` tinyint(1) NOT NULL DEFAULT (0),
   `insurance_required` tinyint(1) NOT NULL DEFAULT (1),
-  `status_code` varchar(20) NOT NULL,
-  `last_updated` datetime NOT NULL DEFAULT (now()),
-  `last_updated_user_id` varchar(50) NOT NULL,
-  PRIMARY KEY (`rental_property_id`)
+  `status_code` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_updated_user_id` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 -- --------------------------------------------------------
 
@@ -243,7 +243,7 @@ CREATE TABLE IF NOT EXISTS `requests` (
   `solution_date` datetime NOT NULL,
   `solution_code` varchar(20) NOT NULL,
   `solution_description` varchar(1024) NOT NULL,
-  `last_updated` datetime NOT NULL DEFAULT (now()),
+  `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_updated_user_id` varchar(50) NOT NULL,
   PRIMARY KEY (`request_id`),
   KEY `fk_requests_rental_properties` (`rental_property_id`),
@@ -274,7 +274,7 @@ CREATE TABLE IF NOT EXISTS `tenants` (
   `gender` varchar(10) NOT NULL,
   `social_insurance_number` varchar(10) DEFAULT NULL,
   `status_code` varchar(10) NOT NULL,
-  `last_updated` datetime NOT NULL DEFAULT (now()),
+  `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_updated_user_id` varchar(50) NOT NULL,
   PRIMARY KEY (`tenant_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -295,7 +295,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `tenant_id` int DEFAULT NULL,
   `landlord_id` int DEFAULT NULL,
   `last_login` datetime NOT NULL DEFAULT (now()),
-  `last_updated` datetime NOT NULL DEFAULT (now()),
+  `last_updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_updated_user_id` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   KEY `fk_users_tenants` (`tenant_id`),
