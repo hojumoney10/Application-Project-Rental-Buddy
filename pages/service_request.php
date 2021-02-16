@@ -71,12 +71,12 @@
         }
         // write function
         else if (isset($_POST['submit'])) {
-            if ($_POST['reqType'] != 'Request Type'&&$_POST['reqContent'] != '') {
+            if ($_POST['reqType'] != 'Request Type' && $_POST['reqContent'] != '') {
                 insertRequest();
             } else {
-                if($_POST['reqType'] == 'Request Type'){
+                if ($_POST['reqType'] == 'Request Type') {
                     $msg = "Please select Request Type";
-                }else if($_POST['reqContent'] == ''){
+                } else if ($_POST['reqContent'] == '') {
                     $msg = "Please insert Request description";
                 }
                 msgHeader('red');
@@ -85,15 +85,13 @@
             // view detail page
         } else if (isset($_POST['requestId'])) {
             showRequestDetail();
-        } 
-            // solution update
+        }
+        // solution update
         else if (isset($_POST['solutionSubmit'])) {
-            if ($_POST['solType'] != 'Solution Type'&&$_POST['solContent']!='') {
+            if ($_POST['solContent'] != '') {
                 updateSolution();
             } else {
-                if($_POST['solType'] == 'Solution Type'){
-                    $msg = "Please select Solution Type";
-                } else if($_POST['solContent']==''){
+                if ($_POST['solContent'] == '') {
                     $msg = "Please insert Solution description";
                 }
                 msgHeader('red');
@@ -116,7 +114,8 @@
 
 
 
-        function insertRequestDetail($requestId, $desc){
+        function insertRequestDetail($requestId, $desc)
+        {
             global $db_conn;
             global $user_id;
 
@@ -180,45 +179,30 @@
                 msgHeader('green');
 
                 //update request detail
-                insertRequestDetail($_POST['request_id'], $type.' is changed to '.$value);
+                insertRequestDetail($_POST['request_id'], $type . ' is changed to ' . $value);
 
                 viewPage();
             } catch (Exception $e) {
                 $db_conn->rollback();
                 echo $e->getMessage();
             }
+        }
+
+        function updateSolution()
+        {
             
-
-        }
-
-        function updateSolution()
-        {
-            global $db_conn;
-            global $user_id;
             global $msg;
-            $data = [
-                'solutionType' => $_POST['solType'],
-                'solContent' => $_POST['solContent'],
-                'requestId' => $_POST['request_id'],
-                'updateTime' => date("Y-m-d H:i:s"),
-                'userId' => $user_id
-            ];
-            try {
-                $sql = "UPDATE requests SET solution_code=:solutionType, solution_description=:solContent, solution_date=:updateTime, last_updated=:updateTime, last_updated_user_id=:userId  WHERE request_id=:requestId";
-                $stmt = $db_conn->prepare($sql);
-                $stmt->execute($data);
-                $msg = "Solution has been updated.";
-                msgHeader('green');
-                viewPage();
-            } catch (Exception $e) {
-                $db_conn->rollback();
-                echo $e->getMessage();
-            }
+            
+            $desc = 'Task: ' . $_POST['solContent'];
+            insertRequestDetail($_POST['request_id'], $desc);
+            $msg = "Task contents has been updated.";
+            msgHeader('green');
+            viewPage();
         }
 
-        function showRequestDetail($reqId ="")
+        function showRequestDetail($reqId = "")
         {
-            if($reqId ==""){
+            if ($reqId == "") {
                 $reqId = $_POST['requestId'];
             }
             global $db_conn;
@@ -236,7 +220,7 @@
             join codes s
             on c.code_id = r.request_type_code and p.code_id = r.priority_code and s.code_id = r.status_code
             
-            where r.tenant_id='" . $tenant_id . "' and r.rental_property_id = " . $property_id . " and r.request_id =" . $reqId );
+            where r.tenant_id='" . $tenant_id . "' and r.rental_property_id = " . $property_id . " and r.request_id =" . $reqId);
             try {
                 $stmt->execute();
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -340,92 +324,21 @@
                     } ?>
         <br>
 
-
-        <h3 class="pt-4">History</h3>
-        <!-- It depends on the exist of solution information from database.  -->
-        <?php
-                    if (strlen($row['solution_code']) > 0) {
-                        // Show solution content
-                    ?>
-        <div class="border" style="background-color: #ffffdd;">
-
-            <div class="row">
-                <div class="col-sm ps-4 pt-3">
-                    <p class="text-start">Completed almost
-                        <?php echo (format_date(strtotime($row['solution_date']))) ?>.</p>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm ps-4">
-                    <p class="fw-bold">Solution Type</p>
-                </div>
-
-                <div class="col-sm">
-                    <span class="badge bg-success"><?php echo selectCodeValue($row['solution_code']); ?></span>
-                </div>
-                <div class="col-sm">
-
-                </div>
-                <div class="col-sm">
-
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm ps-4 pe-4">
-                    <hr>
-                    <p class="fw-bold">Task Contents</p>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm ps-4 pe-4 pb-4">
-                    <pre><?php echo $row['solution_description'] ?></pre>
-                </div>
-            </div>
-
-        </div>
-
-
-        <?php
-                    } else {
-                        // Show solution insert form
-                        $solutionCodes = loadCode('request_solution');
-                    ?>
         <form method="POST">
-            <div class="row mb-3">
-                <label for="reqType" class="col-sm-2 col-form-label">Solution Type</label>
-                <div class="col-sm-10">
-                    <select class="form-select" aria-label="solType" name='solType'>
-                        <option selected>Solution Type</option>
-                        <?php
-                                        foreach ($solutionCodes as $v1) {
-                                            $html .= '<option value="' . $v1[0] . '">' . $v1[1] . '</option>';
-                                        }
-                                        echo $html;
-                                        unset($html);
-                                        unset($solutionCodes);
-                                        ?>
-                    </select>
-                </div>
-            </div>
+
             <div class="row mb-3">
                 <label for="content" class="col-sm-2 col-form-label">Task Contents</label>
                 <div class="col-sm-10">
                     <textarea class="form-control" id="solContent" name='solContent' rows="3"></textarea>
                 </div>
             </div>
-            <input type="hidden" class="form-control" id="request_id" name='request_id'
-                value=<?php echo $reqId  ?>>
+            <input type="hidden" class="form-control" id="request_id" name='request_id' value=<?php echo $reqId  ?>>
             <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-primary" name="solutionSubmit">Update</button>
             </div>
         </form>
-        <?php
+        <h3 class="pt-4">History</h3>
 
-                    }
-                    ?>
         <?php
                 }
             } catch (Exception $e) {
@@ -436,31 +349,28 @@
             // History
             $stmt = $db_conn->prepare("Select description, create_date, create_user_id, last_updated_date, last_user_id
             from requests_detail
-            where request_id=" . $reqId ." order by request_detail_id" );
+            where request_id=" . $reqId . " order by request_detail_id");
 
             try {
                 $stmt->execute();
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
-                    $html.="<br><div class=\"card\">
+                    $html .= "<br><div class=\"card\">
                     <div class=\"card-header\">
-                      Created at ".$row['create_date'].", Last Modified ".$row['last_updated_date']."
+                      Created at " . $row['create_date'] . ", Last Modified " . $row['last_updated_date'] . "
                     </div>
                     <div class=\"card-body\">
-                      <h5 class=\"card-title\">".$row['description']."</h5>
-                      <p class=\"card-text\">Created by ".$row['create_user_id'].", Last Modified ".$row['last_user_id']."</p>
+                    <pre><h5 class=\"card-title\">" . $row['description'] . "</h5></pre>
+                      <p class=\"card-text\">Created by " . $row['create_user_id'] . ", Last Modified " . $row['last_user_id'] . "</p>
                     </div>
                   </div>
                   ";
                 }
                 echo $html;
-            }catch (Exception $e) {
+            } catch (Exception $e) {
                 $db_conn->rollback();
                 echo $e->getMessage();
             }
-
-
-
         }
 
         function insertRequest()
