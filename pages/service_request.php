@@ -341,7 +341,7 @@
         <br>
 
 
-        <h3 class="pt-4">Solution</h3>
+        <h3 class="pt-4">History</h3>
         <!-- It depends on the exist of solution information from database.  -->
         <?php
                     if (strlen($row['solution_code']) > 0) {
@@ -375,7 +375,7 @@
             <div class="row">
                 <div class="col-sm ps-4 pe-4">
                     <hr>
-                    <p class="fw-bold">Solution description</p>
+                    <p class="fw-bold">Task Contents</p>
                 </div>
             </div>
 
@@ -411,7 +411,7 @@
                 </div>
             </div>
             <div class="row mb-3">
-                <label for="content" class="col-sm-2 col-form-label">Solution Description</label>
+                <label for="content" class="col-sm-2 col-form-label">Task Contents</label>
                 <div class="col-sm-10">
                     <textarea class="form-control" id="solContent" name='solContent' rows="3"></textarea>
                 </div>
