@@ -215,7 +215,7 @@
             $tenants = loadTenantsInfo();
 
             $html = "";
-            $stmt = $db_conn->prepare("Select r.request_id, r.request_date, r.rental_property_id, r.tenant_id, c.description as 'typeValue', r.status_code, r.priority_code, r.last_updated, r.description, r.solution_description, r.solution_date, r.solution_code, p.description as 'priorityValue', s.description as 'statusValue'
+            $stmt = $db_conn->prepare("Select r.request_id, r.request_date, r.rental_property_id, r.tenant_id, c.description as 'typeValue', r.status_code, r.priority_code, r.last_updated, r.description, p.description as 'priorityValue', s.description as 'statusValue'
             
             from requests r 
             join codes c 
