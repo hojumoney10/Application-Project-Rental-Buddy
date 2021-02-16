@@ -328,19 +328,15 @@
         <br>
 
         <form method="POST">
-
-            <div class="row mb-3">
-                <label for="content" class="col-sm-2 col-form-label">Task Contents</label>
-                <div class="col-sm-10">
-                    <textarea class="form-control" id="solContent" name='solContent' rows="3"></textarea>
-                </div>
-            </div>
-            <input type="hidden" class="form-control" id="request_id" name='request_id' value=<?php echo $reqId  ?>>
-            <div class="d-flex justify-content-end">
+            <div class="input-group input-group-lg">
+                <span class="input-group-text" id="inputGroup-sizing-lg">Task Contents</span>
+                <textarea class="form-control" aria-label="Task Content" aria-describedby="inputGroup-sizing-lg"
+                    name='solContent'></textarea>
+                <input type="hidden" class="form-control" id="request_id" name='request_id' value=<?php echo $reqId  ?>>
                 <button type="submit" class="btn btn-primary" name="solutionSubmit">Update</button>
             </div>
         </form>
-        <h3 class="pt-4">History</h3>
+
 
         <?php
                 }
@@ -348,19 +344,19 @@
                 $db_conn->rollback();
                 echo $e->getMessage();
             }
-
+            $html = "<h3 class=\"pt-4\">History</h3>";
             // History
             $stmt = $db_conn->prepare("Select description, create_date, create_user_id, last_updated_date, last_user_id
             from requests_detail
             where request_id=" . $reqId . " order by request_detail_id");
-            $i = 1;
+            $i = 0;
             try {
                 $stmt->execute();
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-
+                    $i++;
                     $html .= "<br><div class=\"card\">
                     <div class=\"card-header\">
-                      #" . $i . ".&nbsp;Created at " . $row['create_date'] . ", Last Modified " . $row['last_updated_date'] . "
+                    <span class=\"badge bg-warning text-dark\">#" . $i . "</span>&nbsp;Created at " . $row['create_date'] . ", Last Modified " . $row['last_updated_date'] . "
                     </div>
                     <div class=\"card-body\">
                     <pre><h5 class=\"card-title\">" . $row['description'] . "</h5></pre>
@@ -368,9 +364,10 @@
                     </div>
                   </div>
                   ";
-                    $i++;
                 }
-                echo $html;
+                if ($i >= 1) {
+                    echo $html;
+                }
             } catch (Exception $e) {
                 $db_conn->rollback();
                 echo $e->getMessage();
