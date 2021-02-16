@@ -63,7 +63,7 @@
         //define('_SERVER_PATH_', str_replace(basename(__FILE__), "", realpath(__FILE__)));
         include 'navigationMenu.php';
 
-        dump($_POST);
+        //dump($_POST);
 
         // input form page
         if (isset($_POST['request'])) {
