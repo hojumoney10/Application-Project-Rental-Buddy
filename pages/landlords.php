@@ -17,8 +17,8 @@ if (!isset($_SESSION['PAGEMODE'])){
         Title:       landlords.php
         Application: RentalBuddy
         Purpose:     Handles the crud functions of landlords
-        Author:      G. Blandford, Group 5, INFO-5139-01-21W
-        Date:        February 14th, 2021 (February 10th, 2021) 
+        Author:      G. Blandford,  Group 5, INFO-5139-01-21W
+        Date:        February 15th, 2021 (February 10th, 2021)
     -->
 
     <title>RentalBuddy - Landlords</title>
@@ -617,11 +617,15 @@ function formLandlord()
                         <td><input type="submit" class="btn btn-success btn-crud" name="btn-save" value="Save"></td>
 <?php            }
 ?>
-                        <td><input type="submit" class="btn <?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD' ) ? 'btn-secondary' : 'btn-primary'; ?> btn-crud" name="btn-cancel" value="<?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD' ) ? 'Cancel' : 'OK'; ?>"></td>
+                        <td>
+                                <input type="submit" form="form-cancel" class="btn <?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD' ) ? 'btn-secondary' : 'btn-primary'; ?> btn-crud" name="btn-cancel" value="<?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD' ) ? 'Cancel' : 'OK'; ?>">
+                        </td>
                     </tr>
                 </table>
             </fieldset>
         </form>
+        <!-- empty form for cancel button -->
+        <form id="form-cancel" hidden><form>
     </div>
 <?php
 }
