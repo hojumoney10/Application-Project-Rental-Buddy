@@ -13,6 +13,7 @@
     Date:        February 16th, 2021 (January 30th, 2021) 
 
     20210216    GPB     Added rental_properties.php to menu
+    20210217    SKC     Added service_request_tenant.php & lease_info_tenant.php to menu
 -->
 
 <?php 
@@ -45,6 +46,12 @@ $base_URL .= $_SERVER['HTTP_HOST'];
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="<?php echo $base_URL."/pages/rental_properties.php"?>">Properties</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?php echo $base_URL."/pages/service_request_tenant.php"?>">View Service Request(tenant)</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?php echo $base_URL."/pages/lease_info_tenant.php"?>">View Lease Info(tenant)</a>
                 </li>
             </ul>
         </div>
