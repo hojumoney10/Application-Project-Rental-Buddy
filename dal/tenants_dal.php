@@ -197,7 +197,7 @@ function getTenant() {
                 }
 // Get a landloards
 function saveTenant() {
-
+    
     $tenant_id = $_SESSION['tenant_id'];
     $rowdata = $_SESSION['rowdata'];
 
