@@ -1,3 +1,14 @@
+<?php
+session_start();
+
+// session_unset();
+$_SESSION['PAGE'] = "tenants";
+if (!isset($_SESSION['PAGEMODE'])){
+    $_SESSION['PAGEMODE'] = "LIST";
+    $_SESSION['PAGENUM'] = 0;
+}
+
+?>
 <!DOCTYPE html>
 <html>
 
@@ -173,10 +184,10 @@
 
     }
 
-    // var_dump( $_SERVER['REQUEST_METHOD'] );
-    // var_dump( $_SESSION );
-    // var_dump( $_POST );
-    // var_dump( $_GET );
+     // var_dump( $_SERVER['REQUEST_METHOD'] );
+     // var_dump( $_SESSION );
+     // var_dump( $_POST );
+     // var_dump( $_GET );
 
     // $_ POSTing or $_GETting?
     IF ($_SERVER['REQUEST_METHOD'] == 'GET' || $_SESSION['PAGEMODE'] == "LIST" ) {
@@ -222,7 +233,7 @@
 
             case 1: // Save
                 if ( ( isset($_POST['btn-save'] ) ) && ( $_POST['btn-save'] == "Save" ) ) {
-
+                    
                     // Validate
                     $err_msgs = validateTenant();
 
