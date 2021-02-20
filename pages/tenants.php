@@ -478,7 +478,7 @@ function formDisplayTenants()
 ?>
     <form method="POST">
         <?php
-
+    
         // Get Data
         getTenants();
 
