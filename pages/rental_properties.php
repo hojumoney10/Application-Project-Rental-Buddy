@@ -510,11 +510,13 @@ function formRentalProperty()
                     }
                     ?>Rental Property Details</legend>
 
-                <!-- rental_property_id.-->
+                <!-- rental_property_id & landlord name-->
                 <div class="input-group">
-                    <label for="rental-property-id">Property No.</label>
+                    <label for="rental-property-id">Property No./Landlord</label>
                     <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 100px" id="rental-property-id" name="rental-property-id" aria-describedby="rental-property-id-help" placeholder="" value="<?php echo $row['rental_property_id']; ?>" readonly>
                     <small id="rental-property-id-help" class="form-text text-muted"></small>
+                    <input type="text" size="30" maxlength="50" class="form-control" id="landlord-legal-name" name="landlord-legal-name" value="<?php echo $row['landlord_legal_name']; ?>" readonly<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
+                    <button type="submit" class="btn btn-danger" id="btn-search-landlords" name="btn-search-landlords">...</button>
                 </div>
 
                 <!-- listing reference -->

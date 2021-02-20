@@ -171,7 +171,12 @@ function getRentalProperty() {
             , rp.last_updated
             , rp.last_updated_user_id
 
+            , l.landlord_id
+            , l.legal_name as landlord_legal_name
+
         from rental_properties rp
+        left join landlord_rental_properties lrp on lrp.rental_property_id = rp.rental_property_id
+        inner join landlords l on l.landlord_id = lrp.landlord_id
 
         where rp.rental_property_id = :rental_property_id";
 
