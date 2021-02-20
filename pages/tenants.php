@@ -441,7 +441,7 @@ function validateTenant() {
 		$rowdata['social_insurance_number'] = $_POST['social-insurance-number'];
 		if (strlen($rowdata['social_insurance_number']) == 0){
 			$err_msgs[] = "A social insurance number is required";
-		} else if (strlen( $rowdata['social_insurance_number']) > 11 ){
+		} else if (strlen( $rowdata['social_insurance_number']) > 9 ){
 			$err_msgs[] = "The SIN exceeds 11 characters";
 		}
 	}
