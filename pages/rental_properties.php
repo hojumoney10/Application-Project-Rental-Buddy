@@ -70,9 +70,9 @@ if (!isset($_SESSION['PAGEMODE'])) {
             font-size: 16px;
         }
 
-        nav {
+        /* nav {
             margin-top: 20px;
-        }
+        } */
 
         .container-crud {
             margin-left: 10px;
@@ -181,10 +181,20 @@ if (!isset($_SESSION['PAGEMODE'])) {
     } else if (isset($_POST['btn-cancel']) && ($_POST['btn-cancel'] == "Cancel")) {
         $_SESSION['PAGENUM'] = 0;
         $_SESSION['PAGEMODE'] = "LIST";
+    } else if (isset($_POST['btn-save']) && ($_POST['btn-save'] == "Save")) { // Save clicked
+        // Just let it through
+    } else if ( isset($_POST['btn-search-landlords']) && ($_POST['btn-search-landlords'] == "...") 
+                || isset($_POST['btn-select-landlord']) && ($_POST['btn-select-landlord'] == "Select") ) {
+                // We have either called or closed the modal
     } else {
         $_SESSION['PAGENUM'] = 0;
         $_SESSION['PAGEMODE'] = "LIST";
     }
+
+    // var_dump( $_SERVER['REQUEST_METHOD'] );
+    // dump( $_SESSION );
+    // var_dump( $_POST );
+    // var_dump( $_GET );
 
     // $_ POSTing or $_GETting?
     if ($_SERVER['REQUEST_METHOD'] == 'GET' || $_SESSION['PAGEMODE'] == "LIST") {
@@ -260,6 +270,21 @@ if (!isset($_SESSION['PAGEMODE'])) {
 
                     formDisplayRentalProperties();
                 }
+                
+                // Display a modal if we're searching landlords
+                if (isset($_POST['btn-search-landlords']) && ($_POST['btn-search-landlords'] == "...")) {
+                    
+                    // Redisplay Property
+                    formRentalProperty(1);
+
+                } else if (isset($_POST['btn-select-landlord']) && ($_POST['btn-select-landlord'] == "Select")) {
+
+                    if (isset($_POST['selected']) ) {
+                        $_SESSION['rowdata']['landlord_id'] = $_POST['selected'][0];
+                    }
+                    formRentalProperty();
+                }
+                
                 break;
             default:
         }
@@ -286,13 +311,16 @@ if (!isset($_SESSION['PAGEMODE'])) {
 
 function validateRentalProperty()
 {
-
     $rowdata = $_SESSION['rowdata'];
 
     $rowdata['rental_property_id'] = $_POST['rental-property-id'];
 
-
     $err_msgs = [];
+
+    // landlord must have been selected
+    if (!isset($rowdata['landlord_id'])) {
+        $err_msgs[] = "A landlord must be selected";
+    } 
 
     // listing reference
     if (!isset($_POST['listing-reference'])) {
@@ -486,7 +514,7 @@ function formDisplayRentalProperties() {
     </div>
 <?php }
 
-function formRentalProperty()
+function formRentalProperty($showmodal = 0)
 {
     // Get the data
     $row = $_SESSION['rowdata'];
@@ -515,8 +543,16 @@ function formRentalProperty()
                     <label for="rental-property-id">Property No./Landlord</label>
                     <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 100px" id="rental-property-id" name="rental-property-id" aria-describedby="rental-property-id-help" placeholder="" value="<?php echo $row['rental_property_id']; ?>" readonly>
                     <small id="rental-property-id-help" class="form-text text-muted"></small>
-                    <input type="text" size="30" maxlength="50" class="form-control" id="landlord-legal-name" name="landlord-legal-name" value="<?php echo $row['landlord_legal_name']; ?>" readonly<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
-                    <button type="submit" class="btn btn-danger" id="btn-search-landlords" name="btn-search-landlords">...</button>
+
+                    <input type="text" size="30" maxlength="50" 
+                            class="form-control" 
+                            id="landlord-legal-name" name="landlord-legal-name" 
+                            value="<?php 
+                                        echo getLandlordName($row['landlord_id']); ?>"
+                            readonly
+                            required
+                            immediate="false">
+                    <button type="submit" class="btn btn-danger" id="btn-search-landlords" name="btn-search-landlords" value="..." <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " disabled" : "" ?>>...</button>
                 </div>
 
                 <!-- listing reference -->
@@ -646,6 +682,47 @@ function formRentalProperty()
                     </tr>
                 </table>
             </fieldset>
+
+<?php
+        if ($showmodal) {
+?>
+            <!-- Modal show landlords  -->
+            <div class="modal fade" id="show-landlords-modal" tabindex="-1" role="dialog" style="max-height: 80%">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="select-landlord-modal-label">Select Landlord</h5>
+                            <button type="button" class="btn btn-secondary close" data-bs-dismiss="modal" aria-label="Cancel">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="show-landlords-modal-body">
+                            <?php
+                                showLandlords();
+                            ?>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="submit" class="btn btn-secondary" name="btn-select-landlord" value="Select"
+                               >
+                            </input>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript">
+                $(function(){
+                    //instantiate your content as modal
+                    $('#show-landlords-modal').modal({
+                        //modal options here, like keyboard: false for e.g.
+                    });
+
+                    //show the modal when dom is ready
+                    $('#show-landlords-modal').modal('show');
+                });
+            </script>  
+<?php
+        }
+?>
         </form>
         <!-- empty form for cancel button -->
         <form id="form-cancel" hidden>
