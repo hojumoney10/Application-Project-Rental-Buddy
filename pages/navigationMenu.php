@@ -15,6 +15,7 @@
     20210216    GPB     Added rental_properties.php to menu
     20210217    SKC     Added service_request_tenant.php & lease_info_tenant.php to menu
     20210219    GPB     Added temporary user selector for admin/landlord/tenant
+    20210220    GPB     Updated all links, and now menus are user-driven
 -->
 
 <?php
@@ -52,9 +53,6 @@ $base_URL .= $_SERVER['HTTP_HOST'];
                     // Check if we are viewing as a tenant or an admin/landlord
                     if ($_SESSION['CURRENT_USER']['user_role_code'] == 'tenant') { ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?php echo $base_URL . "/pages/service_request.php" ?>">My Service Requests</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" href="<?php echo $base_URL . "/pages/service_request_tenant.php" ?>">My Service Requests</a>
                         </li>
                         <li class="nav-item">
@@ -70,6 +68,9 @@ $base_URL .= $_SERVER['HTTP_HOST'];
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="<?php echo $base_URL . "/pages/rental_properties.php" ?>">Properties</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo $base_URL . "/pages/service_request.php" ?>">Service Requests</a>
                         </li>
                 <?php
                     }
