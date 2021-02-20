@@ -115,7 +115,7 @@ if (!isset($_SESSION['PAGEMODE'])){
 
         }
 
-        select {
+        input-group select {
             min-width: 285px;
         }
 
@@ -181,7 +181,8 @@ if (!isset($_SESSION['PAGEMODE'])){
         $_SESSION['PAGENUM'] = 0;
         $_SESSION['PAGEMODE'] = "LIST";
     } else {
-
+        $_SESSION['PAGENUM'] = 0;
+        $_SESSION['PAGEMODE'] = "LIST";
     }
 
     // var_dump( $_SERVER['REQUEST_METHOD'] );
@@ -223,6 +224,9 @@ if (!isset($_SESSION['PAGEMODE'])){
 
                     // Show landlord
                     formLandlord();
+
+                    // Show linked properties
+                    getLandlordProperties($_SESSION['landlord_id']); 
 
                 // LIST RECORDS
                 } else {
@@ -271,7 +275,7 @@ if (!isset($_SESSION['PAGEMODE'])){
     } else if ($_SESSION['PAGEMODE'] == "LIST") {
 
         formDisplayLandlords();
-    }
+    } 
 
     // We can do anything here AFTER the form has loaded
     ?>
@@ -530,17 +534,12 @@ function formLandlord()
                     <small id="salutation-help" class="form-text text-muted"></small>
                 </div>
 
-                <!-- first name -->
+                <!-- first name & last name-->
                 <div class="input-group">
-                    <label for="first-name">First Name</label>
-                    <input type="text" size="30" maxlength="50" class="form-control" id="first-name" name="first-name" aria-describedby="first-name-help" placeholder="Enter first name" value="<?php echo $row['first_name']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <label for="first-name">First/Last Name</label>
+                    <input type="text" size="30" maxlength="50" style="max-width: 50%" class="form-control" id="first-name" name="first-name" aria-describedby="first-name-help" placeholder="Enter first name" value="<?php echo $row['first_name']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="first-name-help" class="form-text text-muted"></small>
-                </div>
-
-                <!-- last name -->
-                <div class="input-group">
-                    <label for="last-name">Last Name</label>
-                    <input type="text" size="30" maxlength="50" class="form-control" id="last-name" name="last-name" aria-describedby="last-name-help" placeholder="Enter last name" value="<?php echo $row['last_name']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <input type="text" size="30" maxlength="50" style="max-width: 50%" class="form-control" id="last-name" name="last-name" aria-describedby="last-name-help" placeholder="Enter last name" value="<?php echo $row['last_name']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="last-name-help" class="form-text text-muted"></small>
                 </div>
 
@@ -623,6 +622,8 @@ function formLandlord()
                     </tr>
                 </table>
             </fieldset>
+        </form>
+        <form>
         </form>
         <!-- empty form for cancel button -->
         <form id="form-cancel" hidden><form>

@@ -146,12 +146,13 @@
             global $db_conn;
             global $msg;
             if ($type == 'priority') {
-                $stmt = $db_conn->prepare("select code_id from codes where code_type='request_priority' and code_value ='" . $value . "' and is_enabled='1'");
+                $stmt = $db_conn->prepare("select code_id from codes where code_type='request_priority' and code_value =? and is_enabled='1'");
             } else if ($type == 'status') {
-                $stmt = $db_conn->prepare("select code_id from codes where code_type='request_status' and code_value ='" . $value . "' and is_enabled='1'");
+                $stmt = $db_conn->prepare("select code_id from codes where code_type='request_status' and code_value =? and is_enabled='1'");
             }
             try {
-                $stmt->execute();
+
+                $stmt->execute(array($value));
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     $code_id = $row['code_id'];
                 }
@@ -223,9 +224,9 @@
             join codes s
             on c.code_id = r.request_type_code and p.code_id = r.priority_code and s.code_id = r.status_code
             
-            where r.tenant_id='" . $tenant_id . "' and r.rental_property_id = " . $property_id . " and r.request_id =" . $reqId);
+            where r.tenant_id=? and r.rental_property_id = ? and r.request_id =?");
             try {
-                $stmt->execute();
+                $stmt->execute(array($tenant_id, $property_id, $reqId));
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         ?>
         <h3>Request Detail</h3>
@@ -348,10 +349,10 @@
             // History
             $stmt = $db_conn->prepare("Select description, create_date, create_user_id, last_updated_date, last_user_id
             from requests_detail
-            where request_id=" . $reqId . " order by request_detail_id");
+            where request_id=? order by request_detail_id");
             $i = 0;
             try {
-                $stmt->execute();
+                $stmt->execute(array($reqId));
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     $i++;
                     $html .= "<br><div class=\"card\">
@@ -410,9 +411,9 @@
 
             global $db_conn;
             $results = [];
-            $stmt = $db_conn->prepare("Select code_id, code_value, description from codes where code_type='" . $codeId . "' and is_enabled = 1 Order by sort_order");
+            $stmt = $db_conn->prepare("Select code_id, code_value, description from codes where code_type=? and is_enabled = 1 Order by sort_order");
             try {
-                $stmt->execute();
+                $stmt->execute(array($codeId));
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     $tmp = [
                         $row['code_id'],
@@ -451,9 +452,9 @@
             from tenants t
             join users u
             on u.tenant_id = t.tenant_id
-            where u.user_id='" . $user_id . "'");
+            where u.user_id=?");
             try {
-                $stmt->execute();
+                $stmt->execute(array($user_id));
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     $tmp = [
                         $row['salutation_code'],
@@ -582,7 +583,7 @@
             join codes c 
             on c.code_id = r.request_type_code
             
-            where r.tenant_id='" . $tenant_id . "' and r.rental_property_id = " . $property_id);
+            where r.tenant_id=? and r.rental_property_id = ?");
 
             try {
                 $html = "<table class='table table-striped table-hover'>
@@ -598,7 +599,7 @@
                 </thead>
                 <tbody>
                   ";
-                $stmt->execute();
+                $stmt->execute(array($tenant_id, $property_id));
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
                     $html .= "<tr>

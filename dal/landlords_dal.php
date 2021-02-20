@@ -55,93 +55,211 @@ function getLandlords()
 
 ?>
     <div class="container-fluid">
-            <legend class="text-light bg-dark" style="margin-top: 10px">Landlords</legend>
-            <table id="table-responsive" class="table table-light table-responsive table-striped">
-                <thead class="table-dark">
-                    <!-- <tr>
+        <legend class="text-light bg-dark" style="margin-top: 10px">Landlords</legend>
+        <table id="table-responsive" class="table table-light table-responsive table-striped">
+            <thead class="table-dark">
+                <!-- <tr>
                         <th class="text-light bg-dark" scope="row" colspan="6" style="text-align: left; border-radius: 5px;">Landlords</th>
                         <th></th>
                     </tr> -->
-                    <tr>
-                        <th scope="col"></th>
-                        <th scope="col">No.</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Contact</th>             
-                        <th scope="col">Address</th>             
-                        <th scope="col">Phone</th>
-                        <th scope="col">SMS</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Status</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody-landlords">
-                    <?php
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">No.</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Contact</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">SMS</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody id="tbody-landlords">
+                <?php
 
-                    // execute query in database
-                    $status = $stmt->execute($data);
+                // execute query in database
+                $status = $stmt->execute($data);
 
-                    if ($status) { // no error
+                if ($status) { // no error
 
-                        if ($stmt->rowCount() > 0) { // Results!
+                    if ($stmt->rowCount() > 0) { // Results!
 
-                            // Display landlords
-                            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        // Display landlords
+                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
-                                // Landlord per row
-                    ?>
-                                <tr>
-                                    <th><input type="radio" style="width:10px;" name="selected[]" value="<?php echo $row['landlord_id']; ?>"></th>
-                                    <td><?php echo $row["landlord_id"]; ?></td>
-                                    <td><?php echo $row["legal_name"]; ?></td>
-                                    <td><?php echo $row["full_name"]; ?></td>
-                                    <td><?php echo $row["address"]; ?></td>
-                                    <td><?php echo formatPhone($row["phone"]); ?></td>
-                                    <td><?php echo formatPhone($row["sms"]); ?></td>
-                                    <td><?php echo $row["email"]; ?></td>
-                                    <td style=" <?php echo ($row["status_code"] === "Active" ? "color: green" : "color: red"); ?>">
-                                        <?php echo $row["status_code"] ?> </td>
-                                </tr>
-                            <?php
-                            }
-                            ?>
-                </tbody>
-            </table>
+                            // Landlord per row
+                ?>
+                            <tr>
+                                <th><input type="radio" style="width:10px;" name="selected[]" value="<?php echo $row['landlord_id']; ?>"></th>
+                                <td><?php echo $row["landlord_id"]; ?></td>
+                                <td><?php echo $row["legal_name"]; ?></td>
+                                <td><?php echo $row["full_name"]; ?></td>
+                                <td><?php echo $row["address"]; ?></td>
+                                <td><?php echo formatPhone($row["phone"]); ?></td>
+                                <td><?php echo formatPhone($row["sms"]); ?></td>
+                                <td><?php echo $row["email"]; ?></td>
+                                <td style=" <?php echo ($row["status_code"] === "Active" ? "color: green" : "color: red"); ?>">
+                                    <?php echo $row["status_code"] ?> </td>
+                            </tr>
+                        <?php
+                        }
+                        ?>
+            </tbody>
+        </table>
     </div>
 <?php
 
-                        } else {
-                            // No landlords found 
+                    } else {
+                        // No landlords found 
 ?>
     <tr>
         <td></td>
         <td>No landlords found.</td>
     </tr>
 <?php
-                        }
-                    } else {
-                        // execute error
-                        echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
-
-                        // close database connection
-                        $db_conn = null;
-
-                        exit(1);
                     }
+                } else {
+                    // execute error
+                    echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
+
                     // close database connection
                     $db_conn = null;
+
+                    exit(1);
                 }
+                // close database connection
+                $db_conn = null;
+            }
 
-// Get a landloards
-function getLandlord() {
+// Get the properties for the landlord
+function getLandlordProperties($landlord_id)
+{
+        // create database connection
+        $db_conn = connectDB();
 
-    // landlord
-    $landlord_id = $_SESSION['landlord_id'];
+        // SQL query
+        $querySQL = "select
+                        rp.rental_property_id
+                        , rp.listing_reference
+                        , rp.number_bedrooms
+                        , property_types.description as property_type_code
+                        , status_codes.description as status_code
+                        
+                    from landlord_rental_properties as lrp
+                    inner join rental_properties rp on rp.rental_property_id = lrp.rental_property_id
+                    inner join codes property_types on property_types.code_value = rp.property_type_code and property_types.code_type = 'property_type'
+                    inner join codes status_codes on status_codes.code_value = rp.status_code and status_codes.code_type = 'property_status'
+                    
+                    where lrp.landlord_id = :landlord_id;";
 
-    // create database connection
-    $db_conn = connectDB();
+        $querySQL .= " order by rp.rental_property_id;";
 
-    // SQL query
-    $querySQL = "select
+        $data = array(":landlord_id" => $landlord_id);
+
+        // prepare query
+        $stmt = $db_conn->prepare($querySQL);
+
+        // prepare error check
+        if (!$stmt) {
+            echo "<p>Error: " . $db_conn->errorCode() . "<br>Message: " . implode($db_conn->errorInfo()) . "</p><br>";
+            exit(1);
+        }
+?>
+            <!-- <form id="form-landlord-properties"> -->
+                <div class="container-fluid">
+                    <legend class="text-light bg-dark" style="margin-top: 10px">Landlord Properties</legend>
+                    <table id="table-responsive" class="table table-light table-responsive table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th></th>
+                                <th scope="col">Ref.</th>
+                                <th scope="col">Bedrooms</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-landlord-properties">
+                            <?php
+
+                            // execute query in database
+                            $status = $stmt->execute($data);
+
+                            if ($status) { // no error
+
+                                if ($stmt->rowCount() > 0) { // Results!
+
+                                    // Display rental properties
+                                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                        // Rental property per row
+                            ?>
+                                        <tr>
+                                            <th><input type="radio" style="width:10px;" name="selected[]" value="<?php echo $row['rental_property_id']; ?>"></th>
+                                            <!-- <td><?php echo $row["rental_property_id"]; ?></td> -->
+                                            <td><?php echo $row["listing_reference"]; ?></td>
+                                            <td><?php echo $row["number_bedrooms"]; ?></td>
+                                            <td><?php echo $row["property_type_code"]; ?></td>
+                                            <td style=" <?php
+                                                        echo ($row["status_code"] === "Leased" ? "color: red" : "color: green");
+                                                        ?>">
+                                                <?php echo $row["status_code"] ?>
+                                            </td>
+                                        </tr>
+                                    <?php
+                                    }
+                                    ?>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="container-fluid">
+                    <table class="table table-light">
+                        <tbody>
+                            <tr>
+                                <div class="input-group">
+                                    <td>
+                                        <input type="submit" class="btn btn-danger btn-crud" name="btn-remove-property" value="Remove">
+                                    </td>
+                                </div>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>                
+            <!-- </form> -->
+<?php
+
+                    } else {
+                        // No rental properties found 
+?>
+    <tr>
+        <td></td>
+        <td>No rental properties found.</td>
+    </tr>
+<?php
+                    }
+                } else {
+                    // execute error
+                    echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
+
+                    // close database connection
+                    $db_conn = null;
+
+                    exit(1);
+                }
+                // close database connection
+                $db_conn = null;
+            }
+
+            // Get a landloards
+            function getLandlord()
+            {
+
+                // landlord
+                $landlord_id = $_SESSION['landlord_id'];
+
+                // create database connection
+                $db_conn = connectDB();
+
+                // SQL query
+                $querySQL = "select
             l.landlord_id
             
             , l.legal_name
@@ -167,62 +285,63 @@ function getLandlord() {
 
         where l.landlord_id = :landlord_id";
 
-                    // assign value to :landlord_id
-                    $data = array(":landlord_id" => $landlord_id);
+                // assign value to :landlord_id
+                $data = array(":landlord_id" => $landlord_id);
 
-                    // prepare query
-                    $stmt = $db_conn->prepare($querySQL);
+                // prepare query
+                $stmt = $db_conn->prepare($querySQL);
 
-                    // prepare error check
-                    if (!$stmt) {
-                        echo "<p>Error: " . $db_conn->errorCode() . "<br>Message: " . implode($db_conn->errorInfo()) . "</p><br>";
-                        exit(1);
+                // prepare error check
+                if (!$stmt) {
+                    echo "<p>Error: " . $db_conn->errorCode() . "<br>Message: " . implode($db_conn->errorInfo()) . "</p><br>";
+                    exit(1);
+                }
+
+                // execute query in database
+                $status = $stmt->execute($data);
+
+                if ($status) { // no error
+
+                    if ($stmt->rowCount() > 0) { // Found
+
+                        // Store row in the session
+                        $_SESSION['rowdata'] = $stmt->fetch(PDO::FETCH_ASSOC);
                     }
+                } else {
+                    // execute error
+                    echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
 
-                    // execute query in database
-                    $status = $stmt->execute($data);
-
-                    if ($status) { // no error
-
-                        if ($stmt->rowCount() > 0) { // Found
-
-                            // Store row in the session
-                            $_SESSION['rowdata'] = $stmt->fetch(PDO::FETCH_ASSOC);
-                        }
-                    } else {
-                        // execute error
-                        echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
-
-                        // close database connection
-                        $db_conn = null;
-
-                        exit(1);
-                    }
                     // close database connection
                     $db_conn = null;
+
+                    exit(1);
                 }
-// Get a landloards
-function saveLandlord() {
+                // close database connection
+                $db_conn = null;
+            }
+            // Get a landloards
+            function saveLandlord()
+            {
 
-    $landlord_id = $_SESSION['landlord_id'];
-    $rowdata = $_SESSION['rowdata'];
+                $landlord_id = $_SESSION['landlord_id'];
+                $rowdata = $_SESSION['rowdata'];
 
-// print_r($landlord_id);
-// print_r($rowdata);
+                // print_r($landlord_id);
+                // print_r($rowdata);
 
-    // create database connection
-    $db_conn = connectDB();
+                // create database connection
+                $db_conn = connectDB();
 
-    if ( isset($_SESSION['userdata']) && !empty($_SESSION['userdata'] ) ) {
-        $session_user_id = $_SESSION['userdata']['user_id'];
-    } else {
-        $session_user_id = "admin";
-    }
+                if (isset($_SESSION['CURRENT_USER']) && !empty($_SESSION['CURRENT_USER'])) {
+                    $session_user_id = $_SESSION['CURRENT_USER']['user_id'];
+                } else {
+                    $session_user_id = "admin";
+                }
 
-    if ($landlord_id == 0) {
+                if ($landlord_id == 0) {
 
-        // Add
-        $querySQL = "insert into landlords (
+                    // Add
+                    $querySQL = "insert into landlords (
                     legal_name
                     , salutation_code
                     , first_name
@@ -256,8 +375,9 @@ function saveLandlord() {
                         , :session_user_id
                 )";
 
-        // assign data values
-        $data = array(  ":legal_name" => $rowdata['legal_name'],
+                    // assign data values
+                    $data = array(
+                        ":legal_name" => $rowdata['legal_name'],
                         ":salutation_code" => $rowdata['salutation_code'],
                         ":first_name" => $rowdata['first_name'],
                         ":last_name" => $rowdata['last_name'],
@@ -274,48 +394,47 @@ function saveLandlord() {
                         ":session_user_id" => $session_user_id
                     );
 
-        // Transaction Start
-       $db_conn->beginTransaction(); 
-                            
-            // prepare query
-            $stmt = $db_conn->prepare($querySQL);
+                    // Transaction Start
+                    $db_conn->beginTransaction();
 
-            // prepare error check
-            if (!$stmt) {
+                    // prepare query
+                    $stmt = $db_conn->prepare($querySQL);
 
-                echo "<p>Error: " . $db_conn->errorCode() . "<br>Message: " . implode($db_conn->errorInfo()) . "</p><br>";
-                $db_conn->rollback(); // Transaction Rollback
-                exit(1);
-            }
+                    // prepare error check
+                    if (!$stmt) {
 
-            // execute query in database
-            $status = $stmt->execute($data);
+                        echo "<p>Error: " . $db_conn->errorCode() . "<br>Message: " . implode($db_conn->errorInfo()) . "</p><br>";
+                        $db_conn->rollback(); // Transaction Rollback
+                        exit(1);
+                    }
 
-            if ($status) { 
+                    // execute query in database
+                    $status = $stmt->execute($data);
 
-                // Should give the identity 
-                $landlord_id = $db_conn->lastInsertId(); // Get landlord_id
+                    if ($status) {
 
-            } else {
-                // execute error
-                echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
-                $db_conn->rollback(); // Transaction Rollback
+                        // Should give the identity 
+                        $landlord_id = $db_conn->lastInsertId(); // Get landlord_id
 
-                // close database connection
-                $db_conn = null;
-                exit(1);
-            }
+                    } else {
+                        // execute error
+                        echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
+                        $db_conn->rollback(); // Transaction Rollback
 
-        // Transaction Commit
-        $db_conn->commit();
+                        // close database connection
+                        $db_conn = null;
+                        exit(1);
+                    }
 
-        // close database connection
-        $db_conn = null;
-        
-    } else {
+                    // Transaction Commit
+                    $db_conn->commit();
 
-        // Update
-        $querySQL = "update landlords as l
+                    // close database connection
+                    $db_conn = null;
+                } else {
+
+                    // Update
+                    $querySQL = "update landlords as l
                 set 
                     l.legal_name                = :legal_name
                     , l.salutation_code         = :salutation_code
@@ -336,8 +455,9 @@ function saveLandlord() {
 
             where l.landlord_id = :landlord_id";
 
-        // assign data values
-        $data = array(  ":landlord_id" => $landlord_id,
+                    // assign data values
+                    $data = array(
+                        ":landlord_id" => $landlord_id,
                         ":legal_name" => $rowdata['legal_name'],
                         ":salutation_code" => $rowdata['salutation_code'],
                         ":first_name" => $rowdata['first_name'],
@@ -355,43 +475,43 @@ function saveLandlord() {
                         ":session_user_id" => $session_user_id
                     );
 
-        // Transaction Start
-       $db_conn->beginTransaction(); 
-                            
-            // prepare query
-            $stmt = $db_conn->prepare($querySQL);
+                    // Transaction Start
+                    $db_conn->beginTransaction();
 
-            // prepare error check
-            if (!$stmt) {
+                    // prepare query
+                    $stmt = $db_conn->prepare($querySQL);
 
-                echo "<p>Error: " . $db_conn->errorCode() . "<br>Message: " . implode($db_conn->errorInfo()) . "</p><br>";
-                $db_conn->rollback(); // Transaction Rollback
-                exit(1);
+                    // prepare error check
+                    if (!$stmt) {
+
+                        echo "<p>Error: " . $db_conn->errorCode() . "<br>Message: " . implode($db_conn->errorInfo()) . "</p><br>";
+                        $db_conn->rollback(); // Transaction Rollback
+                        exit(1);
+                    }
+
+                    // execute query in database
+                    $status = $stmt->execute($data);
+
+                    if ($status) {
+
+                        // Nothing to do for an update
+                        //$landlord_id = $db_conn->lastInsertId(); // Get landlord_id
+
+                    } else {
+                        // execute error
+                        echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
+                        $db_conn->rollback(); // Transaction Rollback
+
+                        // close database connection
+                        $db_conn = null;
+                        exit(1);
+                    }
+
+                    // Transaction Commit
+                    $db_conn->commit();
+
+                    // close database connection
+                    $db_conn = null;
+                }
             }
-
-            // execute query in database
-            $status = $stmt->execute($data);
-
-            if ($status) { 
-                
-                // Nothing to do for an update
-                //$landlord_id = $db_conn->lastInsertId(); // Get landlord_id
-
-            } else {
-                // execute error
-                echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
-                $db_conn->rollback(); // Transaction Rollback
-
-                // close database connection
-                $db_conn = null;
-                exit(1);
-            }
-
-        // Transaction Commit
-        $db_conn->commit();
-
-        // close database connection
-        $db_conn = null;
-    }
-}                
 ?>

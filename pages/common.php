@@ -96,9 +96,9 @@ function format_date($time)
 function selectCodeValue($codeId)
 {
     $db_conn = connectDB();
-    $stmt = $db_conn->prepare("Select code_value from codes where code_id='" . $codeId . "' and is_enabled = 1");
+    $stmt = $db_conn->prepare("Select code_value from codes where code_id=? and is_enabled = 1");
     try {
-        $stmt->execute();
+        $stmt->execute(array($codeId));
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             return $row['code_value'];
         }
