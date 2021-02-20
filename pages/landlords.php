@@ -115,7 +115,7 @@ if (!isset($_SESSION['PAGEMODE'])){
 
         }
 
-        select {
+        input-group select {
             min-width: 285px;
         }
 
@@ -181,7 +181,8 @@ if (!isset($_SESSION['PAGEMODE'])){
         $_SESSION['PAGENUM'] = 0;
         $_SESSION['PAGEMODE'] = "LIST";
     } else {
-
+        $_SESSION['PAGENUM'] = 0;
+        $_SESSION['PAGEMODE'] = "LIST";
     }
 
     // var_dump( $_SERVER['REQUEST_METHOD'] );
@@ -271,7 +272,7 @@ if (!isset($_SESSION['PAGEMODE'])){
     } else if ($_SESSION['PAGEMODE'] == "LIST") {
 
         formDisplayLandlords();
-    }
+    } 
 
     // We can do anything here AFTER the form has loaded
     ?>
