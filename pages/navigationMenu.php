@@ -45,25 +45,35 @@ $base_URL .= $_SERVER['HTTP_HOST'];
                 <li class="nav-item active">
                     <a class="nav-link" aria-current="page" href="<?php echo $base_URL . "/index.php" ?>">Home</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo $base_URL . "" ?>">Tenants</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo $base_URL . "/pages/service_request.php" ?>">Service Request(TEMP)</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo $base_URL . "/pages/landlords.php" ?>">Landlords</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo $base_URL . "/pages/rental_properties.php" ?>">Properties</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo $base_URL . "/pages/service_request_tenant.php" ?>">View Service Request(tenant)</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo $base_URL . "/pages/lease_info_tenant.php" ?>">View Lease Info(tenant)</a>
-                </li>
 
+
+                <?php
+
+                    // Check if we are viewing as a tenant or an admin/landlord
+                    if ($_SESSION['CURRENT_USER']['user_role_code'] == 'tenant') { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo $base_URL . "/pages/service_request.php" ?>">My Service Requests</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo $base_URL . "/pages/service_request_tenant.php" ?>">My Service Requests</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo $base_URL . "/pages/lease_info_tenant.php" ?>">My Lease</a>
+                        </li>
+                <?php
+                    } else { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo $base_URL . "/pages/tenants.php" ?>">Tenants</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo $base_URL . "/pages/landlords.php" ?>">Landlords</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo $base_URL . "/pages/rental_properties.php" ?>">Properties</a>
+                        </li>
+                <?php
+                    }
+                ?>
             </ul>
 
             <!-- A development user selector  -->
