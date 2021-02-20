@@ -34,7 +34,7 @@ function getTenants()
         //need check
     if (isset($_SESSION['text-search'])) {
         if ((strlen($_SESSION['text-search']) > 0)) {
-            $querySQL .= " where t.first_name like :text_search";
+            $querySQL .= " where t.first_name like :text_search or t.last_name like :text_search";
         }
     }
 
