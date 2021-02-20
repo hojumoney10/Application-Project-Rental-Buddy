@@ -219,8 +219,8 @@ function saveRentalProperty() {
     // create database connection
     $db_conn = connectDB();
 
-    if ( isset($_SESSION['userdata']) && !empty($_SESSION['userdata'] ) ) {
-        $session_user_id = $_SESSION['userdata']['user_id'];
+    if ( isset($_SESSION['CURRENT_USER']) && !empty($_SESSION['CURRENT_USER'] ) ) {
+        $session_user_id = $_SESSION['CURRENT_USER']['user_id'];
     } else {
         $session_user_id = "admin";
     }
