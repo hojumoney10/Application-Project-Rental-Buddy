@@ -46,42 +46,50 @@
             $user_id = $_SESSION['CURRENT_USER']['user_id'];
             $tenant_id = checkTenantId($user_id);
 
-            $get_lease = $db_conn->prepare('SELECT 
+            // SQL query
+            $get_lease = 'SELECT 
                 l.lease_id, 
                 rp.listing_reference, 
                 CONCAT(t.first_name, " ", t.last_name) as full_name,
                 l.start_date,
                 l.end_date,
                 l.payment_day,
-                l.payment_frequency_code, 
+                c.description as payment_frequency, 
                 l.base_rent_amount,
                 l.parking_amount,
                 l.other_amount,
                 l.payable_to, 
                 l.deposit_amount, 
                 l.key_deposit, 
-                l.payment_type_code, 
+                c1.description as payment_type, 
                 l.include_electricity, 
                 l.include_heat, 
                 l.include_water, 
                 l.insurancy_policy_number, 
-                l.status_code, 
+                c2.description as lease_status, 
                 l.last_updated, 
                 l.last_updated_user_id
                 
                 FROM leases l 
                 INNER JOIN rental_properties rp ON l.rental_property_id = rp.rental_property_id
                 INNER JOIN tenants t ON l.tenant_id = t.tenant_id
-                WHERE l.tenant_id="' . $tenant_id . '";');
+                INNER JOIN codes c ON l.payment_frequency_code = c.code_id and c.is_enabled = 1
+                INNER JOIN codes c1 ON l.payment_type_code = c1.code_id and c1.is_enabled = 1
+                INNER JOIN codes c2 ON l.status_code = c2.code_id and c2.is_enabled = 1
+                WHERE l.tenant_id= :tenant_id';
+
+            $data = array(":tenant_id" => $tenant_id);
+
+            $stmt = $db_conn->prepare($get_lease);
                 
-            if (!$get_lease) {
+            if (!$stmt) {
                 $err = 'Something went wrong!';
                 exit(1);
             }
                 
-            $status = $get_lease->execute();
+            $status = $stmt->execute($data);
                 
-            while ($row = $get_lease->fetch(PDO::FETCH_ASSOC)) {
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
         ?>
                 <h3>View My Lease Information</h3>
@@ -129,7 +137,7 @@
                             <p class="fw-bold">Payment Frequency</p>
                         </div>
                         <div class="col-sm ps-4">
-                            <p><?php echo $row["payment_frequency_code"]; ?></p>
+                            <p><?php echo $row["payment_frequency"]; ?></p>
                         </div>
                         <div class="col-sm ps-4">
                             <p class="fw-bold">Payable To</p>
@@ -175,7 +183,7 @@
                             <p class="fw-bold">Payment Type</p>
                         </div>
                         <div class="col-sm ps-4">
-                            <p><?php echo $row["payment_type_code"]; ?></p>
+                            <p><?php echo $row["payment_type"]; ?></p>
                         </div>
                     </div>
 
@@ -215,7 +223,7 @@
                             <p class="fw-bold">Status</p>
                         </div>
                         <div class="col-sm ps-4">
-                            <p><?php echo $row["status_code"]; ?></p>
+                            <p><?php echo $row["lease_status"]; ?></p>
                         </div>
                         <div class="col-sm ps-4"></div>
                         <div class="col-sm ps-4"></div>
