@@ -46,6 +46,9 @@ $base_URL .= $_SERVER['HTTP_HOST'];
                 <li class="nav-item">
                     <a class="nav-link" href="<?php echo $base_URL."/pages/rental_properties.php"?>">Properties</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?php echo $base_URL . "/pages/leases.php" ?>">Leases</a>
+                </li>
             </ul>
         </div>
     </div>
