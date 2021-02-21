@@ -70,9 +70,9 @@ if (!isset($_SESSION['PAGEMODE'])){
             font-size: 16px;
         }
 
-        nav {
+        /* nav {
             margin-top: 20px;
-        }
+        } */
 
         .container-crud {
             margin-left: 10px;
@@ -655,15 +655,3 @@ function formTenant()
 <?php
 }
 ?>
-© 2021 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
