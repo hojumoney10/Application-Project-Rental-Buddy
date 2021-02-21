@@ -293,9 +293,15 @@ if (!isset($_SESSION['PAGEMODE'])){
 function validateLease() {   
 
     $rowdata = $_SESSION['rowdata'];
-
     $rowdata['lease_id'] = $_POST['lease-id'];
-    // $rowdata['salutation_code'] = $_POST['salutation'];
+
+    if( isset($_POST['rental-property-id'] ) ) {
+        $rowdata['rental_property_id'] = $_POST['rental-property-id'];
+    } 
+
+    if( isset($_POST['tenant-id'] ) ) {
+		$rowdata['tenant_id'] = $_POST['tenant-id'];
+	} 
 
     $err_msgs = [];
 
@@ -306,27 +312,24 @@ function validateLease() {
 		$rowdata['start_date'] = $_POST['start-date'];
 		if (strlen($rowdata['start_date']) == 0){
 			$err_msgs[] = "A date of start is required";
-		} else if (strlen( $rowdata['start_date']) > 11 ){
-			$err_msgs[] = "A date of start exceeds 11 characters";
-		}
+		} 
 	}
 
     // End Date
 	if( isset($_POST['end-date'] ) ) {
 		$rowdata['end_date'] = $_POST['end-date'];
-	} else {
-		if (strlen( $rowdata['end_date']) > 11 ){
-			$err_msgs[] = "A date of end exceeds 11 characters";
-		}
-	}
+	} 
 
     // payment day
-    if( isset($_POST['payment-day'] ) ) {
+    if( !isset($_POST['payment-day'] ) ) {
+        $err_msgs[] = "A payment day is required";
+    } else {
 		$rowdata['payment_day'] = $_POST['payment-day'];
-	} else {
-		if (strlen( $rowdata['payment_day']) > 11 ){
-			$err_msgs[] = "A payment day exceeds 11 characters";
-		}
+		if ($rowdata['payment_day'] < 0){
+			$err_msgs[] = "A payment day is not valid";
+		}else if ($rowdata['payment_day'] > 32){
+            $err_msgs[] = "A payment day is not valid";
+        }
 	}
 
 
@@ -337,8 +340,8 @@ function validateLease() {
 		$rowdata['payment_frequency_code'] = $_POST['payment-frequency-code'];
 		if (strlen($rowdata['payment_frequency_code']) == 0){
 			$err_msgs[] = "A payment-frequency-code is required";
-		} else if (strlen($rowdata['payment_frequency_code']) > 10 ){
-			$err_msgs[] = "The payment-frequency-code exceeds 10 characters";
+		} else if (strlen($rowdata['payment_frequency_code']) > 30 ){
+			$err_msgs[] = "The payment-frequency-code exceeds 30 characters";
 		}
 	}
 
@@ -351,6 +354,8 @@ function validateLease() {
 			$err_msgs[] = "A base-rent-amount is required";
 		} else if (strlen( $rowdata['base_rent_amount']) > 11  ){
 			$err_msgs[] = "The base-rent-amount is not valid";
+		} else if ($rowdata['base_rent_amount'] < 0  ){
+			$err_msgs[] = "The base-rent-amount is not valid";
 		}
 	}
 
@@ -360,6 +365,8 @@ function validateLease() {
 	} else {
 		if (strlen( $rowdata['parking_amount']) > 11  ){
 			$err_msgs[] = "The parking-amount is not valid";
+		}else if ($rowdata['base_rent_amount'] < 0  ){
+			$err_msgs[] = "The base-rent-amount is not valid";
 		}
 	}
 
@@ -369,6 +376,8 @@ function validateLease() {
 	} else {
 		if (strlen( $rowdata['other_amount']) > 11  ){
 			$err_msgs[] = "The other-amount is not valid";
+		}else if ($rowdata['base_rent_amount'] < 0  ){
+			$err_msgs[] = "The base-rent-amount is not valid";
 		}
 	}
 
@@ -390,6 +399,8 @@ function validateLease() {
 			$err_msgs[] = "A deposit-amount is required";
 		} else if (strlen( $rowdata['deposit_amount']) > 11  ){
 			$err_msgs[] = "The deposit-amount is not valid";
+		}else if ($rowdata['base_rent_amount'] < 0  ){
+			$err_msgs[] = "The base-rent-amount is not valid";
 		}
 	}
 
@@ -402,7 +413,9 @@ function validateLease() {
 		}
         elseif ($rowdata['key_deposit'] < 0) {
             $err_msgs[] = "The key-deposit is not valid";
-        }
+        }else if ($rowdata['base_rent_amount'] < 0  ){
+			$err_msgs[] = "The base-rent-amount is not valid";
+		}
 	}
 
     // payment_type_code
@@ -412,8 +425,8 @@ function validateLease() {
 		$rowdata['payment_type_code'] = $_POST['payment-type-code'];
 		if (strlen($rowdata['payment_type_code']) == 0){
 			$err_msgs[] = "A payment-type-code is required";
-		} else if (strlen($rowdata['payment_type_code']) > 10 ){
-			$err_msgs[] = "The payment-type-code exceeds 10 characters";
+		} else if (strlen($rowdata['payment_type_code']) > 30 ){
+			$err_msgs[] = "The payment-type-code exceeds 30 characters";
 		}
 	}
 
@@ -428,7 +441,6 @@ function validateLease() {
     $rowdata['include_water'] = (int)isset($_POST['include-water']);
 
     // insurancy_policy_number
-    $rowdata['smoking_allowed'] = (int)isset($_POST['smoking-allowed']);
 	if( isset($_POST['insurancy-policy-number'] ) ) {
 		$rowdata['insurancy_policy_number'] = $_POST['insurancy-policy-number'];
 	} else {

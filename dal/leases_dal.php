@@ -212,8 +212,8 @@ function saveLease() {
     $lease_id = $_SESSION['lease_id'];
     $rowdata = $_SESSION['rowdata'];
 
- print_r($lease_id);
- print_r($rowdata);
+ //print_r($lease_id);
+ //print_r($rowdata);
 
     // create database connection
     $db_conn = connectDB();
@@ -271,7 +271,7 @@ function saveLease() {
 
         // assign data values
         $data = array(  ":rental_property_id" => $rowdata['rental_property_id'],
-                        ":tenant_id " => $rowdata['tenant_id'],
+                        ":tenant_id" => $rowdata['tenant_id'],
                         ":start_date" => $rowdata['start_date'],
                         ":end_date" => $rowdata['end_date'],
                         ":payment_day" => $rowdata['payment_day'],
