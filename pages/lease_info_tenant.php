@@ -113,8 +113,6 @@
                         </div>
                     </div>
 
-                    <hr>
-
                     <div class="row">
                         <div class="col-sm ps-4">
                             <p class="fw-bold" style="color: #006600;">Payment Details</p>
@@ -180,8 +178,6 @@
                             <p><?php echo $row["payment_type_code"]; ?></p>
                         </div>
                     </div>
-
-                    <hr>
 
                     <div class="row">
                         <div class="col-sm ps-4">
