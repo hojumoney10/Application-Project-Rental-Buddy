@@ -590,12 +590,12 @@
         {
 
         ?>
-        <h1>Your Request History</h1>
+        
         <?php
             global $userRole;
 
             if ($userRole == 'tenant') {
-                $html = "<form method=\"POST\">
+                $html = "<h1>Your Request History</h1><form method=\"POST\">
         <div class=\"d-flex justify-content-end\">
         <button type=\"submit\" class=\"btn btn-success\" id=\"request\" name=\"request\">Request Maintenance</button>
         </div>
@@ -612,6 +612,7 @@
             $html = "";
 
             if ($userRole == 'tenant') {
+               
                 $stmt = $db_conn->prepare("Select r.request_id, r.request_date, r.rental_property_id, r.tenant_id, c.code_value, r.status_code, r.priority_code, r.last_updated
             from requests r 
             join codes c 
@@ -659,7 +660,7 @@
                     echo $e->getMessage();
                 }
             } else if ($userRole == 'landlord' || $userRole == 'admin') {
-
+                $html ='<h1>Request</h1>';
                 $sql = "select r.request_id, r.request_date, r.rental_property_id, r.tenant_id, c.code_value, r.status_code, r.priority_code, r.last_updated, rp.address_1
                 from requests r 
                 join codes c
@@ -676,7 +677,7 @@
                 $stmt = $db_conn->prepare($sql);
 
                 try {
-                    $html = "<table class='table table-striped table-hover'>
+                    $html .= "<table class='table table-striped table-hover'>
                     <thead>
                       <tr>
                         <th scope='col'>#</th>
