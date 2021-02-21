@@ -171,10 +171,12 @@ function getLease() {
     $db_conn = connectDB();
 
     // SQL query
-    $querySQL = "SELECT
+    $querySQL = "select
             l.lease_id            
             , l.rental_property_id
-            , l.tenant_id            
+            , rp.listing_reference
+            , l.tenant_id
+            , trim( concat(ifnull(salutations.description, ''), ' ', t.first_name, ' ', t.last_name ) ) as tenant_name       
             , l.start_date
             , l.end_date
             , l.payment_day
@@ -195,7 +197,10 @@ function getLease() {
             , l.last_updated_user_id
 
         from leases l
-
+        inner join tenants t on t.tenant_id = l.tenant_id
+        inner join rental_properties rp on rp.rental_property_id = l.rental_property_id
+        inner join codes salutations on salutations.code_value = t.salutation_code and salutations.code_type = 'salutation'
+        
         where l.lease_id = :lease_id";
 
                     // assign value to :lease_id

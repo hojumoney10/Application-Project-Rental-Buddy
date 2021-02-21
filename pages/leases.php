@@ -1,3 +1,14 @@
+    <!-- 
+        Title:       leases.php
+        Application: RentalBuddy
+        Purpose:     Handles the crud functions of landlords
+        Author:      G. Blandford, S. Jeong  Group 5, INFO-5139-01-21W
+        Date:        February 21th, 2021 (February 10th, 2021)
+
+        20210220    GPB     Updated all links, and now menus are user-driven
+        20210221    GPB     Added readonly listing ref & tenant name
+
+    -->
 <?php
 session_start();
 
@@ -13,13 +24,6 @@ if (!isset($_SESSION['PAGEMODE'])){
 <html>
 
 <head>
-    <!-- 
-        Title:       leases.php
-        Application: RentalBuddy
-        Purpose:     Handles the crud functions of landlords
-        Author:      G. Blandford, S. Jeong  Group 5, INFO-5139-01-21W
-        Date:        February 15th, 2021 (February 10th, 2021)
-    -->
 
     <title>RentalBuddy - leases</title>
 
@@ -530,34 +534,40 @@ function formLease()
                 <!--rental_property_id-->
                 <div class="input-group">
                     <label for="rental-property-id">Rental Property No.</label>
-                    <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 100px" id="rental-property-id" name="rental-property-id" aria-describedby="rental-property-id-help" placeholder="" value="<?php echo $row['rental_property_id']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 80px" id="rental-property-id" name="rental-property-id" aria-describedby="rental-property-id-help" placeholder="" value="<?php echo $row['rental_property_id']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="rental-property-id-help" class="form-text text-muted"></small>
+
+                    <input type="text" class="form-control" id="listing-reference" name="listing-reference" value="<?php echo $row['listing_reference']; ?>" readonly>
+                    <small id="listing-reference-help" class="form-text text-muted"></small>
                 </div>
                 
                 <!--tenant_id-->
                 <div class="input-group">
                     <label for="tenant-id">Tenant No.</label>
-                    <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 100px" id="tenant-id" name="tenant-id" aria-describedby="tenant-id-help" placeholder="" value="<?php echo $row['tenant_id']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 80px" id="tenant-id" name="tenant-id" aria-describedby="tenant-id-help" placeholder="" value="<?php echo $row['tenant_id']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="tenant-id-help" class="form-text text-muted"></small>
+
+                    <input type="text" class="form-control" id="tenant-name" name="tenant-name" value="<?php echo $row['tenant_name']; ?>" readonly>
+                    <small id="tenant-name-help" class="form-text text-muted"></small>
                 </div>
 
                 <!--start_date-->
                 <div class="input-group">
                     <label for="start-date">Start Date</label>
-                    <input type="date" style="max-width: 150px;" class="form-control" id="start-date" name="start-date" aria-describedby="start-date-help" value="<?php echo $row['start_date']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <input type="date" style="max-width: 200px;" class="form-control" id="start-date" name="start-date" aria-describedby="start-date-help" value="<?php echo $row['start_date']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="start-date-help" class="form-text text-muted"></small>
                 </div>
 
                 <!--end_date-->
                 <div class="input-group">
                     <label for="end-date">End Date</label>
-                    <input type="date" style="max-width: 150px;" class="form-control" id="end-date" name="end-date" aria-describedby="end-date-help" value="<?php echo $row['end_date']; ?>" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <input type="date" style="max-width: 200px;" class="form-control" id="end-date" name="end-date" aria-describedby="end-date-help" value="<?php echo $row['end_date']; ?>" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="end-date-help" class="form-text text-muted"></small>
                 </div>
 
                 <!--Payment day/Frequency-->
                 <div class="input-group">
-                    <label for="province">Frequency/Payment Day</label>
+                    <label for="province">Frequency/Day</label>
                     <select class="selectpicker form-control" style="max-width: 33%;" id="payment-frequency-code" name="payment-frequency-code" aria-describedby="payment-frequency-code-help" placeholder="Enter frequency" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                         <?php
                         getCodes('payment_frequency', $row['payment_frequency_code']);
@@ -624,25 +634,25 @@ function formLease()
 
                 <!--include_electricity-->
                 <div class="input-group">
-                    <label for="include-electricity">Include Electricity</label>
+                    <label for="include-electricity">Electricity</label>
                     <input type="checkbox" class="form-check-input form-check-input-rental" id="include-electricity" name="include-electricity" <?php echo ($row['include_electricity']) ? "checked" : ""; ?> <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
                 </div>
 
                 <!--include_heat-->
                 <div class="input-group">
-                    <label for="include-heat">Include Heat</label>
+                    <label for="include-heat">Heat</label>
                     <input type="checkbox" class="form-check-input form-check-input-rental" id="include-heat" name="include-heat" <?php echo ($row['include_heat']) ? "checked" : ""; ?> <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
                 </div>
 
                 <!--include_water-->
                 <div class="input-group">
-                    <label for="include-water">Include Water</label>
+                    <label for="include-water">Water</label>
                     <input type="checkbox" class="form-check-input form-check-input-rental" id="include-water" name="include-water" <?php echo ($row['include_water']) ? "checked" : ""; ?> <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
                 </div>
 
                 <!--insurancy_policy_number-->
                 <div class="input-group">
-                    <label for="insurancy-policy-number">Insurancy Policy Number</label>
+                    <label for="insurancy-policy-number">Insurance Policy No.</label>
                     <input type="text" size="30" maxlength="50" class="form-control" id="insurancy-policy-number" name="insurancy-policy-number" aria-describedby="insurancy-policy-number-help" placeholder="Enter Insurancy Policy Number" value="<?php echo $row['insurancy_policy_number']; ?>" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="insurancy-policy-number-help" class="form-text text-muted"></small>
                 </div>
