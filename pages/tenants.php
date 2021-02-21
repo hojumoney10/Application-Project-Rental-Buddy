@@ -411,15 +411,13 @@ function validateTenant() {
 	}
 
     // date of birth
-	if( !isset($_POST['date-of-birth'] ) ) {
+    if( !isset($_POST['date-of-birth'] ) ) {
 		$err_msgs[] = "A date of birth is required";
 	} else {
 		$rowdata['date_of_birth'] = $_POST['date-of-birth'];
 		if (strlen($rowdata['date_of_birth']) == 0){
 			$err_msgs[] = "A date of birth is required";
-		} else if (strlen( $rowdata['date_of_birth']) > 11 ){
-			$err_msgs[] = "The date of birth exceeds 11 characters";
-		}
+		} 
 	}
 
     // gender
@@ -441,10 +439,8 @@ function validateTenant() {
 		$rowdata['social_insurance_number'] = $_POST['social-insurance-number'];
 		if (strlen($rowdata['social_insurance_number']) == 0){
 			$err_msgs[] = "A social insurance number is required";
-		} else if (strlen( $rowdata['social_insurance_number']) < 8 ){
-			$err_msgs[] = "The SIN needs 9 characters";
-		} else if (strlen( $rowdata['social_insurance_number']) > 10 ){
-			$err_msgs[] = "The SIN exceeds 11 characters";
+		} else if ( !preg_match('/^[\d]{9}$/', trim($rowdata['social_insurance_number'] ) ) ) {
+			$err_msgs[] = "The social insurance number is not valid";
         }
 	}
 
@@ -624,7 +620,7 @@ function formTenant()
                 <!-- social insurance number -->
                 <div class="input-group">
                     <label for="social-insurance-number">social insurance number</label>
-                    <input type="text" size="10" maxlength="10" class="form-control" id="social-insurance-number" name="social-insurance-number" aria-describedby="social-insurance-number" placeholder="Enter social insurance number" value="<?php echo $row['social_insurance_number']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <input type="text" size="9" maxlength="9" class="form-control" id="social-insurance-number" name="social-insurance-number" aria-describedby="social-insurance-number" placeholder="Enter social insurance number" value="<?php echo $row['social_insurance_number']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="social-insurance-number-help" class="form-text text-muted"></small>
                 </div>      
 
@@ -659,3 +655,15 @@ function formTenant()
 <?php
 }
 ?>
+© 2021 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About

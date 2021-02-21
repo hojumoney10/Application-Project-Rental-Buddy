@@ -45,9 +45,9 @@
     $msg = "";
 
     // temporary value///////////////////////
-    $tenant_id = '1';
-    $property_id = '9998';
-    $user_id = 'tenant'
+    $tenant_id = '';
+    $property_id = '';
+    $user_id = '';
     /////////////////////////////////////////
 
 
@@ -58,12 +58,40 @@
     <div class="container">
 
         <?php
-        require '../vendor/autoload.php';
 
-        //define('_SERVER_PATH_', str_replace(basename(__FILE__), "", realpath(__FILE__)));
+        session_start();
+
+        require '../vendor/autoload.php';
         include 'navigationMenu.php';
 
+        // Please login message
+        if(!isset($_SESSION['CURRENT_USER']['user_id'])){
+            $msg = "Please login..";
+            msgHeader('red');
+        }
+        $userRole = checkUserRoleCode($_SESSION['CURRENT_USER']['user_id']);
+
+        // if Tenant
+        if ($userRole == 'tenant') {
+            $user_id = $_SESSION['CURRENT_USER']['user_id'];
+            $tenant_id = checkTenantId($user_id);
+            $property_id = checkPropertyId($tenant_id);
+        }
+        // if landrord
+        else if ($userRole == 'landlord') {
+            $user_id = $_SESSION['CURRENT_USER']['user_id'];
+            $landlord_id = checkLandlordId($user_id);
+        } else if ($userRole == 'admin') {
+            $user_id = $_SESSION['CURRENT_USER']['user_id'];
+        }
+
+
+        //define('_SERVER_PATH_', str_replace(basename(__FILE__), "", realpath(__FILE__)));
+
+
         //dump($_POST);
+
+
 
         // input form page
         if (isset($_POST['request'])) {
@@ -224,9 +252,9 @@
             join codes s
             on c.code_id = r.request_type_code and p.code_id = r.priority_code and s.code_id = r.status_code
             
-            where r.tenant_id=? and r.rental_property_id = ? and r.request_id =?");
+            where r.request_id =?");
             try {
-                $stmt->execute(array($tenant_id, $property_id, $reqId));
+                $stmt->execute(array($reqId));
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         ?>
         <h3>Request Detail</h3>
@@ -283,7 +311,10 @@
 
         </div>
 
-        <?php if ($row['status_code'] != 'completed') {
+        <?php
+                    // TK. Warning!!! Hardcoding here
+                    global $userRole;
+                    if ($row['status_code'] != '63' && $userRole != 'tenant') {
                         global $user_id;
                         $priorities = loadCode('request_priority');
                         $status = loadCode('request_status');
@@ -564,29 +595,38 @@
         {
 
         ?>
+        
+        <?php
+            global $userRole;
 
-        <form method="POST">
-            <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-success" id="request" name="request">Request Maintenance</button>
-            </div>
-        </form>
+            if ($userRole == 'tenant') {
+                $html = "<h1>Your Request History</h1><form method=\"POST\">
+        <div class=\"d-flex justify-content-end\">
+        <button type=\"submit\" class=\"btn btn-success\" id=\"request\" name=\"request\">Request Maintenance</button>
+        </div>
+        </form>";
+                echo $html;
+            } ?>
 
 
         <?php
             global $db_conn;
             global $tenant_id;
-            global $property_id;
+            //global $property_id;
 
             $html = "";
-            $stmt = $db_conn->prepare("Select r.request_id, r.request_date, r.rental_property_id, r.tenant_id, c.code_value, r.status_code, r.priority_code, r.last_updated
+
+            if ($userRole == 'tenant') {
+               
+                $stmt = $db_conn->prepare("Select r.request_id, r.request_date, r.rental_property_id, r.tenant_id, c.code_value, r.status_code, r.priority_code, r.last_updated
             from requests r 
             join codes c 
             on c.code_id = r.request_type_code
             
-            where r.tenant_id=? and r.rental_property_id = ?");
+            where r.tenant_id=?");
 
-            try {
-                $html = "<table class='table table-striped table-hover'>
+                try {
+                    $html = "<table class='table table-striped table-hover'>
                 <thead>
                   <tr>
                     <th scope='col'>#</th>
@@ -599,10 +639,10 @@
                 </thead>
                 <tbody>
                   ";
-                $stmt->execute(array($tenant_id, $property_id));
-                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $stmt->execute(array($tenant_id));
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
-                    $html .= "<tr>
+                        $html .= "<tr>
                     <th scope='row'>
                         <form id='requestTable" . $row['request_id'] . "' method='POST'>
                             <a href='javascript:;' onclick='document.getElementById(\"requestTable" . $row['request_id'] . "\").submit();'>" . $row['request_id'] . "</a>
@@ -617,12 +657,77 @@
                     <td>" . selectCodeValue($row['status_code']) . "</td>
                     <td>" . selectCodeValue($row['priority_code']) . "</td>
                     <td>" . $row['last_updated'] . "</td></tr>";
+                    }
+                    $html .= "</tbody></table>";
+                    echo $html;
+                } catch (Exception $e) {
+                    $db_conn->rollback();
+                    echo $e->getMessage();
                 }
-                $html .= "</tbody></table>";
-                echo $html;
-            } catch (Exception $e) {
-                $db_conn->rollback();
-                echo $e->getMessage();
+            } else if ($userRole == 'landlord' || $userRole == 'admin') {
+                $html ='<h1>Request</h1>';
+                $sql = "select r.request_id, r.request_date, r.rental_property_id, r.tenant_id, c.code_value, r.status_code, r.priority_code, r.last_updated, rp.address_1
+                from requests r 
+                join codes c
+                join rental_properties rp 
+                on c.code_id = r.request_type_code
+                and r.rental_property_id = rp.rental_property_id ";
+
+                if ($userRole == 'landlord') {
+                    global $landlord_id;
+                    $rental_property_ids = makeRentalPropertyIdArray($landlord_id);
+                    $in  = str_repeat('?,', count($rental_property_ids) - 1) . '?';
+                    $sql .= "where r.rental_property_id IN ($in)";
+                }
+                $stmt = $db_conn->prepare($sql);
+
+                try {
+                    $html .= "<table class='table table-striped table-hover'>
+                    <thead>
+                      <tr>
+                        <th scope='col'>#</th>
+                        <th scope='col'>Property</th>
+                        <th scope='col'>Request Type</th>
+                        <th scope='col'>Request Date</th>
+                        <th scope='col'>Status</th>
+                        <th scope='col'>Priority</th>
+                        <th scope='col'>Last Updated</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ";
+                      if($userRole == 'landlord'){
+                        $stmt->execute($rental_property_ids);
+                      }else if($userRole == 'admin'){
+                        $stmt->execute();
+                      }
+                    
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
+                        $html .= "<tr>
+                        <th scope='row'>
+                            <form id='requestTable" . $row['request_id'] . "' method='POST'>
+                                <a href='javascript:;' onclick='document.getElementById(\"requestTable" . $row['request_id'] . "\").submit();'>" . $row['request_id'] . "</a>
+                                <input type='hidden' name='requestId' value=" . $row['request_id'] . ">
+                            </form>
+                        </th>
+                        <td>" . $row['address_1'] . "</a>
+                        </td>
+                        <td>" . $row['code_value'] . "</a>
+                        </td>
+                        <td><form id='requestTable" . $row['request_id'] . "' method='POST'>
+                        <a href='javascript:;' onclick='document.getElementById(\"requestTable" . $row['request_id'] . "\").submit();'>" . $row['request_date'] . "<input type='hidden' name='requestId' value=" . $row['request_id'] . ">
+                        </form></td>
+                        <td>" . selectCodeValue($row['status_code']) . "</td>
+                        <td>" . selectCodeValue($row['priority_code']) . "</td>
+                        <td>" . $row['last_updated'] . "</td></tr>";
+                    }
+                    $html .= "</tbody></table>";
+                    echo $html;
+                } catch (Exception $e) {
+                    $db_conn->rollback();
+                    echo $e->getMessage();
+                }
             }
         }
 

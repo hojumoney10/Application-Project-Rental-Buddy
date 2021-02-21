@@ -293,9 +293,15 @@ if (!isset($_SESSION['PAGEMODE'])){
 function validateLease() {   
 
     $rowdata = $_SESSION['rowdata'];
-
     $rowdata['lease_id'] = $_POST['lease-id'];
-    // $rowdata['salutation_code'] = $_POST['salutation'];
+
+    if( isset($_POST['rental-property-id'] ) ) {
+        $rowdata['rental_property_id'] = $_POST['rental-property-id'];
+    } 
+
+    if( isset($_POST['tenant-id'] ) ) {
+		$rowdata['tenant_id'] = $_POST['tenant-id'];
+	} 
 
     $err_msgs = [];
 
@@ -306,27 +312,24 @@ function validateLease() {
 		$rowdata['start_date'] = $_POST['start-date'];
 		if (strlen($rowdata['start_date']) == 0){
 			$err_msgs[] = "A date of start is required";
-		} else if (strlen( $rowdata['start_date']) > 11 ){
-			$err_msgs[] = "A date of start exceeds 11 characters";
-		}
+		} 
 	}
 
     // End Date
 	if( isset($_POST['end-date'] ) ) {
 		$rowdata['end_date'] = $_POST['end-date'];
-	} else {
-		if (strlen( $rowdata['end_date']) > 11 ){
-			$err_msgs[] = "A date of end exceeds 11 characters";
-		}
-	}
+	} 
 
     // payment day
-    if( isset($_POST['payment-day'] ) ) {
+    if( !isset($_POST['payment-day'] ) ) {
+        $err_msgs[] = "A payment day is required";
+    } else {
 		$rowdata['payment_day'] = $_POST['payment-day'];
-	} else {
-		if (strlen( $rowdata['payment_day']) > 11 ){
-			$err_msgs[] = "A payment day exceeds 11 characters";
-		}
+		if ($rowdata['payment_day'] < 0){
+			$err_msgs[] = "A payment day is not valid";
+		}else if ($rowdata['payment_day'] > 32){
+            $err_msgs[] = "A payment day is not valid";
+        }
 	}
 
 
@@ -337,8 +340,8 @@ function validateLease() {
 		$rowdata['payment_frequency_code'] = $_POST['payment-frequency-code'];
 		if (strlen($rowdata['payment_frequency_code']) == 0){
 			$err_msgs[] = "A payment-frequency-code is required";
-		} else if (strlen($rowdata['payment_frequency_code']) > 10 ){
-			$err_msgs[] = "The payment-frequency-code exceeds 10 characters";
+		} else if (strlen($rowdata['payment_frequency_code']) > 30 ){
+			$err_msgs[] = "The payment-frequency-code exceeds 30 characters";
 		}
 	}
 
@@ -351,6 +354,8 @@ function validateLease() {
 			$err_msgs[] = "A base-rent-amount is required";
 		} else if (strlen( $rowdata['base_rent_amount']) > 11  ){
 			$err_msgs[] = "The base-rent-amount is not valid";
+		} else if ($rowdata['base_rent_amount'] < 0  ){
+			$err_msgs[] = "The base-rent-amount is not valid";
 		}
 	}
 
@@ -360,6 +365,8 @@ function validateLease() {
 	} else {
 		if (strlen( $rowdata['parking_amount']) > 11  ){
 			$err_msgs[] = "The parking-amount is not valid";
+		}else if ($rowdata['base_rent_amount'] < 0  ){
+			$err_msgs[] = "The base-rent-amount is not valid";
 		}
 	}
 
@@ -369,6 +376,8 @@ function validateLease() {
 	} else {
 		if (strlen( $rowdata['other_amount']) > 11  ){
 			$err_msgs[] = "The other-amount is not valid";
+		}else if ($rowdata['base_rent_amount'] < 0  ){
+			$err_msgs[] = "The base-rent-amount is not valid";
 		}
 	}
 
@@ -390,6 +399,8 @@ function validateLease() {
 			$err_msgs[] = "A deposit-amount is required";
 		} else if (strlen( $rowdata['deposit_amount']) > 11  ){
 			$err_msgs[] = "The deposit-amount is not valid";
+		}else if ($rowdata['base_rent_amount'] < 0  ){
+			$err_msgs[] = "The base-rent-amount is not valid";
 		}
 	}
 
@@ -402,7 +413,9 @@ function validateLease() {
 		}
         elseif ($rowdata['key_deposit'] < 0) {
             $err_msgs[] = "The key-deposit is not valid";
-        }
+        }else if ($rowdata['base_rent_amount'] < 0  ){
+			$err_msgs[] = "The base-rent-amount is not valid";
+		}
 	}
 
     // payment_type_code
@@ -412,46 +425,20 @@ function validateLease() {
 		$rowdata['payment_type_code'] = $_POST['payment-type-code'];
 		if (strlen($rowdata['payment_type_code']) == 0){
 			$err_msgs[] = "A payment-type-code is required";
-		} else if (strlen($rowdata['payment_type_code']) > 10 ){
-			$err_msgs[] = "The payment-type-code exceeds 10 characters";
+		} else if (strlen($rowdata['payment_type_code']) > 30 ){
+			$err_msgs[] = "The payment-type-code exceeds 30 characters";
 		}
 	}
 
     // include_electricity
-	if( isset($_POST['include-electricity'] ) ) {
-		$rowdata['include_electricity'] = $_POST['include-electricity'];
-	} else {
-		if (strlen($rowdata['include_electricity']) > 2 ){
-			$err_msgs[] = "The include-electricity is not valid";
-		}
-        elseif ($rowdata['include_electricity'] < 0) {
-            $err_msgs[] = "The include-electricity is not valid";
-        }
-	}
+    $rowdata['include_electricity'] = (int)isset($_POST['include-electricity']);
 
     // include_heat
-    if( isset($_POST['include-heat'] ) ) {
-		$rowdata['include_heat'] = $_POST['include-heat'];
-	} else {
-		if (strlen($rowdata['include_heat']) > 2 ){
-			$err_msgs[] = "The include-heat is not valid";
-		}
-        elseif ($rowdata['include_heat'] < 0) {
-            $err_msgs[] = "The include-heat is not valid";
-        }
-	}
+    $rowdata['include_heat'] = (int)isset($_POST['include-heat']);
+
 
     // include_water
-    if( isset($_POST['include-water'] ) ) {
-		$rowdata['include_water'] = $_POST['include-water'];
-	} else {
-		if (strlen($rowdata['include_water']) > 2 ){
-			$err_msgs[] = "The include-water is not valid";
-		}
-        elseif ($rowdata['include_water'] < 0) {
-            $err_msgs[] = "The include-water is not valid";
-        }
-	}
+    $rowdata['include_water'] = (int)isset($_POST['include-water']);
 
     // insurancy_policy_number
 	if( isset($_POST['insurancy-policy-number'] ) ) {
@@ -499,7 +486,7 @@ function formDisplayLeases()
         getLeases();
 
         // Search Bar
-        getSearch($fvalue);
+        //getSearch($fvalue);
 
         // Get Standard CRUD buttons
         getCRUDButtons();
@@ -542,14 +529,14 @@ function formLease()
 
                 <!--rental_property_id-->
                 <div class="input-group">
-                    <label for="rental-property-id">Rental Property Id.</label>
+                    <label for="rental-property-id">Rental Property No.</label>
                     <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 100px" id="rental-property-id" name="rental-property-id" aria-describedby="rental-property-id-help" placeholder="" value="<?php echo $row['rental_property_id']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="rental-property-id-help" class="form-text text-muted"></small>
                 </div>
                 
                 <!--tenant_id-->
                 <div class="input-group">
-                    <label for="tenant-id">Tenant Id.</label>
+                    <label for="tenant-id">Tenant No.</label>
                     <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 100px" id="tenant-id" name="tenant-id" aria-describedby="tenant-id-help" placeholder="" value="<?php echo $row['tenant_id']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="tenant-id-help" class="form-text text-muted"></small>
                 </div>
@@ -564,46 +551,42 @@ function formLease()
                 <!--end_date-->
                 <div class="input-group">
                     <label for="end-date">End Date</label>
-                    <input type="date" style="max-width: 150px;" class="form-control" id="end-date" name="end-date" aria-describedby="end-date-help" value="<?php echo $row['end_date']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <input type="date" style="max-width: 150px;" class="form-control" id="end-date" name="end-date" aria-describedby="end-date-help" value="<?php echo $row['end_date']; ?>" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="end-date-help" class="form-text text-muted"></small>
                 </div>
 
-                <!--payment_day-->
+                <!--Payment day/Frequency-->
                 <div class="input-group">
-                    <label for="payment-day">payment day</label>
-                    <input type="text" maxlength="1" style="max-width: 200px;" class="form-control" id="payment-day" name="payment-day" aria-describedby="payment-day-help" placeholder="Enter payment day" value="<?php echo $row['payment_day']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="payment-day-help" class="form-text text-muted"></small>
-                </div>
-
-                <!--payment_frequency_code-->
-                <div class="input-group">
-                    <label for="payment-frequency-code">Payment Frequency Code</label>
-                    <select class="selectpicker form-control" style="max-width: 100px" id="payment-frequency-code" name="payment-frequency-code" aria-describedby="payment-frequency-code-help" placeholder="Enter payment frequency code" value="<?php echo $row['payment_frequency_code']; ?>"<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <label for="province">Frequency/Payment Day</label>
+                    <select class="selectpicker form-control" style="max-width: 33%;" id="payment-frequency-code" name="payment-frequency-code" aria-describedby="payment-frequency-code-help" placeholder="Enter frequency" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                         <?php
                         getCodes('payment_frequency', $row['payment_frequency_code']);
                         ?>
                     </select>
                     <small id="payment-frequency-code-help" class="form-text text-muted"></small>
+
+                    <input type="text" style="max-width: 33%;" class="form-control" id="payment-day" name="payment-day" aria-describedby="payment-day-help" placeholder="Enter payment day" value="<?php echo $row['payment_day']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <small id="payment-day-help" class="form-text text-muted"></small>
                 </div>
 
                 <!--base_rent_amount-->
                 <div class="input-group">
-                    <label for="base-rent-amount">Base Rent Amount</label>
+                    <label for="base-rent-amount">Base Rent</label>
                     <input type="number" maxlength="10" class="form-control" id="base-rent-amount" name="base-rent-amount" aria-describedby="base-rent-amount-help" placeholder="0.00" value="<?php echo $row['base_rent_amount']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="base-rent-amount-help" class="form-text text-muted"></small>
                 </div>
 
                 <!--parking_amount-->
                 <div class="input-group">
-                    <label for="parking-amount">Parking Amount</label>
-                    <input type="number" maxlength="10" class="form-control" id="parking-amount" name="parking-amount" aria-describedby="parking-amount-help" placeholder="0.00" value="<?php echo $row['parking_amount']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <label for="parking-amount">Parking</label>
+                    <input type="number" maxlength="10" class="form-control" id="parking-amount" name="parking-amount" aria-describedby="parking-amount-help" placeholder="0.00" value="<?php echo $row['parking_amount']; ?>" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="parking-amount-help" class="form-text text-muted"></small>
                 </div>
 
                 <!--other_amount-->
                 <div class="input-group">
-                    <label for="other-amount">Other Amount</label>
-                    <input type="number" maxlength="10" class="form-control" id="other-amount" name="other-amount" aria-describedby="other-amount-help" placeholder="0.00" value="<?php echo $row['other_amount']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <label for="other-amount">Other</label>
+                    <input type="number" maxlength="10" class="form-control" id="other-amount" name="other-amount" aria-describedby="other-amount-help" placeholder="0.00" value="<?php echo $row['other_amount']; ?>"<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="other-amount-help" class="form-text text-muted"></small>
                 </div>
 
@@ -616,15 +599,15 @@ function formLease()
 
                 <!--deposit_amount-->
                 <div class="input-group">
-                    <label for="deposit-amount">Deposit Amount</label>
+                    <label for="deposit-amount">Deposit</label>
                     <input type="number" size="30" maxlength="10" class="form-control" id="deposit-amount" name="deposit-amount" aria-describedby="deposit-amount-help" placeholder="0.00" value="<?php echo $row['deposit_amount']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="deposit-amount-help" class="form-text text-muted"></small>
                 </div>
 
                 <!--key_deposit-->
                 <div class="input-group">
-                    <label for="key-deposit">key Deposit</label>
-                    <input type="number" size="30" maxlength="10" class="form-control" id="key-deposit" name="key-deposit" aria-describedby="key-deposit-help" placeholder="0.00" value="<?php echo $row['key_deposit']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <label for="key-deposit">Key Deposit</label>
+                    <input type="number" size="30" maxlength="10" class="form-control" id="key-deposit" name="key-deposit" aria-describedby="key-deposit-help" placeholder="0.00" value="<?php echo $row['key_deposit']; ?>" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="key-deposit-help" class="form-text text-muted"></small>
                 </div>
 
@@ -642,28 +625,25 @@ function formLease()
                 <!--include_electricity-->
                 <div class="input-group">
                     <label for="include-electricity">Include Electricity</label>
-                    <input type="number" size="30" maxlength="1" class="form-control" id="include-electricity" name="include-electricity" aria-describedby="include-electricity-help" placeholder="0" value="<?php echo $row['include_electricity']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="include-electricity-help" class="form-text text-muted"></small>
+                    <input type="checkbox" class="form-check-input form-check-input-rental" id="include-electricity" name="include-electricity" <?php echo ($row['include_electricity']) ? "checked" : ""; ?> <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
                 </div>
 
                 <!--include_heat-->
                 <div class="input-group">
                     <label for="include-heat">Include Heat</label>
-                    <input type="number" size="30" maxlength="1" class="form-control" id="include-heat" name="include-heat" aria-describedby="include-heat-help" placeholder="0" value="<?php echo $row['include_heat']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="include-heat-help" class="form-text text-muted"></small>
+                    <input type="checkbox" class="form-check-input form-check-input-rental" id="include-heat" name="include-heat" <?php echo ($row['include_heat']) ? "checked" : ""; ?> <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
                 </div>
 
                 <!--include_water-->
                 <div class="input-group">
                     <label for="include-water">Include Water</label>
-                    <input type="number" size="30" maxlength="1" class="form-control" id="include-water" name="include-water" aria-describedby="include-water-help" placeholder="0" value="<?php echo $row['include_water']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="include-water-help" class="form-text text-muted"></small>
+                    <input type="checkbox" class="form-check-input form-check-input-rental" id="include-water" name="include-water" <?php echo ($row['include_water']) ? "checked" : ""; ?> <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
                 </div>
 
                 <!--insurancy_policy_number-->
                 <div class="input-group">
                     <label for="insurancy-policy-number">Insurancy Policy Number</label>
-                    <input type="text" size="30" maxlength="50" class="form-control" id="insurancy-policy-number" name="insurancy-policy-number" aria-describedby="insurancy-policy-number-help" placeholder="Enter Insurancy Policy Number" value="<?php echo $row['insurancy_policy_number']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <input type="text" size="30" maxlength="50" class="form-control" id="insurancy-policy-number" name="insurancy-policy-number" aria-describedby="insurancy-policy-number-help" placeholder="Enter Insurancy Policy Number" value="<?php echo $row['insurancy_policy_number']; ?>" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="insurancy-policy-number-help" class="form-text text-muted"></small>
                 </div>
 
