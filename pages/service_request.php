@@ -64,6 +64,11 @@
         require '../vendor/autoload.php';
         include 'navigationMenu.php';
 
+        // Please login message
+        if(!isset($_SESSION['CURRENT_USER']['user_id'])){
+            $msg = "Please login..";
+            msgHeader('red');
+        }
         $userRole = checkUserRoleCode($_SESSION['CURRENT_USER']['user_id']);
 
         // if Tenant
