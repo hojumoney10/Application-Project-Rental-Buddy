@@ -84,104 +84,146 @@
             while ($row = $get_lease->fetch(PDO::FETCH_ASSOC)) {
 
         ?>
-                <div class="container-fluid" style="width: 40%;">
-                    <fieldset class="bg-light">
-                        <legend class="text-light bg-dark" style="text-align: center;">View Lease Details</legend>
-                        <table class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Column</th>
-                                    <th scope="col">Information</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th scope="row">Lease ID</th>
-                                    <td><?php echo $row["lease_id"]; ?></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Listing Reference</th>
-                                    <td><?php echo $row["listing_reference"]; ?></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Tenant Name</th>
-                                    <td><?php echo $row["full_name"]; ?></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Start Date</th>
-                                    <td><?php echo $row["start_date"]; ?></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">End Date</th>
-                                    <td><?php echo $row["end_date"]; ?></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Payment Day</th>
-                                    <td>Day <?php echo $row["payment_day"]; ?></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Payment Frequency</th>
-                                    <td><?php echo $row["payment_frequency_code"]; ?></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Base Rent Amount</th>
-                                    <td>$<?php echo $row["base_rent_amount"]; ?></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Parking Amount</th>
-                                    <td>$<?php echo $row["parking_amount"]; ?></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Other Amount</th>
-                                    <td>$<?php echo $row["other_amount"]; ?></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Payable To</th>
-                                    <td><?php echo $row["payable_to"]; ?></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Deposit Amount</th>
-                                    <td>$<?php echo $row["deposit_amount"]; ?></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Key Deposit</th>
-                                    <td>$<?php echo $row["key_deposit"]; ?></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Payment Type</th>
-                                    <td><?php echo $row["payment_type_code"]; ?></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Electricity ?</th>
-                                    <td><input type="checkbox" id="include-electricity" name="include-electricity" <?php echo ($row['include_electricity']) ? "checked" : ""; ?>></td>                    
-                                </tr>
-                                <tr>
-                                    <th scope="row">Heat ?</th>
-                                    <td><input type="checkbox" id="include-heat" name="include-heat" <?php echo ($row['include_heat']) ? "checked" : ""; ?>></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Water ?</th>
-                                    <td><input type="checkbox" id="include-water" name="include-water" <?php echo ($row['include_water']) ? "checked" : ""; ?>></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Insurancy Policy Number</th>
-                                    <td><?php echo $row["insurancy_policy_number"]; ?></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Status</th>
-                                    <td><?php echo $row["status_code"]; ?></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Last Updated</th>
-                                    <td><?php echo $row["last_updated"]; ?></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Last Updated User ID</th>
-                                    <td><?php echo $row["last_updated_user_id"]; ?></td>
-                                </tr>
-                            </tbody>                
-                        </table>
-                    </fieldset>    
+                <h3>View My Lease Information</h3>
+
+                <div class="border" style="background-color: #ffffdd;">
+                    <div class="row" style="padding-top: 15px;">
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold" style="color: #006600;">Basic Details</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold">Lease Reference</p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p><?php echo $row["listing_reference"]; ?></p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold">Start Date</p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p><?php echo $row["start_date"]; ?></p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold">End Date</p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p><?php echo $row["end_date"]; ?></p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold" style="color: #006600;">Payment Details</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold">Payment Day</p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p>Day <?php echo $row["payment_day"]; ?></p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold">Payment Frequency</p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p><?php echo $row["payment_frequency_code"]; ?></p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold">Payable To</p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p><?php echo $row["payable_to"]; ?></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold">Base Rent Amount</p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p>$<?php echo $row["base_rent_amount"]; ?></p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold">Parking Amount</p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p>$<?php echo $row["parking_amount"]; ?></p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold">Other Amount</p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p>$<?php echo $row["other_amount"]; ?></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold">Deposit Amount</p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p>$<?php echo $row["deposit_amount"]; ?></p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold">Key Deposit</p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p>$<?php echo $row["key_deposit"]; ?></p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold">Payment Type</p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p><?php echo $row["payment_type_code"]; ?></p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold" style="color: #006600;">Other Details</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold">Electricity</p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <input type="checkbox" id="include-electricity" name="include-electricity" <?php echo ($row['include_electricity']) ? "checked" : ""; ?>>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold">Heat</p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <input type="checkbox" id="include-heat" name="include-heat" <?php echo ($row['include_heat']) ? "checked" : ""; ?>>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold">Water</p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <input type="checkbox" id="include-water" name="include-water" <?php echo ($row['include_water']) ? "checked" : ""; ?>>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold">Insurancy Policy #</p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p><?php echo $row["insurancy_policy_number"]; ?></p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p class="fw-bold">Status</p>
+                        </div>
+                        <div class="col-sm ps-4">
+                            <p><?php echo $row["status_code"]; ?></p>
+                        </div>
+                        <div class="col-sm ps-4"></div>
+                        <div class="col-sm ps-4"></div>
+                    </div>
                 </div>
         <?php
             }
