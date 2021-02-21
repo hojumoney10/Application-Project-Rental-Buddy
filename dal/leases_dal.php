@@ -3,7 +3,11 @@
     Application: RentalBuddy
     Purpose:     Handles the lease-related data access code
     Author:      G. Blandford, S. Jeong Group 5, INFO-5139-01-21W
-    Date:        February 10th, 2021 (February 10th, 2021) 
+    Date:        February 21st, 2021 (February 10th, 2021)
+
+    20210221    GPB Bring in Tenant and Property values / change some headings
+                    Use codes table for Payment types and frequency
+                    Added Start Date / Removed Day
 -->
 <?php
 
@@ -21,21 +25,31 @@ function getLeases()
     // SQL query
     $querySQL = "select
             l.lease_id
+            , l.start_date
             , l.rental_property_id 
+            , rp.listing_reference
             , l.tenant_id
+            , trim( concat(ifnull(salutations.description, ''), ' ', t.first_name, ' ', t.last_name ) ) as tenant_name
             , l.payment_day 
             , l.payment_frequency_code
+            , frequency_codes.description as frequency_code_description
             , l.base_rent_amount
+            , ( l.base_rent_amount + l.parking_amount + l.other_amount ) as total_amount
             , l.payment_type_code
+            , payment_types.description as payment_type_description
             , status_codes.description as status_code
             
         from leases l
 
+        inner join tenants t on t.tenant_id = l.tenant_id
+        inner join rental_properties rp on rp.rental_property_id = l.rental_property_id
 
-        inner join codes status_codes on status_codes.code_value = l.status_code and status_codes.code_type = 'lease_status'";
-        
-        //inner join codes payment_type_code on payment_type.code_value = l.payment_type and payment_type.code_type = 'payment_type_code'
-        // inner join codes payment_frequency on payment_frequency.code_value = l.payment_frequency and payment_frequency.code_type = 'payment_frequency'
+        inner join codes frequency_codes on frequency_codes.code_value = l.payment_frequency_code and frequency_codes.code_type = 'payment_frequency'
+        inner join codes payment_types on payment_types.code_value = l.payment_type_code and payment_types.code_type = 'payment_type'
+
+
+        inner join codes status_codes on status_codes.code_value = l.status_code and status_codes.code_type = 'lease_status'
+        inner join codes salutations on salutations.code_value = t.salutation_code and salutations.code_type = 'salutation'";
 
         if (isset($_SESSION['text-search'])) {
         if ((strlen($_SESSION['text-search']) > 0)) {
@@ -68,13 +82,14 @@ function getLeases()
                     </tr> -->
                     <tr>
                         <th scope="col"></th>
-                        <th scope="col">No.</th>
-                        <th scope="col">Rental Property No.</th>
-                        <th scope="col">Tenant No.</th>
-                        <th scope="col">Payment Day</th>
-                        <th scope="col">payment frequency</th>             
-                        <th scope="col">Base Rent Amount</th>             
-                        <th scope="col">Payment Type Code</th>
+                        <th scope="col">Lease No.</th>
+                        <th scope="col">Property</th>
+                        <th scope="col">Tenant</th>
+                        <!-- <th scope="col">Day</th> -->
+                        <th scope="col">Start Date</th>
+                        <th scope="col">Frequency</th>             
+                        <th scope="col">Total Rent</th>             
+                        <th scope="col">Payment Type</th>
                         <th scope="col">Status</th>
                     </tr>
                 </thead>
@@ -96,14 +111,25 @@ function getLeases()
                                 <tr>
                                     <th><input type="radio" style="width:10px;" name="selected[]" value="<?php echo $row['lease_id']; ?>"></th>
                                     <td><?php echo $row["lease_id"]; ?></td>
-                                    <td><a href="/pages/rental_properties.php"><?php echo $row["rental_property_id"]; ?></a></td>
-                                    <td><a href="/pages/tenants.php"><?php echo $row["tenant_id"]; ?></a></td>
-                                    <td><?php echo $row["payment_day"]; ?></td>
-                                    <td><?php echo $row["payment_frequency_code"]; ?></td>
-                                    <td><?php echo $row["base_rent_amount"]; ?></td>
-                                    <td><?php echo $row["payment_type_code"]; ?></td>
+
+                                    <!-- <td><a href="/pages/rental_properties.php"><?php echo $row["rental_property_id"]; ?></a></td>
+                                    <td><a href="/pages/tenants.php"><?php echo $row["tenant_id"]; ?></a></td> -->
+
+                                    <td><a href="/pages/rental_properties.php"><?php echo $row["listing_reference"]; ?></a></td>
+                                    <td><a href="/pages/tenants.php"><?php echo $row["tenant_name"]; ?></a></td>
+
+                                    <!-- <td><?php echo $row["payment_day"]; ?></td> -->
+                                    <!-- <td><?php echo $row["payment_frequency_code"]; ?></td> -->
+                                    <!-- <td><?php echo $row["payment_type_code"]; ?></td> -->
+
+                                    <td><?php echo $row["start_date"]; ?></td>
+                                    <td><?php echo $row["frequency_code_description"]; ?></td>
+                                    <!-- <td><?php echo $row["base_rent_amount"]; ?></td> -->
+                                    <td><?php echo $row["total_amount"]; ?></td>
+                                    <td><?php echo $row["payment_type_description"]; ?></td>
                                     <td style=" <?php echo ($row["status_code"] === "Active" ? "color: green" : "color: red"); ?>">
-                                        <?php echo $row["status_code"] ?> </td>
+                                        <?php echo $row["status_code"] ?>
+                                    </td>
                                 </tr>
                             <?php
                             }
