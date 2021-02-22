@@ -11,6 +11,7 @@
 <?php
     session_start();
     require_once('common.php');
+    require_once('navigationMenu.php');
     require_once '../vendor/autoload.php';
 ?>
 
@@ -37,9 +38,8 @@
     <div class="container">
         
         <?php
-        require_once('navigationMenu.php');
 
-        // Get lease information
+        // Get rental property information
         $db_conn = connectDB();
 
         $userRole = checkUserRoleCode($_SESSION['CURRENT_USER']['user_id']);
