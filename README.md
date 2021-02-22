@@ -28,18 +28,17 @@ Taehyung Kim
 1. Install this GIT into your /var/www directory
 2. Login into MariaDb as root user and execute the script rental.sql
 3. Create a database user with matching credentials that has access to the rental database:
-
-   create user 'rental'@'localhost' identified by 'SScAGAMfi4g0gwgp';
+```sql
+   create user 'rental'@'localhost' identified by 'SScAGAMfi4g0gwgp';  
    grant all privileges on rental.* to 'rental'@'localhost';
-
+```
 4. Navigate to home page /index.php
 
 ## Rental Buddy Deployment Access
 
-Robust Login/Authentication will be handled in Sprint 2. We determined this needed some thought as we
-have had no solid introduction to AUTH in PHP and this is why we focused on other functionality for Sprint 1.
-
-We have provided a simple dropdown to mimic the three types of users of the system; Admin, Landlord & Tenant. 
-The menus represented for the first two users are the same, but the tenant user has specific menu functionality.
-
-Further details are provided in the video-walkthough.
+Robust Login/Authentication will be handled in Sprint 2. We determined this needed some thought as we have had no solid introduction to AUTH in PHP and this is why we focused on other functionality for Sprint 1.  
+  
+We have provided a simple dropdown to mimic the three types of users of the system; Admin, Landlord & Tenant.  
+The menus represented for the first two users are the same, but the tenant user has specific menu functionality.  
+  
+Further details are provided in the video-walkthough.  
