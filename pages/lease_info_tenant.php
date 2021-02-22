@@ -6,13 +6,12 @@
     Date:        February 13th, 2021 (February 13th, 2021) 
 
     20210222     GPB    Corrected JOINS to codes tables and provided more user-friendly aliases
+                        Moved navigationMenu to inside <body>
 -->
 
 <?php
     session_start();
     require_once('common.php');
-    require_once('navigationMenu.php');
-    require_once '../vendor/autoload.php';
 ?>
 
 <!doctype html>
@@ -25,16 +24,21 @@
     <meta name="author" content="Sung-Kyu Choi (Daniel)">
     <title>RentalBuddy - Lease Information (tenant)</title>
 
-    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/starter-template/">
+    <!-- <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/starter-template/"> -->
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 
     <!-- Custom styles for this template -->
-    <link href="../css/starter-template.css" rel="stylesheet">
+    <!-- <link href="../css/starter-template.css" rel="stylesheet"> -->
 </head>
 
 <body>
+<?php
+require_once('navigationMenu.php');
+    require_once '../vendor/autoload.php';
+    ?>
+
     <div class="container">
         
         <?php
