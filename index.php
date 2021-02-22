@@ -44,8 +44,8 @@
 <main class="container">
 
   <div class="starter-template text-center py-5 px-3">
-    <h1>Bootstrap starter template</h1>
-    <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+    <h1>Live Demo!</h1>
+    <p class="lead">Please visit our live demo site on AWS.<br> <a href="https://rental.fanshawe21w.tk/"> https://rental.fanshawe21w.tk/ </a><br>Using Travis, AWS Code deploy, and S3, Github's master branch commit is reflected in real time.</p>
   </div>
 
 </main><!-- /.container -->

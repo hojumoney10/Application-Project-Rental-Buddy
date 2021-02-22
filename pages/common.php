@@ -12,6 +12,11 @@
                         Added selectCodeValue function 
                                           
     20210215    GPB     Added displayErrors function : displays array of error messages in a dismissible bootstrap alert
+
+    20210220    TK      Added checkUserRoleCode function : input userid, output user_role_code
+                        Added checkTenantId function : input userID, output tenantID
+                        Added checkLandlord function : input userID, output landlordID
+                        Added makeRentalPropertyIdArray : input landlordId, output properties Array
                           
 -->
 
@@ -130,4 +135,81 @@ function displayErrors($err_msgs) {
         </div> 
     <?php
 }
+
+function checkUserRoleCode($user_id){
+    $db_conn = connectDB();
+    $stmt = $db_conn->prepare("select user_role_code from users where user_id=? and status_code = 'enabled'");
+    try {
+        $stmt->execute(array($user_id));
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            unset($user_id);
+            return $row['user_role_code'];
+        }
+    } catch (Exception $e) {
+        $db_conn->rollback();
+        echo $e->getMessage();
+    }
+}
+
+function checkTenantId($user_id){
+    $db_conn = connectDB();
+    $stmt = $db_conn->prepare("select tenant_id from users where user_id=? and status_code = 'enabled'");
+    try {
+        $stmt->execute(array($user_id));
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            unset($user_id);
+            return $row['tenant_id'];
+        }
+    } catch (Exception $e) {
+        $db_conn->rollback();
+        echo $e->getMessage();
+    }
+}
+
+function checkPropertyId($tenant_id){
+    $db_conn = connectDB();
+    $stmt = $db_conn->prepare("select rental_property_id from leases where tenant_id=?");
+    try {
+        $stmt->execute(array($tenant_id));
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            unset($tenant_id);
+            return $row['rental_property_id'];
+        }
+    } catch (Exception $e) {
+        $db_conn->rollback();
+        echo $e->getMessage();
+    }
+}
+
+function checkLandlordId($user_id){
+    $db_conn = connectDB();
+    $stmt = $db_conn->prepare("select landlord_id from users where user_id=? and status_code = 'enabled'");
+    try {
+        $stmt->execute(array($user_id));
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            unset($user_id);
+            return $row['landlord_id'];
+        }
+    } catch (Exception $e) {
+        $db_conn->rollback();
+        echo $e->getMessage();
+    }
+}
+
+function makeRentalPropertyIdArray($landlord_id){
+    $db_conn = connectDB();
+    $stmt = $db_conn->prepare("select rental_property_id from landlord_rental_properties where landlord_id=?");
+    try {
+        $tmp=[];
+        $stmt->execute(array($landlord_id));
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            array_push($tmp, $row['rental_property_id']);
+        }
+        return $tmp;
+    } catch (Exception $e) {
+        $db_conn->rollback();
+        echo $e->getMessage();
+    }
+}
+
 ?>

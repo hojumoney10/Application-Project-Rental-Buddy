@@ -70,9 +70,9 @@ if (!isset($_SESSION['PAGEMODE'])){
             font-size: 16px;
         }
 
-        nav {
+        /* nav {
             margin-top: 20px;
-        }
+        } */
 
         .container-crud {
             margin-left: 10px;

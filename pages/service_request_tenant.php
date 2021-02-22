@@ -4,6 +4,9 @@
     Purpose:     Handles the service request view for tenant
     Author:      S. Choi, Group 5, INFO-5139-01-21W
     Date:        February 13th, 2021 (February 13th, 2021) 
+
+
+    *** This file has been REPLACED BY service_request.php ***
 -->
 
 <?php
