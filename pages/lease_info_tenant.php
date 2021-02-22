@@ -6,13 +6,12 @@
     Date:        February 13th, 2021 (February 13th, 2021) 
 
     20210222     GPB    Corrected JOINS to codes tables and provided more user-friendly aliases
+                        Moved navigationMenu to inside <body>
 -->
 
 <?php
     session_start();
     require_once('common.php');
-    require_once('navigationMenu.php');
-    require_once '../vendor/autoload.php';
 ?>
 
 <!doctype html>
@@ -35,6 +34,11 @@
 </head>
 
 <body>
+<?php
+    require_once('navigationMenu.php');
+    require_once '../vendor/autoload.php';
+    ?>
+
     <div class="container">
         
         <?php
