@@ -2,7 +2,8 @@
  
 [![Build Status](https://travis-ci.com/TaehyungAlexKim/Application-Project-Rental-Buddy.svg?token=aTxJ7y6DwwppjrZauChh&branch=main)](https://travis-ci.com/TaehyungAlexKim/Application-Project-Rental-Buddy)
 
-This project is the result of the Fanshawe college 21W IWD1 Application Project course.
+This project is the result of the Fanshawe college 21W IWD1 Application Project course.  
+**Live demo**: [Here](https://rental.fanshawe21w.tk/)
 
 ## System
 
