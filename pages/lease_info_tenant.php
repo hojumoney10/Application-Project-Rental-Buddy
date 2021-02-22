@@ -24,18 +24,18 @@
     <meta name="author" content="Sung-Kyu Choi (Daniel)">
     <title>RentalBuddy - Lease Information (tenant)</title>
 
-    <!-- <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/starter-template/"> -->
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/starter-template/">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 
     <!-- Custom styles for this template -->
-    <!-- <link href="../css/starter-template.css" rel="stylesheet"> -->
+    <link href="../css/starter-template.css" rel="stylesheet">
 </head>
 
 <body>
 <?php
-require_once('navigationMenu.php');
+    require_once('navigationMenu.php');
     require_once '../vendor/autoload.php';
     ?>
 
