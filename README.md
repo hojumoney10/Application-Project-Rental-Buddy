@@ -23,9 +23,16 @@ Taehyung Kim
 
 ## Deployment Instructions (LAMP stack on Ubuntu 20.04 required)
 
+(Note: We are using MariaDB on our live demo site, but application is running on VM's using MySQL with no issue)
+
 1. Install this GIT into your /var/www directory
-2. Login into MySQL as root user and execute the script rental.sql
-3. Navigate to home page /index.php
+2. Login into MariaDb as root user and execute the script rental.sql
+3. Create a database user with matching credentials that has access to the rental database:
+
+   create user 'rental'@'localhost' identified by 'SScAGAMfi4g0gwgp';
+   grant all privileges on rental.* to 'rental'@'localhost';
+
+4. Navigate to home page /index.php
 
 ## Rental Buddy Deployment Access
 
@@ -36,15 +43,3 @@ We have provided a simple dropdown to mimic the three types of users of the syst
 The menus represented for the first two users are the same, but the tenant user has specific menu functionality.
 
 Further details are provided in the video-walkthough.
-
-
-
-
-
-
-
-
-
-
-
-
