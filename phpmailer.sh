@@ -1,3 +1,2 @@
-#!/bin/bash
-echo `cd /var/www/html/rental`
-echo `composer require phpmailer/phpmailer`
+cd /var/www/html/rental
+composer require phpmailer/phpmailer
