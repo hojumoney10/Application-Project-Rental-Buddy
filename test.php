@@ -12,7 +12,7 @@ $mail->Password = ')(4u]B8kY$-0v;[1agkF';
 $mail->setFrom('rentalproject.fanshawe@gmail.com', 'Rental Buddy');
 $mail->addReplyTo('rentalproject.fanshawe@gmail.com', 'Rental Buddy');
 $mail->addAddress('taehyungkim@outlook.com', 'Taehyung Kim');
-$mail->Subject = 'Testing PHPMailer';
+$mail->Subject = 'Testing PHPMailer sh file test';
 $mail->msgHTML(file_get_contents('message.html'), __DIR__);
 $mail->Body = 'This is a plain text message body';
 //$mail->addAttachment('test.txt');
