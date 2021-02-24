@@ -180,6 +180,7 @@ if (!isset($_SESSION['PAGEMODE'])){
     } else if ( isset($_POST['btn-cancel'] ) && ( $_POST['btn-cancel'] == "Cancel") ) {
         $_SESSION['PAGENUM'] = 0;
         $_SESSION['PAGEMODE'] = "LIST";
+    } else if ( isset($_POST['btn-save'] ) && ( $_POST['btn-save'] == "Save") ) {
     } else {
         $_SESSION['PAGENUM'] = 0;
         $_SESSION['PAGEMODE'] = "LIST";
@@ -449,7 +450,6 @@ function validateLandlord() {
 			$err_msgs[] = "The status exceeds 10 characters";
 		}
 	}
-        
     $_SESSION['rowdata'] = $rowdata;
 	return $err_msgs;
 }

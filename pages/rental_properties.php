@@ -274,6 +274,10 @@ if (!isset($_SESSION['PAGEMODE'])) {
                 // Display a modal if we're searching landlords
                 if (isset($_POST['btn-search-landlords']) && ($_POST['btn-search-landlords'] == "...")) {
                     
+                    // We need to store the variables
+                    // so let's call validate without error display
+                    validateRentalProperty();
+                                        
                     // Redisplay Property
                     formRentalProperty(1);
 
@@ -445,8 +449,8 @@ function validateRentalProperty()
         $err_msgs[] = "The number of parking spaces is required";
     } else {
         $rowdata['number_parking_spaces'] = $_POST['number-parking-spaces'];
-        if ($rowdata['number_parking_spaces'] < 1 || $rowdata['number_parking_spaces'] > 99 ) {
-            $err_msgs[] = "The number of bedrooms must be between 1 and 99";
+        if ($rowdata['number_parking_spaces'] < 0 || $rowdata['number_parking_spaces'] > 99 ) {
+            $err_msgs[] = "The number of parking spaces must be between 0 and 99";
         } 
     }    
 

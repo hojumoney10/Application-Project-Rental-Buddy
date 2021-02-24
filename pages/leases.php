@@ -184,8 +184,10 @@ if (!isset($_SESSION['PAGEMODE'])){
     } else if ( isset($_POST['btn-cancel'] ) && ( $_POST['btn-cancel'] == "Cancel") ) {
         $_SESSION['PAGENUM'] = 0;
         $_SESSION['PAGEMODE'] = "LIST";
+    } else if ( isset($_POST['btn-save'] ) && ( $_POST['btn-save'] == "Save") ) {
     } else {
-
+        $_SESSION['PAGENUM'] = 0;
+        $_SESSION['PAGEMODE'] = "LIST";
     }
 
     // var_dump( $_SERVER['REQUEST_METHOD'] );
@@ -623,7 +625,7 @@ function formLease()
 
                 <!--payment_type_code-->
                 <div class="input-group">
-                    <label for="payment-type-code">Payment Frequency Code</label>
+                    <label for="payment-type-code">Payment Type</label>
                     <select class="selectpicker form-control" style="max-width: 200px" id="payment-type-code" name="payment-type-code" aria-describedby="payment-type-code-help" placeholder="Enter payment Type code" value="<?php echo $row['payment_frequency_code']; ?>"<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                         <?php
                         getCodes('payment_type', $row['payment_type_code']);

@@ -4,13 +4,14 @@
     Purpose:     Handles the lease info view for tenant
     Author:      S. Choi, Group 5, INFO-5139-01-21W
     Date:        February 13th, 2021 (February 13th, 2021) 
+
+    20210222     GPB    Corrected JOINS to codes tables and provided more user-friendly aliases
+                        Moved navigationMenu to inside <body>
 -->
 
 <?php
     session_start();
     require_once('common.php');
-    require_once('navigationMenu.php');
-    require_once '../vendor/autoload.php';
 ?>
 
 <!doctype html>
@@ -33,6 +34,11 @@
 </head>
 
 <body>
+<?php
+    require_once('navigationMenu.php');
+    require_once '../vendor/autoload.php';
+    ?>
+
     <div class="container">
         
         <?php
@@ -53,30 +59,30 @@
                 CONCAT(t.first_name, " ", t.last_name) as full_name,
                 l.start_date,
                 l.end_date,
+                frequency_codes.description as payment_frequency,				
                 l.payment_day,
-                c.description as payment_frequency, 
                 l.base_rent_amount,
                 l.parking_amount,
                 l.other_amount,
                 l.payable_to, 
                 l.deposit_amount, 
                 l.key_deposit, 
-                c1.description as payment_type, 
+
                 l.include_electricity, 
                 l.include_heat, 
                 l.include_water, 
                 l.insurancy_policy_number, 
-                c2.description as lease_status, 
                 l.last_updated, 
                 l.last_updated_user_id
                 
                 FROM leases l 
                 INNER JOIN rental_properties rp ON l.rental_property_id = rp.rental_property_id
                 INNER JOIN tenants t ON l.tenant_id = t.tenant_id
-                INNER JOIN codes c ON l.payment_frequency_code = c.code_id and c.is_enabled = 1
-                INNER JOIN codes c1 ON l.payment_type_code = c1.code_id and c1.is_enabled = 1
-                INNER JOIN codes c2 ON l.status_code = c2.code_id and c2.is_enabled = 1
-                WHERE l.tenant_id= :tenant_id';
+                INNER JOIN codes frequency_codes on l.payment_frequency_code = frequency_codes.code_value and frequency_codes.code_type = "payment_frequency"
+                INNER JOIN codes payment_types on l.payment_type_code = payment_types.code_value and payment_types.code_type = "payment_type"
+                INNER JOIN codes status_codes on l.status_code = status_codes.code_value and status_codes.code_type = "lease_status"	
+
+                WHERE l.tenant_id=  :tenant_id';
 
             $data = array(":tenant_id" => $tenant_id);
 

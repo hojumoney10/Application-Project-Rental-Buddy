@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.7deb1
+-- version 4.9.5deb2
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Feb 18, 2021 at 10:43 PM
--- Server version: 10.3.25-MariaDB-0ubuntu1
--- PHP Version: 7.4.9
+-- Generation Time: Feb 22, 2021 at 12:33 PM
+-- Server version: 10.3.25-MariaDB-0ubuntu0.20.04.1
+-- PHP Version: 7.4.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -21,6 +21,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `rental`
 --
+CREATE DATABASE IF NOT EXISTS `rental` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `rental`;
 
 -- --------------------------------------------------------
 
@@ -160,6 +162,15 @@ CREATE TABLE `landlord_rental_properties` (
   `rental_property_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `landlord_rental_properties`
+--
+
+INSERT INTO `landlord_rental_properties` (`landlord_rental_property_id`, `landlord_id`, `rental_property_id`) VALUES
+(1, 1, 3),
+(2, 1, 1),
+(3, 2, 2);
+
 -- --------------------------------------------------------
 
 --
@@ -195,7 +206,7 @@ CREATE TABLE `leases` (
 --
 
 INSERT INTO `leases` (`lease_id`, `rental_property_id`, `tenant_id`, `start_date`, `end_date`, `payment_day`, `payment_frequency_code`, `base_rent_amount`, `parking_amount`, `other_amount`, `payable_to`, `deposit_amount`, `key_deposit`, `payment_type_code`, `include_electricity`, `include_heat`, `include_water`, `insurancy_policy_number`, `status_code`, `last_updated`, `last_updated_user_id`) VALUES
-(1, 1, 1, '2021-01-01', '2021-12-31', 1, 'monthly', '1000.00', '100.00', '100.00', 'Michael Davidson', '1000.00', '100.00', 'etransfer', 1, 0, 0, 'ABC123', 'active', '2021-02-17 23:10:12', 'test');
+(1, 1, 1, '2021-02-01', '2021-09-30', 1, 'monthly', '1000.00', '0.00', '0.00', '', '1000.00', '0.00', 'etransfer', 0, 0, 0, NULL, 'active', '2021-02-21 02:10:32', 'admin');
 
 -- --------------------------------------------------------
 
@@ -231,7 +242,8 @@ CREATE TABLE `rental_properties` (
 
 INSERT INTO `rental_properties` (`rental_property_id`, `listing_reference`, `address_1`, `address_2`, `city`, `province_code`, `postal_code`, `latitude`, `longitude`, `number_bedrooms`, `property_type_code`, `parking_space_type_code`, `number_parking_spaces`, `rental_duration_code`, `smoking_allowed`, `insurance_required`, `status_code`, `last_updated`, `last_updated_user_id`) VALUES
 (1, 'WILSON193MAIN', '193 Wilson Avenue', 'Main', 'London', 'ON', 'N6H 1X6', '42.98553', '-81.2602478', 2, 'houseshare', 'drive', 2, 'monthly', 0, 1, 'leased', '2021-02-16 12:12:49', 'admin'),
-(2, 'WILSON193UPPER', '193 Wilson Avenue', 'Upper', 'London', 'ON', 'N6H 1X6', '42.98553', '-81.2602478', 2, 'houseshare', 'drive', 1, 'monthly', 0, 1, 'available', '2021-02-16 12:13:01', 'admin');
+(2, 'WILSON193UPPER', '193 Wilson Avenue', 'Upper', 'London', 'ON', 'N6H 1X6', '42.98553', '-81.2602478', 2, 'houseshare', 'drive', 1, 'monthly', 0, 1, 'available', '2021-02-21 17:08:28', 'landlord'),
+(3, 'MOORE24', '24 Moore Street', '', 'London', 'ON', 'N6H1X6', '', '', 2, 'house', 'drive', 2, 'monthly', 1, 1, 'available', '2021-02-20 23:53:12', 'landlord');
 
 -- --------------------------------------------------------
 
@@ -257,10 +269,10 @@ CREATE TABLE `requests` (
 --
 
 INSERT INTO `requests` (`request_id`, `request_date`, `rental_property_id`, `tenant_id`, `request_type_code`, `description`, `status_code`, `priority_code`, `last_updated`, `last_updated_user_id`) VALUES
-(2, '2021-02-15 01:59:24', 9998, 1, '58', 'I want to have a cat.', '61', '65', '2021-02-18 17:35:46', 'tenant'),
-(3, '2021-02-15 14:50:23', 9998, 1, '56', 'The bathroom faucet is leaking', '60', '64', '2021-02-15 21:29:55', 'tenant'),
-(4, '2021-02-16 18:13:29', 9998, 1, '59', 'asdfasdfasdf', '60', '65', '2021-02-16 18:13:29', 'tenant'),
-(5, '2021-02-17 02:14:19', 9998, 1, '58', 'too loud', '60', '65', '2021-02-17 02:14:19', 'tenant');
+(2, '2021-02-15 01:59:24', 1, 1, '58', 'I want to have a cat.', '61', '64', '2021-02-19 22:02:09', 'tenant'),
+(3, '2021-02-15 14:50:23', 1, 1, '56', 'The bathroom faucet is leaking', '60', '64', '2021-02-15 21:29:55', 'tenant'),
+(4, '2021-02-16 18:13:29', 1, 1, '59', 'asdfasdfasdf', '63', '65', '2021-02-16 21:26:47', 'tenant'),
+(5, '2021-02-21 02:51:47', 1, 1, '56', 'request new... ', '62', '65', '2021-02-22 11:26:17', 'landlord');
 
 -- --------------------------------------------------------
 
@@ -286,10 +298,16 @@ INSERT INTO `requests_detail` (`request_detail_id`, `request_id`, `description`,
 (7, 3, 'priority is changed to low', '2021-02-15 21:29:55', 'tenant', '2021-02-15 21:29:55', 'tenant'),
 (8, 3, 'Task: Task History\r\n\r\n1.2.3.4.5.', '2021-02-16 00:16:08', 'tenant', '2021-02-16 00:16:08', 'tenant'),
 (9, 4, 'Task: Testing something', '2021-02-16 18:33:48', 'tenant', '2021-02-16 18:33:48', 'tenant'),
-(10, 2, 'priority is changed to low', '2021-02-18 22:35:41', 'tenant', '2021-02-18 22:35:41', 'tenant'),
-(11, 2, 'priority is changed to medium', '2021-02-18 22:35:44', 'tenant', '2021-02-18 22:35:44', 'tenant'),
-(12, 2, 'priority is changed to low', '2021-02-18 22:35:45', 'tenant', '2021-02-18 22:35:45', 'tenant'),
-(13, 2, 'priority is changed to medium', '2021-02-18 22:35:46', 'tenant', '2021-02-18 22:35:46', 'tenant');
+(10, 4, 'Task: asdfasdf\r\nasdfasdfasdfasdf\r\nasdfasdfasdfadsfasdfasdf\r\nasdfasdfasdfasdfadsfasdfasdfasdfasdf\r\nasdfasdfasdfasdfasdfadsfasdfasdfadsfasdfasdfasdf', '2021-02-16 21:26:44', 'tenant', '2021-02-16 21:26:44', 'tenant'),
+(11, 4, 'status is changed to completed', '2021-02-16 21:26:47', 'tenant', '2021-02-16 21:26:47', 'tenant'),
+(12, 2, 'priority is changed to medium', '2021-02-19 22:02:07', 'tenant', '2021-02-19 22:02:07', 'tenant'),
+(13, 2, 'priority is changed to low', '2021-02-19 22:02:09', 'tenant', '2021-02-19 22:02:09', 'tenant'),
+(14, 5, 'priority is changed to low', '2021-02-21 02:52:03', 'landlord', '2021-02-21 02:52:03', 'landlord'),
+(15, 5, 'Task: blah blah', '2021-02-21 02:52:16', 'tenant', '2021-02-21 02:52:16', 'tenant'),
+(16, 5, 'status is changed to inprogress', '2021-02-21 02:52:24', 'landlord', '2021-02-21 02:52:24', 'landlord'),
+(17, 5, 'Task: adsfads\r\nasdfasdf\r\nasdfasdfasdf\r\n\r\nasdfasdfasdfasdf', '2021-02-22 11:25:55', 'tenant', '2021-02-22 11:25:55', 'tenant'),
+(18, 5, 'priority is changed to medium', '2021-02-22 11:26:17', 'landlord', '2021-02-22 11:26:17', 'landlord'),
+(19, 5, 'Task: asdfadsfasdfasdfasdfasdf', '2021-02-22 12:08:25', 'tenant', '2021-02-22 12:08:25', 'tenant');
 
 -- --------------------------------------------------------
 
@@ -323,7 +341,7 @@ CREATE TABLE `tenants` (
 --
 
 INSERT INTO `tenants` (`tenant_id`, `salutation_code`, `first_name`, `last_name`, `address_1`, `address_2`, `city`, `province_code`, `postal_code`, `phone`, `fax`, `email`, `date_of_birth`, `gender`, `social_insurance_number`, `status_code`, `last_updated`, `last_updated_user_id`) VALUES
-(1, 'mr', 'Taehyung', 'Kim', '250 Oakland Ave', NULL, 'London', 'ON', 'N5W 0C1', '236-777-7249', '', 'taehyungkim@outlook.com', '1984-08-26', 'male', NULL, 'enabled', '2021-02-13 18:00:17', 'test');
+(1, 'mr', 'Taehyung', 'Kim', '250 Oakland Ave', '', 'London', 'ON', 'N5W 0C1', '2367777272', '', 'taehyungkim@outlook.com', '1984-08-26', 'male', '123456787', 'active', '2021-02-21 17:38:03', 'admin');
 
 -- --------------------------------------------------------
 
@@ -350,7 +368,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `password`, `email`, `user_role_code`, `status_code`, `tenant_id`, `landlord_id`, `last_login`, `last_updated`, `last_updated_user_id`) VALUES
 ('admin', 'admin', 'admin@localhost', 'admin', 'enabled', NULL, NULL, '2021-02-10 17:04:02', '2021-02-10 17:04:02', NULL),
-('landlord', 'landlord', 'landlord@localhost', 'landlord', 'enabled', NULL, NULL, '2021-02-10 17:04:02', '2021-02-10 17:04:02', NULL),
+('landlord', 'landlord', 'landlord@localhost', 'landlord', 'enabled', NULL, 1, '2021-02-10 17:04:02', '2021-02-10 17:04:02', NULL),
 ('tenant', 'tenant', 'tenant@localhost', 'tenant', 'enabled', 1, NULL, '2021-02-10 17:04:02', '2021-02-10 17:04:02', NULL);
 
 --
@@ -440,7 +458,7 @@ ALTER TABLE `landlords`
 -- AUTO_INCREMENT for table `landlord_rental_properties`
 --
 ALTER TABLE `landlord_rental_properties`
-  MODIFY `landlord_rental_property_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `landlord_rental_property_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `leases`
@@ -452,7 +470,7 @@ ALTER TABLE `leases`
 -- AUTO_INCREMENT for table `rental_properties`
 --
 ALTER TABLE `rental_properties`
-  MODIFY `rental_property_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `rental_property_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `requests`
@@ -464,7 +482,7 @@ ALTER TABLE `requests`
 -- AUTO_INCREMENT for table `requests_detail`
 --
 ALTER TABLE `requests_detail`
-  MODIFY `request_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `request_detail_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `tenants`

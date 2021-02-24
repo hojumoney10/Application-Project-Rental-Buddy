@@ -601,14 +601,14 @@ function formTenant()
                 
                 <!-- date of birth -->
                 <div class="input-group">
-                    <label for="date-of-birth">date of birth</label>
-                    <input type="date" style="max-width: 150px;" class="form-control" id="date-of-birth" name="date-of-birth" aria-describedby="date-of-birth-help" value="<?php echo $row['date_of_birth']; ?>" >
+                    <label for="date-of-birth">Date of Birth</label>
+                    <input type="date" style="max-width: 200px;" class="form-control" id="date-of-birth" name="date-of-birth" aria-describedby="date-of-birth-help" value="<?php echo $row['date_of_birth']; ?>" >
                     <small id="date-of-birth-help" class="form-text text-muted"></small>
                 </div>
 
                 <!--  gender  -->
                 <div class="input-group">
-                    <label for="gender">gender</label>
+                    <label for="gender">Gender</label>
                     <select class="selectpicker form-control" style="max-width: 100px" id="gender" name="gender" aria-describedby="gender-help" placeholder="Enter gender" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                         <?php
                         getCodes('gender', $row['gender']);
@@ -619,7 +619,7 @@ function formTenant()
 
                 <!-- social insurance number -->
                 <div class="input-group">
-                    <label for="social-insurance-number">social insurance number</label>
+                    <label for="social-insurance-number">SIN</label>
                     <input type="text" size="9" maxlength="9" class="form-control" id="social-insurance-number" name="social-insurance-number" aria-describedby="social-insurance-number" placeholder="Enter social insurance number" value="<?php echo $row['social_insurance_number']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="social-insurance-number-help" class="form-text text-muted"></small>
                 </div>      
