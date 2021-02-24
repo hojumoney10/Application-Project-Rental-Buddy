@@ -21,3 +21,4 @@ if (!$mail->send()) {
 } else {
     echo 'The email message was sent.';
 }
+?>
