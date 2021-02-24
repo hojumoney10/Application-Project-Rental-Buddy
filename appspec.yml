@@ -16,6 +16,6 @@ permissions:
 
 hooks:
   AfterInstall:
-    - location: composer require phpmailer/phpmailer
-    timeout: 600
-    runas: ubuntu
+    - location: /var/www/html/rental/phpmailer.sh
+      timeout: 600
+      runas: ubuntu
