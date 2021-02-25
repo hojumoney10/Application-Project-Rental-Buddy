@@ -13,3 +13,9 @@ permissions:
     pattern: "**"
     owner: ubuntu
     group: ubuntu
+
+hooks:
+  AfterInstall:
+    - location: phpmailer.sh
+      timeout: 600
+      runas: ubuntu

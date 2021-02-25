@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '55a45ca85cef4990015cd1166abc85932436cecf',
+    'reference' => '19919229ad1d250e5f91e7191feae2352e2761ae',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,21 +18,30 @@
       'aliases' => 
       array (
       ),
-      'reference' => '55a45ca85cef4990015cd1166abc85932436cecf',
+      'reference' => '19919229ad1d250e5f91e7191feae2352e2761ae',
     ),
-    'symfony/polyfill-mbstring' => 
+    'phpmailer/phpmailer' => 
     array (
-      'pretty_version' => 'v1.22.0',
-      'version' => '1.22.0.0',
+      'pretty_version' => 'v6.3.0',
+      'version' => '6.3.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'f377a3dd1fde44d37b9831d68dc8dea3ffd28e13',
+      'reference' => '4a08cf4cdd2c38d12ee2b9fa69e5d235f37a6dcb',
+    ),
+    'symfony/polyfill-mbstring' => 
+    array (
+      'pretty_version' => 'v1.22.1',
+      'version' => '1.22.1.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '5232de97ee3b75b0360528dae24e73db49566ab1',
     ),
     'symfony/polyfill-php80' => 
     array (
-      'pretty_version' => 'v1.22.0',
-      'version' => '1.22.0.0',
+      'pretty_version' => 'v1.22.1',
+      'version' => '1.22.1.0',
       'aliases' => 
       array (
       ),
