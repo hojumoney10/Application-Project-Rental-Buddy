@@ -11,7 +11,6 @@
     <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/starter-template/">
 
     
-  <!-- Dual deploy system test... lamp and rental -->
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 
