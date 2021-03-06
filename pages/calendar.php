@@ -84,8 +84,6 @@
         } else if ($userRole == 'admin') {
             $user_id = $_SESSION['CURRENT_USER']['user_id'];
         }
-        // 불러올 정보
-        // 2. 노티피케이션 - 노티피케이션 시스템 구성을 기다려야 함
 
         # create the calendar object
 
@@ -94,6 +92,9 @@
         # or for multiple events
 
         $events = array();
+
+        //Add notification
+        //waiting...
 
         //Add Request
         $requestheaders = collectServiceRequestHeader();
@@ -146,7 +147,6 @@
                 $startYearMonthDay_str = strtotime("$startYearMonthDay_str +1 month");
                 $startYearMonthDay_str = date("Y-m-d", $startYearMonthDay_str);
             }
-
         }
         
 
