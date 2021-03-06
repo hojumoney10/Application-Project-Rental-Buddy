@@ -50,7 +50,7 @@
 }
 
 .calendar tbody tr td{
-    text-align: center;
+    text-align: left;
     vertical-align: top;
     width: 14.28%;
 }
@@ -82,4 +82,32 @@
 .calendar tbody tr td.mask,
 .calendar tbody tr td.mask-end {
     background: #C23B22;
+}
+
+.calendar tbody tr td.day.mask-start div span#request.header {
+    text-align: left !important;
+    font-size: 14px;
+    background-color: #5481E6;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+.calendar tbody tr td.day.mask-start div span#request.detail {
+    text-align: left !important;
+    font-size: 14px;
+    background-color: #FF8C00;
+    color: black;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+.calendar tbody tr td.day.mask-start div span#request.headercontent {
+    text-align: left !important;
+    font-size: 13px;
+    background-color: #0D98BA;
+    
+    font-family: 'Roboto Condensed', sans-serif;
+}
+.calendar tbody tr td.day.mask-start div span#request.detailcontent {
+    text-align: left !important;
+    font-size: 13px;
+    background-color: #FFCC21;
+    color: black;
+    font-family: 'Roboto Condensed', sans-serif;
 }

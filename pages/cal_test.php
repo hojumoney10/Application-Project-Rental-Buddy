@@ -15,25 +15,26 @@
     <title>RentalBuddy:Personal Calendar</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/starter-template/">
-
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../vendor/benhall14/php-calendar/html/css/calendar.css">
-
+    <link rel="stylesheet" href="../node_modules/bootstrap-icons/font/bootstrap-icons.css">
     <style>
-    .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        user-select: none;
-    }
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
 
-    @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-            font-size: 3.5rem;
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
         }
-    }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
     </style>
 
     <!-- Custom styles for this template -->
@@ -83,12 +84,11 @@
         } else if ($userRole == 'admin') {
             $user_id = $_SESSION['CURRENT_USER']['user_id'];
         }
-
-
+        dump($userRole);
         // 불러올 정보
-        // 1. 납부 정보
-        // 2. 노티피케이션
-        // 3. 서비스 리퀘스트 정보
+        // 1. 납부 정보 - 리스 정보의 밸리데이션을 기다려야 함
+        // 2. 노티피케이션 - 노티피케이션 시스템 구성을 기다려야 함
+        // 3. 서비스 리퀘스트 정보 - 시도
 
         # create the calendar object
 
@@ -98,58 +98,184 @@
 
         $events = array();
 
-        $events[] = array(
-            'start' => '2021-03-14',
-            'end' => '2021-03-14',
-            'summary' => 'My Birthday',
-            'mask' => true,
-            'classes' => ['myclass', 'abc']
-        );
+        //Add Request
+        $requestheaders = collectServiceRequestHeader();
+        foreach ($requestheaders as &$value) {
+            $events[] = array(
+                'start' => $value[2],
+                'end' => $value[2],
+                'summary' => '<span id="request" class="header"><i class="bi bi-check"></i> Request Added&nbsp;</span><br><span id="request" class="headercontent">#' . $value[0] . ". " . $value[1] . '</span><br>',
+                'mask' => true
+            );
+        }
+        unset($value);
 
-        $events[] = array(
-            'start' => '2021-03-25',
-            'end' => '2021-03-25',
-            'summary' => 'Christmas',
-            'mask' => true
-        );
+        //Add RequestDetail
+        $requestDetail = collectServiceRequestDetail();
+        foreach ($requestDetail as &$value) {
+            $events[] = array(
+                'start' => $value[2],
+                'end' => $value[2],
+                'summary' => '<span id="request" class="detail"><i class="bi bi-check-all"></i> Request History Added&nbsp;</span><br><span id="request" class="detailcontent">#' . $value[0] . ". " . $value[1] . '</span><br>',
+                'mask' => true
+            );
+        }
+        unset($value);
+
+        function collectServiceRequestHeader()
+        {
+            global $userRole;
+            global $db_conn;
+            global $tenant_id;
+
+            $results = [];
+            if ($userRole == 'tenant') {
+                $stmt = $db_conn->prepare("SELECT request_id, description, date(request_date) as date FROM requests WHERE last_updated BETWEEN DATE_ADD(NOW(),INTERVAL -1 MONTH ) AND DATE_ADD(NOW(),INTERVAL +3 MONTH) and tenant_id=?");
+                try {
+                    $stmt->execute(array($tenant_id));
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        $tmp = [
+                            $row['request_id'],
+                            $row['description'],
+                            $row['date']
+                        ];
+                        array_push($results, $tmp);
+                    }
+                    return $results;
+                } catch (Exception $e) {
+                    $db_conn->rollback();
+                    echo $e->getMessage();
+                }
+            } else if ($userRole == 'landlord' || $userRole == 'admin') {
+                $sql = "SELECT request_id, description, date(request_date) as date FROM requests WHERE last_updated BETWEEN DATE_ADD(NOW(),INTERVAL -1 MONTH ) AND DATE_ADD(NOW(),INTERVAL +3 MONTH) ";
+
+                if ($userRole == 'landlord') {
+                    global $landlord_id;
+                    $rental_property_ids = makeRentalPropertyIdArray($landlord_id);
+                    $in  = str_repeat('?,', count($rental_property_ids) - 1) . '?';
+                    $sql .= "and rental_property_id IN ($in)";
+                }
+                dump($sql);
+                dump($rental_property_ids);
+                $stmt = $db_conn->prepare($sql);
+
+                try {
+                    if ($userRole == 'landlord') {
+                        $stmt->execute($rental_property_ids);
+                    } else if ($userRole == 'admin') {
+                        $stmt->execute();
+                    }
+
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        $tmp = [
+                            $row['request_id'],
+                            $row['description'],
+                            $row['date']
+                        ];
+                        array_push($results, $tmp);
+                    }
+                    return $results;
+                } catch (Exception $e) {
+                    $db_conn->rollback();
+                    echo $e->getMessage();
+                }
+            }
+        }
+
+        function collectServiceRequestDetail()
+        {
+            global $userRole;
+            global $db_conn;
+            global $tenant_id;
+
+            $results = [];
+            if ($userRole == 'tenant') {
+                $stmt = $db_conn->prepare("SELECT 
+            r.request_id as r_id
+            , r.description as r_desc
+            , date(r.request_date) as r_date
+            , rd.request_id as rd_id
+            , rd.description as rd_desc
+            , date(rd.create_date) as detail_date 
+            FROM requests r JOIN requests_detail rd 
+            ON r.request_id = rd.request_id 
+            WHERE rd.create_date BETWEEN DATE_ADD(NOW(),INTERVAL -1 MONTH ) AND DATE_ADD(NOW(),INTERVAL +3 MONTH)
+            and r.tenant_id=?");
+                try {
+                    $stmt->execute(array($tenant_id));
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        $tmp = [
+                            $row['rd_id'],
+                            $row['rd_desc'],
+                            $row['detail_date']
+                        ];
+                        array_push($results, $tmp);
+                    }
+                    return $results;
+                } catch (Exception $e) {
+                    $db_conn->rollback();
+                    echo $e->getMessage();
+                }
+            } else if ($userRole == 'landlord' || $userRole == 'admin') {
+                $sql = "SELECT 
+                r.request_id as r_id
+                , r.description as r_desc
+                , date(r.request_date) as r_date
+                , rd.request_id as rd_id
+                , rd.description as rd_desc
+                , date(rd.create_date) as detail_date 
+                FROM requests r JOIN requests_detail rd 
+                ON r.request_id = rd.request_id 
+                WHERE rd.create_date BETWEEN DATE_ADD(NOW(),INTERVAL -1 MONTH ) AND DATE_ADD(NOW(),INTERVAL +3 MONTH) ";
+
+                if ($userRole == 'landlord') {
+                    global $landlord_id;
+                    $rental_property_ids = makeRentalPropertyIdArray($landlord_id);
+                    $in  = str_repeat('?,', count($rental_property_ids) - 1) . '?';
+                    $sql .= "and r.rental_property_id IN ($in)";
+                }
+
+                $stmt = $db_conn->prepare($sql);
+                try {
+                    if ($userRole == 'landlord') {
+                        $stmt->execute($rental_property_ids);
+                    } else if ($userRole == 'admin') {
+                        $stmt->execute();
+                    }
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        $tmp = [
+                            $row['rd_id'],
+                            $row['rd_desc'],
+                            $row['detail_date']
+                        ];
+                        array_push($results, $tmp);
+                    }
+                    return $results;
+                } catch (Exception $e) {
+                    $db_conn->rollback();
+                    echo $e->getMessage();
+                }
+            }
+        }
 
         $calendar->addEvents($events);
 
-        # finally, to draw a calendar
+        //purple, pink, orange, yellow, green, grey, blue
+        // -1
+        $timestamp = strtotime("-1 month");
+        echo $calendar->draw(date('Y-m-d', $timestamp), 'purple');
 
-        echo $calendar->draw(date('Y-m-d')); # draw this months calendar
+        // now
+        $timestamp = strtotime("Now");
+        echo $calendar->draw(date('Y-m-d', $timestamp), 'green');
 
-        # this can be repeated as many times as needed with different dates passed, such as:
+        // +1
+        $timestamp = strtotime("+1 month");
+        echo $calendar->draw(date('Y-m-d', $timestamp), 'grey');
 
-        echo $calendar->draw(date('Y-01-01')); # draw a calendar for January this year
-
-        echo $calendar->draw(date('Y-02-01')); # draw a calendar for February this year
-
-        echo $calendar->draw(date('Y-03-01')); # draw a calendar for March this year
-
-        echo $calendar->draw(date('Y-04-01')); # draw a calendar for April this year
-
-        echo $calendar->draw(date('Y-05-01')); # draw a calendar for May this year
-
-        echo $calendar->draw(date('Y-06-01')); # draw a calendar for June this year
-
-        # to use the pre-made color schemes, include the calendar.css stylesheet and pass the color choice to the draw method, such as:
-
-        echo $calendar->draw(date('Y-m-d'));            # print a (default) turquoise calendar
-
-        echo $calendar->draw(date('Y-m-d'), 'purple');  # print a purple calendar
-
-        echo $calendar->draw(date('Y-m-d'), 'pink');    # print a pink calendar
-
-        echo $calendar->draw(date('Y-m-d'), 'orange');  # print a orange calendar
-
-        echo $calendar->draw(date('Y-m-d'), 'yellow');  # print a yellow calendar
-
-        echo $calendar->draw(date('Y-m-d'), 'green');   # print a green calendar
-
-        echo $calendar->draw(date('Y-m-d'), 'grey');    # print a grey calendar
-
-        echo $calendar->draw(date('Y-m-d'), 'blue');    # print a blue calendar
+        // +2
+        $timestamp = strtotime("+2 month");
+        echo $calendar->draw(date('Y-m-d', $timestamp), 'blue');
 
         function msgHeader($type)
         {
@@ -166,7 +292,6 @@
             unset($msg);
             unset($header);
         }
-
 
         ?>
     </div>
