@@ -5,6 +5,7 @@ php:
 cache:
   directories:
     - node_modules
+    - vendor
 
 notifications:
   email:
