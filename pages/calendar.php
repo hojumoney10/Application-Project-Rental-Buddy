@@ -84,11 +84,8 @@
         } else if ($userRole == 'admin') {
             $user_id = $_SESSION['CURRENT_USER']['user_id'];
         }
-        dump($userRole);
         // 불러올 정보
-        // 1. 납부 정보 - 리스 정보의 밸리데이션을 기다려야 함
         // 2. 노티피케이션 - 노티피케이션 시스템 구성을 기다려야 함
-        // 3. 서비스 리퀘스트 정보 - 시도
 
         # create the calendar object
 
