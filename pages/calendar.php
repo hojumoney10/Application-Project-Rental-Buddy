@@ -1,9 +1,11 @@
 <!-- 
-    Title:       service_request.php
+    Title:       calendar.php
     Application: RentalBuddy
-    Purpose:     Handling Service request 
+    Purpose:     Handling calendar 
     Author:      T. Kim, Group 5, INFO-5139-01-21W
-    Date:        February 10th, 2021 
+    Date:        March 6th, 2021
+    // To do: Adding Payment day for landlord
+              Adding Notification <- waiting for related feature development
 -->
 <!doctype html>
 <html lang="en">
