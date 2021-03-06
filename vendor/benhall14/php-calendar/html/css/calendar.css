@@ -111,3 +111,17 @@
     color: black;
     font-family: 'Roboto Condensed', sans-serif;
 }
+.calendar tbody tr td.day.mask-start div span#payment.subject {
+    text-align: left !important;
+    font-size: 14px;
+    background-color: #40E0D0;
+    color: black;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+.calendar tbody tr td.day.mask-start div span#payment.content {
+    text-align: left !important;
+    font-size: 13px;
+    background-color: #819FF7;
+    color: black;
+    font-family: 'Roboto Condensed', sans-serif;
+}

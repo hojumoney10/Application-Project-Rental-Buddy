@@ -122,6 +122,66 @@
         }
         unset($value);
 
+        //Add payment day
+        if ($userRole == 'tenant'){
+            $paymentDay =collectPaymentDay();
+            $startDate = new DateTime($paymentDay[4]);
+            $endDate = new DateTime($paymentDay[5]);
+            $interval = $startDate -> diff($endDate);
+            
+            $maxMonth = (($interval->format('%y')) * 12 + $interval->format('%m'));
+
+
+            $startYearMonthDay_str = substr($paymentDay[4], 0 ,-2);
+            if(strlen($paymentDay[0])==1){
+                $paymentDay[0] = "0".$paymentDay[0];
+            }
+            $startYearMonthDay_str= $startYearMonthDay_str.$paymentDay[0];
+
+            for($i = 1; $i <= $maxMonth;$i++){
+
+                $events[] = array(
+                    'start' => $startYearMonthDay_str,
+                    'end' => $startYearMonthDay_str,
+                    'summary' => '<span id="payment" class="subject"><i class="bi bi-cash-stack"></i> Payment Day&nbsp;</span><br><span id="payment" class="content">Rent $' . $paymentDay[1] . "<br>Parking $" . $paymentDay[2] ."<br>Other $". $paymentDay[3]. '</span><br>',
+                    'mask' => true
+                );
+                $startYearMonthDay_str = strtotime("$startYearMonthDay_str +1 month");
+                $startYearMonthDay_str = date("Y-m-d", $startYearMonthDay_str);
+            }
+
+        }
+        
+
+        function collectPaymentDay(){
+            global $userRole;
+            global $db_conn;
+            global $tenant_id;
+
+            $results = [];
+            if ($userRole == 'tenant') {
+                $stmt = $db_conn->prepare("SELECT payment_day, base_rent_amount, parking_amount, other_amount, start_date, end_date FROM leases 
+                WHERE status_code='active' and tenant_id=?");
+            }
+            try {
+                $stmt->execute(array($tenant_id));
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $tmp = [
+                        $row['payment_day'],
+                        $row['base_rent_amount'],
+                        $row['parking_amount'],
+                        $row['other_amount'],
+                        $row['start_date'],
+                        $row['end_date']
+                    ];
+                }
+                return $tmp;
+            } catch (Exception $e) {
+                $db_conn->rollback();
+                echo $e->getMessage();
+            }
+        }
+
         function collectServiceRequestHeader()
         {
             global $userRole;
@@ -155,8 +215,6 @@
                     $in  = str_repeat('?,', count($rental_property_ids) - 1) . '?';
                     $sql .= "and rental_property_id IN ($in)";
                 }
-                dump($sql);
-                dump($rental_property_ids);
                 $stmt = $db_conn->prepare($sql);
 
                 try {
