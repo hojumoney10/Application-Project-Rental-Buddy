@@ -71,7 +71,7 @@
 .calendar tbody tr td.day div:last-child{
     font-size:10px;
     padding:4px;
-    min-height:25px;
+
 }
 
 .calendar tbody tr td.today{
@@ -139,4 +139,14 @@
     font-family: 'Roboto Condensed', sans-serif;
     padding-left: 5px;
     margin-bottom: 5px;
+}
+div#d-day.header {
+    text-align: left !important;
+    font-size: 13px;
+    background-color: #0D2601;
+    color: #FFFFFF;
+    font-family: 'Roboto Condensed', sans-serif;
+    padding-left: 5px;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
 }

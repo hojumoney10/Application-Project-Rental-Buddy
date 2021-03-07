@@ -86,6 +86,7 @@
             $tenant_id = checkTenantId($user_id);
             $property_id = checkPropertyId($tenant_id);
             drawCalendarButton();
+            addDday();
             addRequestHeader();
             addRequestDetail();
             addPaymentDay();
@@ -172,6 +173,20 @@
                 );
             }
             unset($value);
+        }
+
+        function addDday(){
+            global $events;
+            $paymentDay = collectPaymentDay();
+            $startDate = new DateTime();
+            $endDate = new DateTime($paymentDay[5]);
+            $interval = $startDate->diff($endDate);
+            dump($interval->days);
+            $events[] = array(
+                'start' => date("Y-m-d"),
+                'end' => date("Y-m-d"),
+                'summary' => '<div id="d-day" class="header"><i class="bi bi-calendar-check"></i> Rent D-day: -'.$interval->days.'</div>'
+            );
         }
 
         function addPaymentDay()
