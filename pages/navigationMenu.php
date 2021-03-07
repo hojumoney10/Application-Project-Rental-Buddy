@@ -61,6 +61,9 @@ $base_URL .= $_SERVER['HTTP_HOST'];
                 <li class="nav-item">
                     <a class="nav-link" href="<?php echo $base_URL . "/pages/lease_info_tenant.php" ?>">My Lease</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?php echo $base_URL . "/pages/calendar.php" ?>">Calendar</a>
+                </li>
                 <?php
                 } else { ?>
                 <li class="nav-item">
@@ -91,12 +94,11 @@ $base_URL .= $_SERVER['HTTP_HOST'];
             <div style="float: right;">
                 <form id="user" method="POST">
                     <select name="selected-user" style="max-width: 150px !important;">
-                        <option value="admin"
-                            <?php if ($_SESSION['CURRENT_USER']['user_id'] == 'admin') {
+                        <option value="admin" <?php if ($_SESSION['CURRENT_USER']['user_id'] == 'admin') {
                                                     echo 'selected';
                                                 } ?><?php if ($_SESSION['CURRENT_USER']['user_id'] == 'admin') {
-                                                                                                                                    echo 'selected';
-                                                                                                                                } ?>>
+                                                        echo 'selected';
+                                                    } ?>>
                             Admin</option>
                         <option value="landlord" <?php if ($_SESSION['CURRENT_USER']['user_id'] == 'landlord') {
                                                         echo 'selected';
@@ -144,7 +146,7 @@ function login($user_id)
     $status = $stmt->execute($data);
 
     if ($status) {
-        if ($stmt->rowCount() > 0) {  
+        if ($stmt->rowCount() > 0) {
             // Store USER row
             $_SESSION['CURRENT_USER'] = $stmt->fetch(PDO::FETCH_ASSOC);
         }
