@@ -4,8 +4,6 @@
     Purpose:     Handling calendar 
     Author:      T. Kim, Group 5, INFO-5139-01-21W
     Date:        March 6th, 2021
-    // To do: Adding Payment day for landlord
-              Adding Notification <- waiting for related feature development
 -->
 <!doctype html>
 <html lang="en">
@@ -22,21 +20,21 @@
     <link rel="stylesheet" href="../vendor/benhall14/php-calendar/html/css/calendar.css">
     <link rel="stylesheet" href="../node_modules/bootstrap-icons/font/bootstrap-icons.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
 
-        .bd-placeholder-img {
-            font-size: 1.125rem;
-            text-anchor: middle;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            user-select: none;
-        }
+    .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+    }
 
-        @media (min-width: 768px) {
-            .bd-placeholder-img-lg {
-                font-size: 3.5rem;
-            }
+    @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+            font-size: 3.5rem;
         }
+    }
     </style>
 
     <!-- Custom styles for this template -->
@@ -87,11 +85,20 @@
             $user_id = $_SESSION['CURRENT_USER']['user_id'];
             $tenant_id = checkTenantId($user_id);
             $property_id = checkPropertyId($tenant_id);
-
+            drawCalendarButton();
             addRequestHeader();
             addRequestDetail();
             addPaymentDay();
-            drawCalendar();
+            if(isset($_POST['timestamp'])){
+                if(isset($_POST['next'])){
+                    drawCalendar($_POST['timestamp'], 'next');
+                }else if(isset($_POST['previous'])){
+                    drawCalendar($_POST['timestamp'], 'previous');
+                } 
+            }else{
+                drawCalendar(strtotime("Now"), 'now');
+            }
+
         }
         // if landrord
         else if ($userRole == 'landlord') {
@@ -101,7 +108,15 @@
             addRequestHeader();
             addRequestDetail();
             addPaymentDay();
-            drawCalendar();
+            if(isset($_POST['timestamp'])){
+                if(isset($_POST['next'])){
+                    drawCalendar($_POST['timestamp'], 'next');
+                }else if(isset($_POST['previous'])){
+                    drawCalendar($_POST['timestamp'], 'previous');
+                }
+            }else{
+                drawCalendar(strtotime("Now"), 'now');
+            }
         } else if ($userRole == 'admin') {
             $user_id = $_SESSION['CURRENT_USER']['user_id'];
             $msg = "Calendar feature is not supported for Administrator account.";
@@ -111,6 +126,22 @@
 
         //Add notification
         //waiting...
+
+
+        function drawCalendarButton()
+        {
+            $html="
+            <form method=\"POST\">
+                <div class=\"d-flex justify-content-between\" style=\"margin-bottom:5px;\">
+                    <button type=\"submit\" name=\"previous\" class=\"btn btn-warning\"><i class=\"bi bi-arrow-left-circle\"></i> Previous</button>    
+                    <button type=\"submit\" name=\"next\" class=\"btn btn-success\">Next <i class=\"bi bi-arrow-right-circle\"></i></button>
+                </div>
+            
+            ";
+            echo $html;
+        }
+
+
         function addRequestHeader()
         {
             global $events;
@@ -177,29 +208,32 @@
             }
         }
 
-        function drawCalendar()
+        function drawCalendar($stamp, $stat)
         {
             global $calendar;
             global $events;
 
             $calendar->addEvents($events);
 
-            //purple, pink, orange, yellow, green, grey, blue
-            // -1
-            $timestamp = strtotime("-1 month");
-            echo $calendar->draw(date('Y-m-d', $timestamp), 'purple');
+            $stamp = date("Y-m-d", $stamp);
 
+            if($stat =='next'){
+                $stamp = strtotime("$stamp +1 month");
+            }else if($stat =='previous'){
+                $stamp = strtotime("$stamp -1 month");
+            }else if($stat =='now'){
+                $stamp = strtotime("now");
+            }
+            $back_colors = array('purple','pink', 'orange','yellow','green','grey','blue');
+            $i = rand(0, count($back_colors));
             // now
-            $timestamp = strtotime("Now");
-            echo $calendar->draw(date('Y-m-d', $timestamp), 'green');
+            //$timestamp = strtotime("Now");
+            echo $calendar->draw(date('Y-m-d', $stamp), $back_colors[$i]);
+            ?>
 
-            // +1
-            $timestamp = strtotime("+1 month");
-            echo $calendar->draw(date('Y-m-d', $timestamp), 'grey');
-
-            // +2
-            $timestamp = strtotime("+2 month");
-            echo $calendar->draw(date('Y-m-d', $timestamp), 'blue');
+            <input type="hidden" class="form-control" id="timestamp" name='timestamp' value=<?php echo $stamp; ?>>
+        </form>
+            <?php
         }
 
 
@@ -366,8 +400,6 @@
                 }
             }
         }
-
-
 
         function msgHeader($type)
         {

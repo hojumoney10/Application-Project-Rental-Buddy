@@ -85,14 +85,6 @@
             $user_id = $_SESSION['CURRENT_USER']['user_id'];
         }
 
-
-        //define('_SERVER_PATH_', str_replace(basename(__FILE__), "", realpath(__FILE__)));
-
-
-        //dump($_POST);
-
-
-
         // input form page
         if (isset($_POST['request'])) {
             inputPage();
@@ -139,8 +131,6 @@
         else {
             viewPage();
         }
-
-
 
         function insertRequestDetail($requestId, $desc)
         {
