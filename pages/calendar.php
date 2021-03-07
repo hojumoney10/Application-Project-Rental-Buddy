@@ -181,7 +181,7 @@
             $startDate = new DateTime();
             $endDate = new DateTime($paymentDay[5]);
             $interval = $startDate->diff($endDate);
-            dump($interval->days);
+
             $events[] = array(
                 'start' => date("Y-m-d"),
                 'end' => date("Y-m-d"),
