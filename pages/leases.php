@@ -1,12 +1,17 @@
+<?php
+session_start();
+include_once("./check_session.php");
+?>    
     <!-- 
         Title:       leases.php
         Application: RentalBuddy
         Purpose:     Handles the crud functions of landlords
         Author:      G. Blandford, S. Jeong  Group 5, INFO-5139-01-21W
-        Date:        February 21th, 2021 (February 10th, 2021)
+        Date:        March 7th, 2021 (February 10th, 2021)
 
         20210220    GPB     Updated all links, and now menus are user-driven
         20210221    GPB     Added readonly listing ref & tenant name
+        20210307    GPB     Check user logged in           
 
     -->
 <?php

@@ -1,10 +1,17 @@
+<?php
+session_start();
+include_once("./check_session.php");
+?>
 <!-- 
     Title:       calendar.php
     Application: RentalBuddy
     Purpose:     Handling calendar 
     Author:      T. Kim, Group 5, INFO-5139-01-21W
-    Date:        March 6th, 2021
+    Date:        March 7th, 2021, (March 6th, 2021)
+
+    20210307     GPB    Check user logged in - removed TK code further down
 -->
+
 <!doctype html>
 <html lang="en">
 
@@ -12,7 +19,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
-    <title>RentalBuddy:Personal Calendar</title>
+    <title>RentalBuddy - Personal Calendar</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/starter-template/">
     <!-- Bootstrap core CSS -->
@@ -74,10 +81,10 @@
         $events = array();
 
         // Please login message
-        if (!isset($_SESSION['CURRENT_USER']['user_id'])) {
-            $msg = "Please login..";
-            msgHeader('red');
-        }
+        // if (!isset($_SESSION['CURRENT_USER']['user_id'])) {
+        //     $msg = "Please login..";
+        //     msgHeader('red');
+        // }
         $userRole = checkUserRoleCode($_SESSION['CURRENT_USER']['user_id']);
 
         // if Tenant

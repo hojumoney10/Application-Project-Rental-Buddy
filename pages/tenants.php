@@ -1,5 +1,6 @@
 <?php
 session_start();
+include_once("./check_session.php");
 
 // session_unset();
 $_SESSION['PAGE'] = "tenants";
@@ -7,7 +8,6 @@ if (!isset($_SESSION['PAGEMODE'])){
     $_SESSION['PAGEMODE'] = "LIST";
     $_SESSION['PAGENUM'] = 0;
 }
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -18,7 +18,9 @@ if (!isset($_SESSION['PAGEMODE'])){
         Application: RentalBuddy
         Purpose:     Handles the crud functions of tenants
         Author:      J. Foster & S. Jeong,  Group 5, INFO-5139-01-21W
-        Date:        February 18th, 2021 (February 18th, 2021)
+        Date:        March 7th, 2021 (February 18th, 2021)
+
+        20210307     GPB    Check user logged in
     -->
 
     <title>RentalBuddy - Tenants</title>

@@ -1,18 +1,20 @@
+<?php
+    session_start();
+    include_once("./check_session.php");
+
+    require_once('common.php');
+?>
 <!-- 
     Title:       lease_info_tenant.php
     Application: RentalBuddy
     Purpose:     Handles the lease info view for tenant
     Author:      S. Choi, Group 5, INFO-5139-01-21W
-    Date:        February 13th, 2021 (February 13th, 2021) 
+    Date:        March 7th, 2021 (February 13th, 2021) 
 
     20210222     GPB    Corrected JOINS to codes tables and provided more user-friendly aliases
                         Moved navigationMenu to inside <body>
+    20210307     GPB    Check user logged in    
 -->
-
-<?php
-    session_start();
-    require_once('common.php');
-?>
 
 <!doctype html>
 <html lang="en">
@@ -22,7 +24,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Lease Information (tenant)">
     <meta name="author" content="Sung-Kyu Choi (Daniel)">
-    <title>RentalBuddy - Lease Information (tenant)</title>
+    <title>RentalBuddy - Lease Information (Tenant)</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/starter-template/">
 
