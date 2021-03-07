@@ -66,6 +66,15 @@
         include 'navigationMenu.php';
 
         use benhall14\phpCalendar\Calendar as Calendar;
+
+        # create the calendar object
+
+        $calendar = new Calendar();
+
+        # or for multiple events
+
+        $events = array();
+
         // Please login message
         if (!isset($_SESSION['CURRENT_USER']['user_id'])) {
             $msg = "Please login..";
@@ -78,81 +87,124 @@
             $user_id = $_SESSION['CURRENT_USER']['user_id'];
             $tenant_id = checkTenantId($user_id);
             $property_id = checkPropertyId($tenant_id);
+
+            addRequestHeader();
+            addRequestDetail();
+            addPaymentDay();
+            drawCalendar();
         }
         // if landrord
         else if ($userRole == 'landlord') {
             $user_id = $_SESSION['CURRENT_USER']['user_id'];
             $landlord_id = checkLandlordId($user_id);
+
+            addRequestHeader();
+            addRequestDetail();
+            addPaymentDay();
+            drawCalendar();
         } else if ($userRole == 'admin') {
             $user_id = $_SESSION['CURRENT_USER']['user_id'];
+            $msg = "Calendar feature is not supported for Administrator account.";
+            msgHeader('red');
         }
 
-        # create the calendar object
-
-        $calendar = new Calendar();
-
-        # or for multiple events
-
-        $events = array();
 
         //Add notification
         //waiting...
-
-        //Add Request
-        $requestheaders = collectServiceRequestHeader();
-        foreach ($requestheaders as &$value) {
-            $events[] = array(
-                'start' => $value[2],
-                'end' => $value[2],
-                'summary' => '<div id="request" class="header"><i class="bi bi-check"></i> Request Added</div><div id="request" class="headercontent">#' . $value[0] . ". " . $value[1] . '</div><br>',
-                'mask' => true
-            );
-        }
-        unset($value);
-
-        //Add RequestDetail
-        $requestDetail = collectServiceRequestDetail();
-        foreach ($requestDetail as &$value) {
-            $events[] = array(
-                'start' => $value[2],
-                'end' => $value[2],
-                'summary' => '<div id="request" class="detail"><i class="bi bi-check-all"></i> Request History Added</div><div id="request" class="detailcontent">#' . $value[0] . ". " . $value[1] . '</div><br>',
-                'mask' => true
-            );
-        }
-        unset($value);
-
-        //Add payment day
-        if ($userRole == 'tenant'){
-            $paymentDay =collectPaymentDay();
-            $startDate = new DateTime($paymentDay[4]);
-            $endDate = new DateTime($paymentDay[5]);
-            $interval = $startDate -> diff($endDate);
-            
-            $maxMonth = (($interval->format('%y')) * 12 + $interval->format('%m'));
-
-
-            $startYearMonthDay_str = substr($paymentDay[4], 0 ,-2);
-            if(strlen($paymentDay[0])==1){
-                $paymentDay[0] = "0".$paymentDay[0];
-            }
-            $startYearMonthDay_str= $startYearMonthDay_str.$paymentDay[0];
-
-            for($i = 1; $i <= $maxMonth;$i++){
-
+        function addRequestHeader()
+        {
+            global $events;
+            //Add Request
+            $requestheaders = collectServiceRequestHeader();
+            foreach ($requestheaders as &$value) {
                 $events[] = array(
-                    'start' => $startYearMonthDay_str,
-                    'end' => $startYearMonthDay_str,
-                    'summary' => '<div id="payment" class="subject"><i class="bi bi-cash-stack"></i> Payment Day</div><div id="payment" class="content">Rent $' . $paymentDay[1] . "<br>Parking $" . $paymentDay[2] ."<br>Other $". $paymentDay[3]. '</div><br>',
+                    'start' => $value[2],
+                    'end' => $value[2],
+                    'summary' => '<div id="request" class="header"><i class="bi bi-check"></i> Request Added</div><div id="request" class="headercontent">#' . $value[0] . ". " . $value[1] . '</div>',
                     'mask' => true
                 );
-                $startYearMonthDay_str = strtotime("$startYearMonthDay_str +1 month");
-                $startYearMonthDay_str = date("Y-m-d", $startYearMonthDay_str);
+            }
+            unset($value);
+        }
+
+        function addRequestDetail()
+        {
+            global $events;
+            //Add RequestDetail
+            $requestDetail = collectServiceRequestDetail();
+            foreach ($requestDetail as &$value) {
+                $events[] = array(
+                    'start' => $value[2],
+                    'end' => $value[2],
+                    'summary' => '<div id="request" class="detail"><i class="bi bi-check-all"></i> Request History Added</div><div id="request" class="detailcontent">#' . $value[0] . ". " . $value[1] . '</div>',
+                    'mask' => true
+                );
+            }
+            unset($value);
+        }
+
+        function addPaymentDay()
+        {
+            global $userRole;
+            global $events;
+            //Add payment day
+            if ($userRole == 'tenant') {
+                $paymentDay = collectPaymentDay();
+                $startDate = new DateTime($paymentDay[4]);
+                $endDate = new DateTime($paymentDay[5]);
+                $interval = $startDate->diff($endDate);
+
+                $maxMonth = (($interval->format('%y')) * 12 + $interval->format('%m'));
+
+
+                $startYearMonthDay_str = substr($paymentDay[4], 0, -2);
+                if (strlen($paymentDay[0]) == 1) {
+                    $paymentDay[0] = "0" . $paymentDay[0];
+                }
+                $startYearMonthDay_str = $startYearMonthDay_str . $paymentDay[0];
+
+                for ($i = 1; $i <= $maxMonth; $i++) {
+
+                    $events[] = array(
+                        'start' => $startYearMonthDay_str,
+                        'end' => $startYearMonthDay_str,
+                        'summary' => '<div id="payment" class="subject"><i class="bi bi-cash-stack"></i> Payment Day</div><div id="payment" class="content">Rent $' . $paymentDay[1] . "<br>Parking $" . $paymentDay[2] . "<br>Other $" . $paymentDay[3] . '</div>',
+                        'mask' => true
+                    );
+                    $startYearMonthDay_str = strtotime("$startYearMonthDay_str +1 month");
+                    $startYearMonthDay_str = date("Y-m-d", $startYearMonthDay_str);
+                }
             }
         }
-        
 
-        function collectPaymentDay(){
+        function drawCalendar()
+        {
+            global $calendar;
+            global $events;
+
+            $calendar->addEvents($events);
+
+            //purple, pink, orange, yellow, green, grey, blue
+            // -1
+            $timestamp = strtotime("-1 month");
+            echo $calendar->draw(date('Y-m-d', $timestamp), 'purple');
+
+            // now
+            $timestamp = strtotime("Now");
+            echo $calendar->draw(date('Y-m-d', $timestamp), 'green');
+
+            // +1
+            $timestamp = strtotime("+1 month");
+            echo $calendar->draw(date('Y-m-d', $timestamp), 'grey');
+
+            // +2
+            $timestamp = strtotime("+2 month");
+            echo $calendar->draw(date('Y-m-d', $timestamp), 'blue');
+        }
+
+
+        function collectPaymentDay()
+        {
             global $userRole;
             global $db_conn;
             global $tenant_id;
@@ -315,24 +367,7 @@
             }
         }
 
-        $calendar->addEvents($events);
 
-        //purple, pink, orange, yellow, green, grey, blue
-        // -1
-        $timestamp = strtotime("-1 month");
-        echo $calendar->draw(date('Y-m-d', $timestamp), 'purple');
-
-        // now
-        $timestamp = strtotime("Now");
-        echo $calendar->draw(date('Y-m-d', $timestamp), 'green');
-
-        // +1
-        $timestamp = strtotime("+1 month");
-        echo $calendar->draw(date('Y-m-d', $timestamp), 'grey');
-
-        // +2
-        $timestamp = strtotime("+2 month");
-        echo $calendar->draw(date('Y-m-d', $timestamp), 'blue');
 
         function msgHeader($type)
         {
