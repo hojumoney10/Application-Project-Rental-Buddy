@@ -104,7 +104,7 @@
             $events[] = array(
                 'start' => $value[2],
                 'end' => $value[2],
-                'summary' => '<span id="request" class="header"><i class="bi bi-check"></i> Request Added&nbsp;</span><br><span id="request" class="headercontent">#' . $value[0] . ". " . $value[1] . '</span><br>',
+                'summary' => '<div id="request" class="header"><i class="bi bi-check"></i> Request Added</div><div id="request" class="headercontent">#' . $value[0] . ". " . $value[1] . '</div><br>',
                 'mask' => true
             );
         }
@@ -116,7 +116,7 @@
             $events[] = array(
                 'start' => $value[2],
                 'end' => $value[2],
-                'summary' => '<span id="request" class="detail"><i class="bi bi-check-all"></i> Request History Added&nbsp;</span><br><span id="request" class="detailcontent">#' . $value[0] . ". " . $value[1] . '</span><br>',
+                'summary' => '<div id="request" class="detail"><i class="bi bi-check-all"></i> Request History Added</div><div id="request" class="detailcontent">#' . $value[0] . ". " . $value[1] . '</div><br>',
                 'mask' => true
             );
         }
@@ -143,7 +143,7 @@
                 $events[] = array(
                     'start' => $startYearMonthDay_str,
                     'end' => $startYearMonthDay_str,
-                    'summary' => '<span id="payment" class="subject"><i class="bi bi-cash-stack"></i> Payment Day&nbsp;</span><br><span id="payment" class="content">Rent $' . $paymentDay[1] . "<br>Parking $" . $paymentDay[2] ."<br>Other $". $paymentDay[3]. '</span><br>',
+                    'summary' => '<div id="payment" class="subject"><i class="bi bi-cash-stack"></i> Payment Day</div><div id="payment" class="content">Rent $' . $paymentDay[1] . "<br>Parking $" . $paymentDay[2] ."<br>Other $". $paymentDay[3]. '</div><br>',
                     'mask' => true
                 );
                 $startYearMonthDay_str = strtotime("$startYearMonthDay_str +1 month");

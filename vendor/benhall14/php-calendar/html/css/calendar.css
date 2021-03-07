@@ -65,7 +65,7 @@
 .calendar tbody tr td.day div:first-child{
     padding:4px;
     line-height:17px;
-    height:25px;
+
 }
 
 .calendar tbody tr td.day div:last-child{
@@ -81,47 +81,59 @@
 .calendar tbody tr td.mask-start,
 .calendar tbody tr td.mask,
 .calendar tbody tr td.mask-end {
-    background: #C23B22;
+    background: #D96D55;
 }
 
-.calendar tbody tr td.day.mask-start div span#request.header {
+.calendar tbody tr td.day.mask-start div div#request.header {
     text-align: left !important;
-    font-size: 14px;
-    background-color: #5481E6;
+    font-size: 13px;
+    background-color: #BFAEA8;
     font-family: 'Roboto Condensed', sans-serif;
+    padding-left: 5px;
+    color:black;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
 }
-.calendar tbody tr td.day.mask-start div span#request.detail {
+.calendar tbody tr td.day.mask-start div div#request.detail {
     text-align: left !important;
-    font-size: 14px;
+    font-size: 13px;
     background-color: #FF8C00;
     color: black;
     font-family: 'Roboto Condensed', sans-serif;
+    padding-left: 5px;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
 }
-.calendar tbody tr td.day.mask-start div span#request.headercontent {
+.calendar tbody tr td.day.mask-start div div#request.headercontent {
     text-align: left !important;
     font-size: 13px;
-    background-color: #0D98BA;
-    
+    background-color: #593E34;
+    padding-left: 5px;
     font-family: 'Roboto Condensed', sans-serif;
 }
-.calendar tbody tr td.day.mask-start div span#request.detailcontent {
+.calendar tbody tr td.day.mask-start div div#request.detailcontent {
     text-align: left !important;
     font-size: 13px;
     background-color: #FFCC21;
     color: black;
     font-family: 'Roboto Condensed', sans-serif;
+    padding-left: 5px;
 }
-.calendar tbody tr td.day.mask-start div span#payment.subject {
-    text-align: left !important;
-    font-size: 14px;
-    background-color: #40E0D0;
-    color: black;
-    font-family: 'Roboto Condensed', sans-serif;
-}
-.calendar tbody tr td.day.mask-start div span#payment.content {
+.calendar tbody tr td.day.mask-start div div#payment.subject {
     text-align: left !important;
     font-size: 13px;
-    background-color: #819FF7;
+    background-color: #184059;
+    color: #FFFFFF;
+    font-family: 'Roboto Condensed', sans-serif;
+    padding-left: 5px;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+.calendar tbody tr td.day.mask-start div div#payment.content {
+    text-align: left !important;
+    font-size: 13px;
+    background-color: #5D8AA6;
     color: black;
     font-family: 'Roboto Condensed', sans-serif;
+    padding-left: 5px;
 }
