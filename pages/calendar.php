@@ -104,7 +104,7 @@
         else if ($userRole == 'landlord') {
             $user_id = $_SESSION['CURRENT_USER']['user_id'];
             $landlord_id = checkLandlordId($user_id);
-
+            drawCalendarButton();
             addRequestHeader();
             addRequestDetail();
             addPaymentDay();
