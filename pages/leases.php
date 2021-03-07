@@ -25,7 +25,7 @@ if (!isset($_SESSION['PAGEMODE'])){
 
 <head>
 
-    <title>RentalBuddy - leases</title>
+    <title>RentalBuddy - Leases</title>
 
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -528,7 +528,7 @@ function formLease()
 
                 <!-- Lease no.-->
                 <div class="input-group">
-                    <label for="lease-id">lease No.</label>
+                    <label for="lease-id">Lease No.</label>
                     <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 100px" id="lease-id" name="lease-id" aria-describedby="lease-id-help" placeholder="" value="<?php echo $row['lease_id']; ?>" readonly>
                     <small id="lease-help" class="form-text text-muted"></small>
                 </div>
