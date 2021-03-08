@@ -1,5 +1,6 @@
 <?php
 session_start();
+include_once("./check_session.php");
 
 // session_unset();
 $_SESSION['PAGE'] = "rental_properties";
@@ -18,7 +19,9 @@ if (!isset($_SESSION['PAGEMODE'])) {
         Application: RentalBuddy
         Purpose:     Handles the crud functions of rental_properties
         Author:      G. Blandford,  Group 5, INFO-5139-01-21W
-        Date:        February 15th, 2021 (February 15th, 2021)
+        Date:        March 7th, 2021 (February 15th, 2021)
+
+        20210307     GPB    Check user logged in
     -->
 
     <title>RentalBuddy - Rental Properties</title>

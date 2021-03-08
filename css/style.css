@@ -1,1 +1,105 @@
-/* implement styles in here */
+.backgroundColor {
+    background:darkgray
+}
+
+.fontColor {
+    color: darkblue;
+}
+
+body {
+    padding-top: 5rem;   
+    font-family: 'Metrophobic', sans-serif;
+    font-size: 16px;
+}
+
+.bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+@media (min-width: 768px) {
+    .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+}
+
+.container-login {
+    margin-top: 40px;
+}
+
+.form {
+    margin-top: 30px;
+    display: inline-block;
+}
+
+#form-employee {
+    margin-top: 0 !important;
+}
+
+.form-inline {
+    display: inline-block;
+}
+
+.input-group {
+    margin-bottom: 10px !important;
+}
+
+.form-group {
+    margin-bottom: 10px !important;
+}
+
+.form-check-inline {
+    margin: 5px 15px;
+}
+
+label {
+    width: 180px;
+    justify-content: left !important;
+}
+
+#form-employee label {
+    width: 120px;
+    justify-content: left !important;
+}
+
+
+.form-login .input-group {
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: left;
+}
+
+.form-login label {
+    width: 100px;
+}
+
+input[type=text] {
+    width: 280px;
+
+}
+
+fieldset {
+    padding: 10px;
+    border-radius: 10px;
+}
+
+legend {
+    padding-top: 5px;
+    border-radius: 5px;
+    border: 5px;
+    margin-bottom: 20px;
+    text-align: center;
+    height: 50px;
+    vertical-align: middle !important;
+}
+
+.btn-login {
+    margin-top: 0;
+    margin-left: 10px;
+}

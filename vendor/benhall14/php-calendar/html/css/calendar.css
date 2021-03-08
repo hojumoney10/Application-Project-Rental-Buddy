@@ -1,0 +1,153 @@
+.calendar{
+    background: #2CA8C2;
+    color: #FFF;
+    width:100%;
+    font-family: 'Oxygen';
+    table-layout:fixed;
+}
+
+.calendar.purple{
+    background:#913CCD;
+}
+
+.calendar.pink{
+    background: #F15F74;
+}
+
+.calendar.orange{
+    background: #F76D3C;
+}
+
+.calendar.yellow{
+    background: #F7D842;
+}
+
+.calendar.green{
+    background: #98CB4A;
+}
+
+.calendar.grey{
+    background: #839098;
+}
+
+.calendar.blue{
+    background: #5481E6;
+}
+
+.calendar-title th {
+    font-size: 22px;
+    font-weight: bold;
+    padding: 20px;
+    text-align: center;
+    text-transform: uppercase;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.calendar-header th {
+    padding: 10px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.calendar tbody tr td{
+    text-align: left;
+    vertical-align: top;
+    width: 14.28%;
+}
+
+.calendar tbody tr td.pad{
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.calendar tbody tr td.day{
+}
+
+.calendar tbody tr td.day div:first-child{
+    padding:4px;
+    line-height:17px;
+
+}
+
+.calendar tbody tr td.day div:last-child{
+    font-size:10px;
+    padding:4px;
+
+}
+
+.calendar tbody tr td.today{
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.calendar tbody tr td.mask-start,
+.calendar tbody tr td.mask,
+.calendar tbody tr td.mask-end {
+    background: #D96D55;
+}
+
+.calendar tbody tr td.day.mask-start div div#request.header {
+    text-align: left !important;
+    font-size: 13px;
+    background-color: #BFAEA8;
+    font-family: 'Roboto Condensed', sans-serif;
+    padding-left: 5px;
+    color:black;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+.calendar tbody tr td.day.mask-start div div#request.detail {
+    text-align: left !important;
+    font-size: 13px;
+    background-color: #FF8C00;
+    color: black;
+    font-family: 'Roboto Condensed', sans-serif;
+    padding-left: 5px;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+.calendar tbody tr td.day.mask-start div div#request.headercontent {
+    text-align: left !important;
+    font-size: 13px;
+    background-color: #593E34;
+    padding-left: 5px;
+    font-family: 'Roboto Condensed', sans-serif;
+    margin-bottom: 5px;
+}
+.calendar tbody tr td.day.mask-start div div#request.detailcontent {
+    text-align: left !important;
+    font-size: 13px;
+    background-color: #FFCC21;
+    color: black;
+    font-family: 'Roboto Condensed', sans-serif;
+    padding-left: 5px;
+    margin-bottom: 5px;
+}
+.calendar tbody tr td.day.mask-start div div#payment.subject {
+    text-align: left !important;
+    font-size: 13px;
+    background-color: #184059;
+    color: #FFFFFF;
+    font-family: 'Roboto Condensed', sans-serif;
+    padding-left: 5px;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+.calendar tbody tr td.day.mask-start div div#payment.content {
+    text-align: left !important;
+    font-size: 13px;
+    background-color: #5D8AA6;
+    color: black;
+    font-family: 'Roboto Condensed', sans-serif;
+    padding-left: 5px;
+    margin-bottom: 5px;
+}
+.calendar tbody tr td.day.today div div#d-day.header {
+    text-align: left !important;
+    font-size: 13px;
+    background-color: #0D2601;
+    color: #FFFFFF;
+    font-family: 'Roboto Condensed', sans-serif;
+    padding-left: 5px;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    margin-bottom: 5px;
+}

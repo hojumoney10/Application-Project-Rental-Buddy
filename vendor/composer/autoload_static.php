@@ -13,6 +13,10 @@ class ComposerStaticInit44ba69d454a13627ba90361bf3ed4f2e
     );
 
     public static $prefixLengthsPsr4 = array (
+        'b' => 
+        array (
+            'benhall14\\' => 10,
+        ),
         'S' => 
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
@@ -26,6 +30,10 @@ class ComposerStaticInit44ba69d454a13627ba90361bf3ed4f2e
     );
 
     public static $prefixDirsPsr4 = array (
+        'benhall14\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/benhall14/php-calendar/src',
+        ),
         'Symfony\\Polyfill\\Php80\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
