@@ -65,7 +65,6 @@ include_once("./check_session.php");
     <div class="container">
 
         <?php
-
         // session_start();
 
         require '../vendor/autoload.php';
@@ -76,20 +75,17 @@ include_once("./check_session.php");
         //     $msg = "Please login..";
         //     msgHeader('red');
         // }
-        $userRole = checkUserRoleCode($_SESSION['CURRENT_USER']['user_id']);
-
+        //$userRole = checkUserRoleCode($_SESSION['CURRENT_USER']['user_id']);
+        $userRole = $_SESSION['CURRENT_USER']['user_role_code'];
+        $user_id = $_SESSION['CURRENT_USER']['user_id'];
         // if Tenant
         if ($userRole == 'tenant') {
-            $user_id = $_SESSION['CURRENT_USER']['user_id'];
-            $tenant_id = checkTenantId($user_id);
+            $tenant_id = $_SESSION['CURRENT_USER']['tenant_id'];
             $property_id = checkPropertyId($tenant_id);
         }
         // if landrord
         else if ($userRole == 'landlord') {
-            $user_id = $_SESSION['CURRENT_USER']['user_id'];
-            $landlord_id = checkLandlordId($user_id);
-        } else if ($userRole == 'admin') {
-            $user_id = $_SESSION['CURRENT_USER']['user_id'];
+            $landlord_id = $_SESSION['CURRENT_USER']['landlord_id'];
         }
 
         // input form page
@@ -163,8 +159,6 @@ include_once("./check_session.php");
             msgHeader('green');
             showRequestDetail($requestId);
         }
-
-
 
         function updateRequest($value, $type)
         {

@@ -85,12 +85,13 @@ include_once("./check_session.php");
         //     $msg = "Please login..";
         //     msgHeader('red');
         // }
-        $userRole = checkUserRoleCode($_SESSION['CURRENT_USER']['user_id']);
+        //$userRole = checkUserRoleCode($_SESSION['CURRENT_USER']['user_id']);
 
+        $userRole = $_SESSION['CURRENT_USER']['user_role_code'];
+        $user_id = $_SESSION['CURRENT_USER']['user_id'];
         // if Tenant
         if ($userRole == 'tenant') {
-            $user_id = $_SESSION['CURRENT_USER']['user_id'];
-            $tenant_id = checkTenantId($user_id);
+            $tenant_id = $_SESSION['CURRENT_USER']['tenant_id'];
             $property_id = checkPropertyId($tenant_id);
             drawCalendarButton();
             addDday();
@@ -110,8 +111,7 @@ include_once("./check_session.php");
         }
         // if landrord
         else if ($userRole == 'landlord') {
-            $user_id = $_SESSION['CURRENT_USER']['user_id'];
-            $landlord_id = checkLandlordId($user_id);
+            $landlord_id = $_SESSION['CURRENT_USER']['landlord_id'];
             drawCalendarButton();
             addRequestHeader();
             addRequestDetail();
@@ -126,7 +126,7 @@ include_once("./check_session.php");
                 drawCalendar(strtotime("Now"), 'now');
             }
         } else if ($userRole == 'admin') {
-            $user_id = $_SESSION['CURRENT_USER']['user_id'];
+
             $msg = "Calendar feature is not supported for Administrator account.";
             msgHeader('red');
         }
