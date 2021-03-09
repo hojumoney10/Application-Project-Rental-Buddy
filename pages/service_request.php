@@ -91,7 +91,6 @@ include_once("./check_session.php");
         //     msgHeader('red');
         // }
         //$userRole = checkUserRoleCode($_SESSION['CURRENT_USER']['user_id']);
-        dump($_POST);
 
         $userRole = $_SESSION['CURRENT_USER']['user_role_code'];
         $user_id = $_SESSION['CURRENT_USER']['user_id'];
@@ -461,7 +460,6 @@ include_once("./check_session.php");
 
         function insertAppointment()
         {
-            dump('들어옴');
             global $db_conn;
             global $msg;
             global $user_id;
