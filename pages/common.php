@@ -262,10 +262,6 @@ function phpMail() {
         . 'Request Content: <br>' . $_POST['reqContent'] . 
         '<br><br><br> *This is an automated message. Do not reply.';
     }
-    else {
-        $mailData['subject'] = 'Cannot read subject';
-        $mailData['body'] = 'Cannot read content';
-    }
 
     $mail = new PHPMailer;
     $mail->isSMTP();
