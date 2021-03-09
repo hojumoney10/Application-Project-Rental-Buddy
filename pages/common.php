@@ -17,6 +17,7 @@
                         Added checkTenantId function : input userID, output tenantID
                         Added checkLandlord function : input userID, output landlordID
                         Added makeRentalPropertyIdArray : input landlordId, output properties Array
+    20210309    TK      Added checkTenantName : input tenantId, output tenantName
                           
 -->
 
@@ -206,6 +207,22 @@ function makeRentalPropertyIdArray($landlord_id){
             array_push($tmp, $row['rental_property_id']);
         }
         return $tmp;
+    } catch (Exception $e) {
+        $db_conn->rollback();
+        echo $e->getMessage();
+    }
+}
+
+function checkTenantName($tenant_id){
+    $db_conn = connectDB();
+    $stmt = $db_conn->prepare("select salutation_code, first_name, last_name from tenants where tenant_id=?");
+    try {
+        $tmp=[];
+        $stmt->execute(array($tenant_id));
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            unset($tenant_id);
+            return $row['salutation_code'].'. '.$row['first_name'].' '.$row['last_name'];
+        }
     } catch (Exception $e) {
         $db_conn->rollback();
         echo $e->getMessage();

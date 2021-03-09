@@ -98,7 +98,7 @@ include_once("./check_session.php");
             addRequestHeader();
             addRequestDetail();
             addPaymentDay();
-            addAppointment();
+            addAppointmentTenant();
             if(isset($_POST['timestamp'])){
                 if(isset($_POST['next'])){
                     drawCalendar($_POST['timestamp'], 'next');
@@ -117,6 +117,7 @@ include_once("./check_session.php");
             addRequestHeader();
             addRequestDetail();
             addPaymentDay();
+            addAppointmentLandlord();
             if(isset($_POST['timestamp'])){
                 if(isset($_POST['next'])){
                     drawCalendar($_POST['timestamp'], 'next');
@@ -197,7 +198,7 @@ include_once("./check_session.php");
             );
         }
 
-        function addAppointment(){
+        function addAppointmentTenant(){
             global $events;
             $appointmentDay = collectAppointment();
             foreach ($appointmentDay as &$value) {
@@ -205,6 +206,20 @@ include_once("./check_session.php");
                     'start' => $value[2],
                     'end' => $value[2],
                     'summary' => '<div id="appointment" class="header"><i class="bi bi-alarm"></i> Appointment: '.$value[3].'</div><div id="appointment" class="detail">#' . $value[0] . ". " . $value[1] . '</div>',
+                    'mask' => true
+                );
+            }
+            unset($value);
+        }
+
+        function addAppointmentLandlord(){
+            global $events;
+            $appointmentDay = collectAppointment();
+            foreach ($appointmentDay as &$value) {
+                $events[] = array(
+                    'start' => $value[2],
+                    'end' => $value[2],
+                    'summary' => '<div id="appointment" class="header"><i class="bi bi-alarm"></i> Appointment: '.$value[3].'</div><div id="appointment" class="detail">#' . $value[0] . ". " . $value[1] . '<br>with '.checkTenantName($value[4]).'</div>',
                     'mask' => true
                 );
             }
@@ -320,6 +335,38 @@ include_once("./check_session.php");
                             $row['description'],
                             $row['date'],
                             $row['time']
+                        ];
+                        array_push($results, $tmp);
+                    }
+                    return $results;
+                } catch (Exception $e) {
+                    $db_conn->rollback();
+                    echo $e->getMessage();
+                }
+            }else if($userRole == 'landlord'){
+                global $landlord_id;
+                $rental_property_ids = makeRentalPropertyIdArray($landlord_id);
+                $in  = str_repeat('?,', count($rental_property_ids) - 1) . '?';
+
+                $sql = "SELECT request_id, 
+                description, 
+                date(appointment_date_time) as date, 
+                time(appointment_date_time) as time,
+                tenant_id 
+                FROM requests WHERE request_type_code='69' and status_code='63' and rental_property_id IN ($in)";
+
+                $stmt = $db_conn->prepare($sql);
+
+                try {
+                    $stmt->execute($rental_property_ids);
+
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        $tmp = [
+                            $row['request_id'],
+                            $row['description'],
+                            $row['date'],
+                            $row['time'],
+                            $row['tenant_id']
                         ];
                         array_push($results, $tmp);
                     }
