@@ -1,11 +1,4 @@
 <!-- 
-    File: JavaScript.js
-    Author: T.Kim
-    Date: Jan 30, 2021
-    Description: Menu file. 
--->
-
-<!-- 
     Title:       navigationMenu.php
     Application: RentalBuddy
     Purpose:     Handles navigation for the RentalBuddy site
@@ -17,6 +10,8 @@
     20210219    GPB     Added temporary user selector for admin/landlord/tenant
     20210220    GPB     Updated all links, and now menus are user-driven
                         Added leases
+    20210306    THK     Added Calendar(for tenant)
+    20210307    GPB     Added Welcome/Logout
 -->
 
 <?php
@@ -37,8 +32,7 @@ $base_URL .= $_SERVER['HTTP_HOST'];
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="<?php echo $base_URL . "/index.php" ?>">RentalBuddy</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExampleDefault"
-            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -53,59 +47,61 @@ $base_URL .= $_SERVER['HTTP_HOST'];
 
                 // Check if we are viewing as a tenant or an admin/landlord
                 if ($_SESSION['CURRENT_USER']['user_role_code'] == 'tenant') { ?>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo $base_URL . "/pages/service_request.php" ?>">My Service
-                        Requests</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo $base_URL . "/pages/lease_info_tenant.php" ?>">My Lease</a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo $base_URL . "/pages/service_request.php" ?>">My Service
+                            Requests</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo $base_URL . "/pages/lease_info_tenant.php" ?>">My Lease</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo $base_URL . "/pages/calendar.php" ?>">Calendar</a>
+                    </li>
                 <?php
                 } else { ?>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo $base_URL . "/pages/tenants.php" ?>">Tenants</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo $base_URL . "/pages/landlords.php" ?>">Landlords</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo $base_URL . "/pages/rental_properties.php" ?>">Properties</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo $base_URL . "/pages/leases.php" ?>">Leases</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?php echo $base_URL . "/pages/service_request.php" ?>">Service
-                        Requests</a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo $base_URL . "/pages/tenants.php" ?>">Tenants</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo $base_URL . "/pages/landlords.php" ?>">Landlords</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo $base_URL . "/pages/rental_properties.php" ?>">Properties</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo $base_URL . "/pages/leases.php" ?>">Leases</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo $base_URL . "/pages/service_request.php" ?>">Service
+                            Requests</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo $base_URL . "/pages/calendar.php" ?>">Calendar</a>
+                    </li>
                 <?php
                 }
                 ?>
             </ul>
 
-            <!-- A development user selector  -->
-            <div style="float: right;">
-                <form id="user" method="POST">
-                    <select name="selected-user" style="max-width: 150px !important;">
-                        <option value="admin"
-                            <?php if ($_SESSION['CURRENT_USER']['user_id'] == 'admin') {
-                                                    echo 'selected';
-                                                } ?><?php if ($_SESSION['CURRENT_USER']['user_id'] == 'admin') {
-                                                                                                                                    echo 'selected';
-                                                                                                                                } ?>>
-                            Admin</option>
-                        <option value="landlord" <?php if ($_SESSION['CURRENT_USER']['user_id'] == 'landlord') {
-                                                        echo 'selected';
-                                                    } ?>>
-                            Landlord</option>
-                        <option value="tenant" <?php if ($_SESSION['CURRENT_USER']['user_id'] == 'tenant') {
-                                                    echo 'selected';
-                                                } ?>>Tenant
-                        </option>
-                    </select>
-                    <button type="submit" class="btn btn-warning" name="btn-select-user">Login</button>
-                </form>
-            </div>
+            <?php
+            if (isset($_SESSION['CURRENT_USER'])) {
+            ?>
+                <div style="float: right;">
+                    <!-- Logout -->
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Hello, <?php echo $_SESSION['CURRENT_USER']['user_name']; ?>!
+                            </a>
+                            <ul class="dropdown-menu me-auto mb-2 mb-md-0" aria-labelledby="navbarDropdownMenuLink2">
+                                <li><a class="dropdown-item" href="<?php echo $base_URL . "/pages/logout.php" ?>">Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            <?php
+            }
+            ?>
         </div>
     </div>
 </nav>
@@ -140,7 +136,7 @@ function login($user_id)
     $status = $stmt->execute($data);
 
     if ($status) {
-        if ($stmt->rowCount() > 0) {  
+        if ($stmt->rowCount() > 0) {
             // Store USER row
             $_SESSION['CURRENT_USER'] = $stmt->fetch(PDO::FETCH_ASSOC);
         }

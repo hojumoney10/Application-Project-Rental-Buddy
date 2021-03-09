@@ -1,12 +1,17 @@
+<?php
+session_start();
+include_once("./check_session.php");
+?>    
     <!-- 
         Title:       leases.php
         Application: RentalBuddy
         Purpose:     Handles the crud functions of landlords
         Author:      G. Blandford, S. Jeong  Group 5, INFO-5139-01-21W
-        Date:        February 21th, 2021 (February 10th, 2021)
+        Date:        March 7th, 2021 (February 10th, 2021)
 
         20210220    GPB     Updated all links, and now menus are user-driven
         20210221    GPB     Added readonly listing ref & tenant name
+        20210307    GPB     Check user logged in           
 
     -->
 <?php
@@ -25,7 +30,7 @@ if (!isset($_SESSION['PAGEMODE'])){
 
 <head>
 
-    <title>RentalBuddy - leases</title>
+    <title>RentalBuddy - Leases</title>
 
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -528,7 +533,7 @@ function formLease()
 
                 <!-- Lease no.-->
                 <div class="input-group">
-                    <label for="lease-id">lease No.</label>
+                    <label for="lease-id">Lease No.</label>
                     <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 100px" id="lease-id" name="lease-id" aria-describedby="lease-id-help" placeholder="" value="<?php echo $row['lease_id']; ?>" readonly>
                     <small id="lease-help" class="form-text text-muted"></small>
                 </div>

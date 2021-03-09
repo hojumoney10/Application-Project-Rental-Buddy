@@ -30,7 +30,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '19919229ad1d250e5f91e7191feae2352e2761ae',
+    'reference' => '6172734a2a70a466c8ab46dfcbaa66061f3760ee',
     'name' => '__root__',
   ),
   'versions' => 
@@ -42,7 +42,16 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '19919229ad1d250e5f91e7191feae2352e2761ae',
+      'reference' => '6172734a2a70a466c8ab46dfcbaa66061f3760ee',
+    ),
+    'benhall14/php-calendar' => 
+    array (
+      'pretty_version' => '1.2',
+      'version' => '1.2.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '5dbf8e63b0778c0d7549ee4d935d2627b850319f',
     ),
     'phpmailer/phpmailer' => 
     array (
