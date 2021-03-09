@@ -451,6 +451,7 @@ include_once("./check_session.php");
 
                 $msg = "Request has benn inserted.";
                 msgHeader('green');
+                phpMail();
                 viewPage();
             } catch (Exception $e) {
                 $db_conn->rollback();
@@ -482,6 +483,7 @@ include_once("./check_session.php");
 
                 $msg = "Request has benn inserted.";
                 msgHeader('green');
+                phpMail();
                 viewPage();
             } catch (Exception $e) {
                 $db_conn->rollback();
@@ -589,7 +591,7 @@ include_once("./check_session.php");
                 <label for="name" class="col-sm-2 col-form-label">Tenant Name</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" id="name" name='tenantName'
-                        placeholder="<?php echo $tenants['1'] . " " . $tenants['2']; ?>" disabled>
+                        value="<?php echo $tenants['1'] . " " . $tenants['2']; ?>" readonly>
                 </div>
             </div>
             <div class="row mb-3">
