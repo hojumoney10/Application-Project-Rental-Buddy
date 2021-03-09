@@ -212,4 +212,81 @@ function makeRentalPropertyIdArray($landlord_id){
     }
 }
 
+function loadTenantAddress()
+        {
+            global $db_conn;
+            global $user_id;
+            $stmt = $db_conn->prepare("select t.address_1, t.address_2, t.city, t.province_code, t.postal_code 
+            from tenants t
+            join users u
+            on u.tenant_id = t.tenant_id
+            where u.user_id=?");
+            try {
+                $stmt->execute(array($user_id));
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $tmp = [
+                        $row['address_1'],
+                        $row['address_2'],
+                        $row['city'],
+                        $row['province_code'],
+                        $row['postal_code'],
+                    ];
+
+                    return $tmp;
+                }
+            } catch (Exception $e) {
+                $db_conn->rollback();
+                echo $e->getMessage();
+            }
+        }
+
+use PHPMailer\PHPMailer\PHPMailer;
+
+function phpMail() {
+    $tenant = loadTenantAddress();
+
+    if(isset($_POST['submit'])) {
+        $mailData['subject'] = 'New Service Request';
+        $mailData['reqName'] = selectCodeValue($_POST['reqType']);
+
+        $mailData['body'] = 'You have a new Service Request from '. $_POST['tenantName'] . ' at ' . $tenant[0] . " " . $tenant[1] . " " . $tenant[2] . ", " . $tenant[3] . " " . $tenant[4] .': <br><br>'. 
+        'Request Type: ' . $mailData['reqName'] . '<br><br>'
+        . 'Request Content: <br>' . $_POST['reqContent'] . 
+        '<br><br><br> *This is an automated message. Do not reply.';
+    }
+    else if(isset($_POST['appointment_submit'])) {
+        $mailData['subject'] = 'New Appointment Request';
+
+        $mailData['body'] = 'You have a new Appointment Request from '. $_POST['tenantName'] . ' at ' . $tenant[0] . " " . $tenant[1] . " " . $tenant[2] . ", " . $tenant[3] . " " . $tenant[4] .': <br><br>'. 
+        'Requested Appointment Date: ' . $_POST['datetime'] . '<br><br>'
+        . 'Request Content: <br>' . $_POST['reqContent'] . 
+        '<br><br><br> *This is an automated message. Do not reply.';
+    }
+    else {
+        $mailData['subject'] = 'Cannot read subject';
+        $mailData['body'] = 'Cannot read content';
+    }
+
+    $mail = new PHPMailer;
+    $mail->isSMTP();
+    $mail->SMTPDebug = 2;
+    $mail->Host = 'smtp.gmail.com';
+    $mail->Port = 587;
+    $mail->SMTPAuth = true;
+    $mail->Username = 'rentalproject.fanshawe@gmail.com';
+    $mail->Password = ')(4u]B8kY$-0v;[1agkF';
+    $mail->setFrom('rentalproject.fanshawe@gmail.com', 'Rental Buddy');
+    $mail->addReplyTo('rentalproject.fanshawe@gmail.com', 'Rental Buddy');
+    $mail->addAddress('fosterj319@yahoo.com', 'Jordan Foster');
+    $mail->Subject = $mailData['subject'];
+    $mail->msgHTML(file_get_contents('message.html'), __DIR__);
+    $mail->Body = $mailData['body'];
+    //$mail->addAttachment('test.txt');
+    if (!$mail->send()) {
+        echo 'Mailer Error: ' . $mail->ErrorInfo;
+    } else {
+        echo 'The email message was sent.';
+    }
+}
+
 ?>
