@@ -98,6 +98,7 @@ include_once("./check_session.php");
             addRequestHeader();
             addRequestDetail();
             addPaymentDay();
+            addAppointment();
             if(isset($_POST['timestamp'])){
                 if(isset($_POST['next'])){
                     drawCalendar($_POST['timestamp'], 'next');
@@ -196,6 +197,20 @@ include_once("./check_session.php");
             );
         }
 
+        function addAppointment(){
+            global $events;
+            $appointmentDay = collectAppointment();
+            foreach ($appointmentDay as &$value) {
+                $events[] = array(
+                    'start' => $value[2],
+                    'end' => $value[2],
+                    'summary' => '<div id="appointment" class="header"><i class="bi bi-alarm"></i> Appointment: '.$value[3].'</div><div id="appointment" class="detail">#' . $value[0] . ". " . $value[1] . '</div>',
+                    'mask' => true
+                );
+            }
+            unset($value);
+        }
+
         function addPaymentDay()
         {
             global $userRole;
@@ -289,6 +304,35 @@ include_once("./check_session.php");
             }
         }
 
+        function collectAppointment(){
+            //for tenant and landlord
+            global $userRole;
+            global $db_conn;
+            global $tenant_id;
+            $results = [];
+            if ($userRole == 'tenant') {
+                $stmt = $db_conn->prepare("SELECT request_id, description, date(appointment_date_time) as date, time(appointment_date_time) as time FROM requests WHERE request_type_code='69' and status_code='63' and tenant_id=?");
+                try {
+                    $stmt->execute(array($tenant_id));
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        $tmp = [
+                            $row['request_id'],
+                            $row['description'],
+                            $row['date'],
+                            $row['time']
+                        ];
+                        array_push($results, $tmp);
+                    }
+                    return $results;
+                } catch (Exception $e) {
+                    $db_conn->rollback();
+                    echo $e->getMessage();
+                }
+            }
+
+
+        }
+
         function collectServiceRequestHeader()
         {
             global $userRole;
@@ -297,7 +341,7 @@ include_once("./check_session.php");
 
             $results = [];
             if ($userRole == 'tenant') {
-                $stmt = $db_conn->prepare("SELECT request_id, description, date(request_date) as date FROM requests WHERE last_updated BETWEEN DATE_ADD(NOW(),INTERVAL -1 MONTH ) AND DATE_ADD(NOW(),INTERVAL +3 MONTH) and tenant_id=?");
+                $stmt = $db_conn->prepare("SELECT request_id, description, date(request_date) as date FROM requests WHERE  tenant_id=?");
                 try {
                     $stmt->execute(array($tenant_id));
                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
