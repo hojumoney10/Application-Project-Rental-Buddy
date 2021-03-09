@@ -151,3 +151,26 @@
     padding-bottom: 0px !important;
     margin-bottom: 5px;
 }
+
+.calendar tbody tr td.day.mask-start div div#appointment.header {
+    text-align: left !important;
+    font-size: 13px;
+    background-color: #BF0404;
+    color: #FFFFFF;
+    font-family: 'Roboto Condensed', sans-serif;
+    padding-left: 5px;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    box-shadow: 0px 0px 20px #000;
+
+}
+.calendar tbody tr td.day.mask-start div div#appointment.detail {
+    text-align: left !important;
+    font-size: 13px;
+    background-color: #D9BBA9;
+    color: black;
+    font-family: 'Roboto Condensed', sans-serif;
+    padding-left: 5px;
+    margin-bottom: 5px;
+    box-shadow: 0px 0px 20px #000;
+}
