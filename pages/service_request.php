@@ -25,23 +25,38 @@ include_once("./check_session.php");
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/starter-template/">
 
+    <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 
-    <style>
-        .bd-placeholder-img {
-            font-size: 1.125rem;
-            text-anchor: middle;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            user-select: none;
-        }
+    <!-- Datetime Picker -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/css/tempusdominus-bootstrap-4.min.css" />
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js">
+    </script>
 
-        @media (min-width: 768px) {
-            .bd-placeholder-img-lg {
-                font-size: 3.5rem;
-            }
+
+    <style>
+    .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+    }
+
+    @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+            font-size: 3.5rem;
         }
+    }
     </style>
 
     <!-- Custom styles for this template -->
@@ -76,6 +91,7 @@ include_once("./check_session.php");
         //     msgHeader('red');
         // }
         //$userRole = checkUserRoleCode($_SESSION['CURRENT_USER']['user_id']);
+
         $userRole = $_SESSION['CURRENT_USER']['user_role_code'];
         $user_id = $_SESSION['CURRENT_USER']['user_id'];
         // if Tenant
@@ -89,7 +105,7 @@ include_once("./check_session.php");
         }
 
         // input form page
-        if (isset($_POST['request'])) {
+        if (isset($_POST['request']) || isset($_POST['appointment'])) {
             inputPage();
         }
         // write function
@@ -105,8 +121,23 @@ include_once("./check_session.php");
                 msgHeader('red');
                 inputPage();
             }
+        }// appointment  write function
+        else if (isset($_POST['appointment_submit'])) {
+            if ($_POST['reqContent'] != ''&& $_POST['datetime'] != '') {
+                insertAppointment();
+            } else {
+                if($_POST['datetime'] == '') {
+                    $msg = "Please select date and time";
+                }else if ($_POST['reqContent'] == ''){
+                    $msg = "Please insert Request description";
+                }
+                msgHeader('red');
+                //inputPage();
+            }
+        }
+        
+        else if (isset($_POST['requestId'])) {
             // view detail page
-        } else if (isset($_POST['requestId'])) {
             showRequestDetail();
         }
         // solution update
@@ -248,61 +279,61 @@ include_once("./check_session.php");
                 $stmt->execute(array($reqId));
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         ?>
-                    <h3>Request Detail</h3>
-                    <div class="border" style="background-color: #ffffdd;">
+        <h3>Request Detail</h3>
+        <div class="border" style="background-color: #ffffdd;">
 
-                        <div class="row">
-                            <div class="col-sm ps-4 pt-3">
-                                <p class="text-start">Requested by <?php echo $tenants[1] . " " . $tenants[2] ?> almost
-                                    <?php echo (format_date(strtotime($row['request_date']))) ?>. Updated about
-                                    <?php echo (format_date(strtotime($row['last_updated']))) ?><br>
-                                    <?php echo $tenants[3] . " " . $tenants[4] . " " . $tenants[5] . " " . $tenants[6] . " " . $tenants[7] ?>
-                                </p>
-                            </div>
-                        </div>
+            <div class="row">
+                <div class="col-sm ps-4 pt-3">
+                    <p class="text-start">Requested by <?php echo $tenants[1] . " " . $tenants[2] ?> almost
+                        <?php echo (format_date(strtotime($row['request_date']))) ?>. Updated about
+                        <?php echo (format_date(strtotime($row['last_updated']))) ?><br>
+                        <?php echo $tenants[3] . " " . $tenants[4] . " " . $tenants[5] . " " . $tenants[6] . " " . $tenants[7] ?>
+                    </p>
+                </div>
+            </div>
 
-                        <div class="row">
-                            <div class="col-sm ps-4">
-                                <p class="fw-bold">Request Type</p>
-                            </div>
+            <div class="row">
+                <div class="col-sm ps-4">
+                    <p class="fw-bold">Request Type</p>
+                </div>
 
-                            <div class="col-sm">
-                                <span class="badge bg-primary"><?php echo $row['typeValue'] ?></span>
-                            </div>
+                <div class="col-sm">
+                    <span class="badge bg-primary"><?php echo $row['typeValue'] ?></span>
+                </div>
 
-                            <div class="col-sm ps-4">
-                                <p class="fw-bold">Priority</p>
-                            </div>
+                <div class="col-sm ps-4">
+                    <p class="fw-bold">Priority</p>
+                </div>
 
-                            <div class="col-sm">
-                                <span class="badge bg-warning text-dark"><?php echo $row['priorityValue'] ?></span>
-                            </div>
+                <div class="col-sm">
+                    <span class="badge bg-warning text-dark"><?php echo $row['priorityValue'] ?></span>
+                </div>
 
-                            <div class="col-sm ps-4">
-                                <p class="fw-bold">Status</p>
-                            </div>
+                <div class="col-sm ps-4">
+                    <p class="fw-bold">Status</p>
+                </div>
 
-                            <div class="col-sm">
-                                <span class="badge bg-info text-dark"><?php echo $row['statusValue'] ?></span>
-                            </div>
-                        </div>
+                <div class="col-sm">
+                    <span class="badge bg-info text-dark"><?php echo $row['statusValue'] ?></span>
+                </div>
+            </div>
 
-                        <div class="row">
-                            <div class="col-sm ps-4 pe-4">
-                                <hr>
-                                <p class="fw-bold">Description</p>
-                            </div>
-                        </div>
+            <div class="row">
+                <div class="col-sm ps-4 pe-4">
+                    <hr>
+                    <p class="fw-bold">Description</p>
+                </div>
+            </div>
 
-                        <div class="row">
-                            <div class="col-sm ps-4 pe-4 pb-4">
-                                <pre><?php echo $row['description'] ?></pre>
-                            </div>
-                        </div>
+            <div class="row">
+                <div class="col-sm ps-4 pe-4 pb-4">
+                    <pre><?php echo $row['description'] ?></pre>
+                </div>
+            </div>
 
-                    </div>
+        </div>
 
-                    <?php
+        <?php
                     // TK. Warning!!! Hardcoding here
                     global $userRole;
                     if ($row['status_code'] != '63' && $userRole != 'tenant') {
@@ -310,55 +341,58 @@ include_once("./check_session.php");
                         $priorities = loadCode('request_priority');
                         $status = loadCode('request_status');
                     ?>
-                        <br>
+        <br>
 
-                        <div class="row mb-3">
+        <div class="row mb-3">
 
 
-                            <label for="priority" class="col-sm-2 col-form-label">Change Priority</label>
-                            <div class="btn-group col-sm-4" role="group" id="priority" aria-label="PriorityChange">
-                                <form method="POST">
-                                    <input type="hidden" class="form-control" id="request_id" name='request_id' value=<?php echo $reqId;  ?>>
-                                    <input type="hidden" class="form-control" id="user_id" name='user_id' value=<?php echo $user_id; ?>>
-                                    <input type="hidden" class="form-control" id="user_id" name='priority' value=''>
-                                    <?php foreach ($priorities as $v1) {
+            <label for="priority" class="col-sm-2 col-form-label">Change Priority</label>
+            <div class="btn-group col-sm-4" role="group" id="priority" aria-label="PriorityChange">
+                <form method="POST">
+                    <input type="hidden" class="form-control" id="request_id" name='request_id'
+                        value=<?php echo $reqId;  ?>>
+                    <input type="hidden" class="form-control" id="user_id" name='user_id' value=<?php echo $user_id; ?>>
+                    <input type="hidden" class="form-control" id="user_id" name='priority' value=''>
+                    <?php foreach ($priorities as $v1) {
                                         $html = "<button type='submit' class='btn btn-outline-primary' name='" . $v1[1] . "'>" . $v1[2] . "</button>";
                                         echo $html;
                                     } ?>
-                                </form>
-                            </div>
+                </form>
+            </div>
 
-                            <label for="status" class="col-sm-2 col-form-label">Change Status </label>
-                            <div class="btn-group col-sm-4" id="status" role="group" aria-label="StatusChange">
-                                <form method="POST">
-                                    <input type="hidden" class="form-control" id="request_id" name='request_id' value=<?php echo $reqId;  ?>>
-                                    <input type="hidden" class="form-control" id="user_id" name='user_id' value=<?php echo $user_id; ?>>
-                                    <input type="hidden" class="form-control" id="user_id" name='status' value=''>
-                                    <?php foreach ($status as $v1) {
+            <label for="status" class="col-sm-2 col-form-label">Change Status </label>
+            <div class="btn-group col-sm-4" id="status" role="group" aria-label="StatusChange">
+                <form method="POST">
+                    <input type="hidden" class="form-control" id="request_id" name='request_id'
+                        value=<?php echo $reqId;  ?>>
+                    <input type="hidden" class="form-control" id="user_id" name='user_id' value=<?php echo $user_id; ?>>
+                    <input type="hidden" class="form-control" id="user_id" name='status' value=''>
+                    <?php foreach ($status as $v1) {
                                         $html = "<button type='submit' class='btn btn-outline-primary' name='" . $v1[1] . "'>" . $v1[2] . "</button>";
                                         echo $html;
                                         unset($html);
                                     } ?>
-                                </form>
-                            </div>
+                </form>
+            </div>
 
-                        </div>
+        </div>
 
-                    <?php
+        <?php
                     } ?>
-                    <br>
+        <br>
 
-                    <form method="POST">
-                        <div class="input-group input-group-lg">
-                            <span class="input-group-text" id="inputGroup-sizing-lg">Task Contents</span>
-                            <textarea class="form-control" aria-label="Task Content" aria-describedby="inputGroup-sizing-lg" name='solContent'></textarea>
-                            <input type="hidden" class="form-control" id="request_id" name='request_id' value=<?php echo $reqId  ?>>
-                            <button type="submit" class="btn btn-primary" name="solutionSubmit">Update</button>
-                        </div>
-                    </form>
+        <form method="POST">
+            <div class="input-group input-group-lg">
+                <span class="input-group-text" id="inputGroup-sizing-lg">Task Contents</span>
+                <textarea class="form-control" aria-label="Task Content" aria-describedby="inputGroup-sizing-lg"
+                    name='solContent'></textarea>
+                <input type="hidden" class="form-control" id="request_id" name='request_id' value=<?php echo $reqId  ?>>
+                <button type="submit" class="btn btn-primary" name="solutionSubmit">Update</button>
+            </div>
+        </form>
 
 
-            <?php
+        <?php
                 }
             } catch (Exception $e) {
                 $db_conn->rollback();
@@ -424,13 +458,43 @@ include_once("./check_session.php");
             }
         }
 
+        function insertAppointment()
+        {
+            global $db_conn;
+            global $msg;
+            global $user_id;
+            $stmt = $db_conn->prepare("INSERT INTO requests (rental_property_id, tenant_id, request_type_code, description, status_code, priority_code, last_updated_user_id, appointment_date_time) values(?, ?, ?, ?, ?, ?, ?, ?)");
+            try {
+                $array = [
+                    $_POST['rentalId'],
+                    $_POST['tenantId'],
+                    '69',
+                    $_POST['reqContent'],
+                    '60',
+                    '65',
+                    $user_id,
+                    date($_POST['datetime'])
+                ];
+
+                $db_conn->beginTransaction();
+                $stmt->execute($array);
+                $db_conn->commit();
+
+                $msg = "Request has benn inserted.";
+                msgHeader('green');
+                viewPage();
+            } catch (Exception $e) {
+                $db_conn->rollback();
+                echo $e->getMessage();
+            }
+        }
 
         function loadCode($codeId)
         {
 
             global $db_conn;
             $results = [];
-            $stmt = $db_conn->prepare("Select code_id, code_value, description from codes where code_type=? and is_enabled = 1 Order by sort_order");
+            $stmt = $db_conn->prepare("Select code_id, code_value, description from codes where code_type=? and is_enabled = 1 and code_id not in('69') Order by sort_order");
             try {
                 $stmt->execute(array($codeId));
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -506,70 +570,111 @@ include_once("./check_session.php");
             // tenant information load
             $tenants = loadTenantsInfo();
             ?>
-            <form method="POST">
-                <div class="row mb-3">
-                    <h3>Contact Info</h3>
-                    <h6>Please check your contact information, if you need, you can change your information in manage page.
-                    </h6>
+        <form method="POST">
+            <div class="row mb-3">
+                <h3>Contact Info</h3>
+                <h6>Please check your contact information, if you need, you can change your information in manage page.
+                </h6>
+            </div>
+            <div class="row mb-3">
+                <!-- Tenant ID and rental_property_id is hidden -->
+                <div class="col-sm-10">
+                    <input type="hidden" class="form-control" id="tenantId" name='tenantId'
+                        value=<?php echo $tenant_id; ?>>
+                    <input type="hidden" class="form-control" id="rentalId" name='rentalId'
+                        value=<?php echo $property_id; ?>>
                 </div>
-                <div class="row mb-3">
-                    <!-- Tenant ID and rental_property_id is hidden -->
-                    <div class="col-sm-10">
-                        <input type="hidden" class="form-control" id="tenantId" name='tenantId' value=<?php echo $tenant_id; ?>>
-                        <input type="hidden" class="form-control" id="rentalId" name='rentalId' value=<?php echo $property_id; ?>>
-                    </div>
+            </div>
+            <div class="row mb-3">
+                <label for="name" class="col-sm-2 col-form-label">Tenant Name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="name" name='tenantName'
+                        placeholder="<?php echo $tenants['1'] . " " . $tenants['2']; ?>" disabled>
                 </div>
-                <div class="row mb-3">
-                    <label for="name" class="col-sm-2 col-form-label">Tenant Name</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="name" name='tenantName' placeholder="<?php echo $tenants['1'] . " " . $tenants['2']; ?>" disabled>
-                    </div>
+            </div>
+            <div class="row mb-3">
+                <label for="inputEmail3" class="col-sm-2 col-form-label">Tenant Email</label>
+                <div class="col-sm-10">
+                    <input type="email" class="form-control" id="inputEmail" name='tenantEmail'
+                        placeholder="<?php echo $tenants[9]; ?>" disabled>
                 </div>
-                <div class="row mb-3">
-                    <label for="inputEmail3" class="col-sm-2 col-form-label">Tenant Email</label>
-                    <div class="col-sm-10">
-                        <input type="email" class="form-control" id="inputEmail" name='tenantEmail' placeholder="<?php echo $tenants[9]; ?>" disabled>
-                    </div>
+            </div>
+            <div class="row mb-3">
+                <label for="phone" class="col-sm-2 col-form-label">Tenant Phone</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="phone" name='phone1'
+                        placeholder="<?php echo $tenants[8]; ?>" disabled>
                 </div>
-                <div class="row mb-3">
-                    <label for="phone" class="col-sm-2 col-form-label">Tenant Phone</label>
-                    <div class="col-sm-10">
-                        <div class="row">
-                            <div class="col-md">
-                                <input type="text" class="form-control" id="phone" name='phone1' placeholder="<?php echo $tenants[8]; ?>" disabled>
+            </div>
+            <div class="row mb-3">
+                <?php if (isset($_POST['request'])) { ?>
+                <h3>Request Maintenance</h3>
+                <?php } else if (isset($_POST['appointment'])) { ?>
+                <h3>Make Appointment</h3>
+                <?php } ?>
+            </div>
+            <div class="row mb-3">
+            <?php if (isset($_POST['request'])) { ?>
+                <label for="reqType" class="col-sm-2 col-form-label">Request Type</label>
+                <?php } else if (isset($_POST['appointment'])) { ?>
+                    <label for="reqType" class="col-sm-2 col-form-label">Date and Time</label>
+                <?php } ?>
+
+                <?php if (isset($_POST['request'])) { ?>
+                <div class="col-sm-10">
+                    <select class="form-select" aria-label="reqType" name='reqType'>
+                        <option selected>Request Type</option>
+                        <?php
+                                foreach ($requestCodes as $v1) {
+                                    $html .= '<option value="' . $v1[0] . '">' . $v1[1] . '</option>';
+                                }
+                                echo $html;
+                                unset($html);
+                                unset($requestCodes);
+                                ?>
+                    </select>
+                </div>
+                <?php } else if (isset($_POST['appointment'])) { ?>
+                <div class="col-sm-6">
+                    
+                        <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                            <input type="text" class="form-control datetimepicker-input"
+                                data-target="#datetimepicker1" name="datetime"/>
+                            <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar" style="padding-top: 7px; padding-bottom:7px"></i></div>
                             </div>
                         </div>
-                    </div>
+                    
                 </div>
-                <div class="row mb-3">
-                    <h3>Request Maintenance</h3>
+                <script type="text/javascript">
+                $(function() {
+                    $('#datetimepicker1').datetimepicker(
+                        {
+                            minDate: moment(),
+                            format: 'YYYY-MM-DD HH:mm',
+                            useCurrent: true
+                        }
+                    );
+                });
+                </script>
+                <?php } ?>
+
+            </div>
+            <div class="row mb-3">
+                <label for="content" class="col-sm-2 col-form-label">Request Content</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" id="reqContent" name='reqContent' rows="3"></textarea>
                 </div>
-                <div class="row mb-3">
-                    <label for="reqType" class="col-sm-2 col-form-label">Request Type</label>
-                    <div class="col-sm-10">
-                        <select class="form-select" aria-label="reqType" name='reqType'>
-                            <option selected>Request Type</option>
-                            <?php
-                            foreach ($requestCodes as $v1) {
-                                $html .= '<option value="' . $v1[0] . '">' . $v1[1] . '</option>';
-                            }
-                            echo $html;
-                            unset($html);
-                            unset($requestCodes);
-                            ?>
-                        </select>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <label for="content" class="col-sm-2 col-form-label">Request Content</label>
-                    <div class="col-sm-10">
-                        <textarea class="form-control" id="reqContent" name='reqContent' rows="3"></textarea>
-                    </div>
-                </div>
-                <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary" name="submit">Request</button>
-                </div>
-            </form>
+            </div>
+            <div class="d-flex justify-content-end">
+            <?php if (isset($_POST['request'])) { ?>
+                <button type="submit" class="btn btn-primary" name="submit">Request</button>
+                <?php } else if (isset($_POST['appointment'])) { ?>
+                    <button type="submit" class="btn btn-primary" name="appointment_submit">Submit</button>
+                <?php } ?>
+                
+            </div>
+        </form>
 
         <?php
         }
@@ -579,12 +684,13 @@ include_once("./check_session.php");
 
         ?>
 
-            <?php
+        <?php
             global $userRole;
 
             if ($userRole == 'tenant') {
                 $html = "<h1>Your Request History</h1><form method=\"POST\">
         <div class=\"d-flex justify-content-end\">
+        <button type=\"submit\" class=\"btn btn-warning\" id=\"appointment\" name=\"appointment\" style=\"margin-right:5px;\">Make Appointment</button>
         <button type=\"submit\" class=\"btn btn-success\" id=\"request\" name=\"request\">Request Maintenance</button>
         </div>
         </form>";
@@ -716,7 +822,7 @@ include_once("./check_session.php");
 
         ?>
     </div>
-    <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
 
 
 </body>
