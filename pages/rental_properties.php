@@ -22,6 +22,7 @@ if (!isset($_SESSION['PAGEMODE'])) {
         Date:        March 7th, 2021 (February 15th, 2021)
 
         20210307     GPB    Check user logged in
+        20210308     SKC    Added map API functionality
     -->
 
     <title>RentalBuddy - Rental Properties</title>
@@ -140,6 +141,12 @@ if (!isset($_SESSION['PAGEMODE'])) {
             text-align: center;
             height: 50px;
             vertical-align: middle !important;
+        }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 10px;
         }
     </style>
 
@@ -305,6 +312,12 @@ if (!isset($_SESSION['PAGEMODE'])) {
 
     <!-- Custom JS -->
     <!-- <script src="./js/script.js"></script> -->
+
+    <!-- google map API -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQJWK4iJkTx2qKbexRTHTUK8RFtgBrkdY&callback=initMap&libraries=&v=weekly"
+      async
+    ></script>
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -676,6 +689,33 @@ function formRentalProperty($showmodal = 0)
                         ?>
                     </select>
                     <small id="status-code-help" class="form-text text-muted"></small>
+                </div>
+
+                <!-- map -->
+                <div class="input-group">
+                    <label for="map">Property Location</label>
+                    <script>
+                        // Initialize and add the map
+                        function initMap() {
+
+                            // The location of property
+                            var property = { lat: <?php echo $row['latitude']; ?>, lng: <?php echo $row['longitude']; ?> };
+
+                            // The map, centered at property
+                            const map = new google.maps.Map(document.getElementById("map"), {
+                                zoom: 16,
+                                center: property,
+                            });
+
+                            // The marker, positioned at property
+                            var marker = new google.maps.Marker({
+                                position: property,
+                                map: map,
+                            });
+
+                        }
+                    </script>
+                    <div id="map"></div>
                 </div>
 
                 <table>
