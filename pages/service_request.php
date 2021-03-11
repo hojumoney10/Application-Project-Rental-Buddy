@@ -712,7 +712,7 @@ include_once("./check_session.php");
             join codes c 
             on c.code_id = r.request_type_code
             
-            where is_notification='0' and r.tenant_id=?");
+            where r.is_notification='0' and r.tenant_id=?");
 
                 try {
                     $html = "<table class='table table-striped table-hover'>
@@ -761,7 +761,7 @@ include_once("./check_session.php");
                 join rental_properties rp 
                 on c.code_id = r.request_type_code
                 and r.rental_property_id = rp.rental_property_id 
-                where is_notification='0'";
+                where r.is_notification='0'";
 
                 if ($userRole == 'landlord') {
                     global $landlord_id;
