@@ -29,6 +29,7 @@ $base_URL = ($_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://';
 //$base_URL .= ($_SERVER['SERVER_PORT'] != '80') ? $_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'] : $_SERVER['HTTP_HOST'];
 $base_URL .= $_SERVER['HTTP_HOST'];
 ?>
+
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="<?php echo $base_URL . "/index.php" ?>">RentalBuddy</a>
@@ -76,6 +77,9 @@ $base_URL .= $_SERVER['HTTP_HOST'];
                             Requests</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="<?php echo $base_URL . "/pages/users.php" ?>">Users</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="<?php echo $base_URL . "/pages/calendar.php" ?>">Calendar</a>
                     </li>
                 <?php
@@ -87,8 +91,17 @@ $base_URL .= $_SERVER['HTTP_HOST'];
             if (isset($_SESSION['CURRENT_USER'])) {
             ?>
                 <div style="float: right;">
-                    <!-- Logout -->
+
+
                     <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                        <!-- Notifications -->
+                        <li id="li-notification" class="nav-item">
+                            <div id="div-notifications">
+                                <a id="notification-icon" class="nav-link bi-envelope" style="font-size: 1.25rem; padding-top: 3px;" href="#">
+                                <span class="badge bg-danger"><?php echo 23;?></span></a>
+                            </div>
+                        </li>                    
+                        <!-- Logout -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Hello, <?php echo $_SESSION['CURRENT_USER']['user_name']; ?>!
