@@ -326,7 +326,7 @@ include_once("./check_session.php");
             global $tenant_id;
             $results = [];
             if ($userRole == 'tenant') {
-                $stmt = $db_conn->prepare("SELECT request_id, description, date(appointment_date_time) as date, time(appointment_date_time) as time FROM requests WHERE request_type_code='69' and status_code='63' and tenant_id=?");
+                $stmt = $db_conn->prepare("SELECT request_id, description, date(appointment_date_time) as date, time(appointment_date_time) as time FROM requests WHERE is_notification='0' and request_type_code='69' and status_code='63' and tenant_id=?");
                 try {
                     $stmt->execute(array($tenant_id));
                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -353,7 +353,7 @@ include_once("./check_session.php");
                 date(appointment_date_time) as date, 
                 time(appointment_date_time) as time,
                 tenant_id 
-                FROM requests WHERE request_type_code='69' and status_code='63' and rental_property_id IN ($in)";
+                FROM requests WHERE is_notification='0' and request_type_code='69' and status_code='63' and rental_property_id IN ($in)";
 
                 $stmt = $db_conn->prepare($sql);
 
@@ -388,7 +388,7 @@ include_once("./check_session.php");
 
             $results = [];
             if ($userRole == 'tenant') {
-                $stmt = $db_conn->prepare("SELECT request_id, description, date(request_date) as date FROM requests WHERE  tenant_id=?");
+                $stmt = $db_conn->prepare("SELECT request_id, description, date(request_date) as date FROM requests WHERE  is_notification='0' and tenant_id=?");
                 try {
                     $stmt->execute(array($tenant_id));
                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -405,7 +405,7 @@ include_once("./check_session.php");
                     echo $e->getMessage();
                 }
             } else if ($userRole == 'landlord' || $userRole == 'admin') {
-                $sql = "SELECT request_id, description, date(request_date) as date FROM requests WHERE last_updated BETWEEN DATE_ADD(NOW(),INTERVAL -1 MONTH ) AND DATE_ADD(NOW(),INTERVAL +3 MONTH) ";
+                $sql = "SELECT request_id, description, date(request_date) as date FROM requests WHERE is_notification='0' and last_updated BETWEEN DATE_ADD(NOW(),INTERVAL -1 MONTH ) AND DATE_ADD(NOW(),INTERVAL +3 MONTH) ";
 
                 if ($userRole == 'landlord') {
                     global $landlord_id;
@@ -455,7 +455,7 @@ include_once("./check_session.php");
             , date(rd.create_date) as detail_date 
             FROM requests r JOIN requests_detail rd 
             ON r.request_id = rd.request_id 
-            WHERE rd.create_date BETWEEN DATE_ADD(NOW(),INTERVAL -1 MONTH ) AND DATE_ADD(NOW(),INTERVAL +3 MONTH)
+            WHERE r.is_notification='0' and rd.create_date BETWEEN DATE_ADD(NOW(),INTERVAL -1 MONTH ) AND DATE_ADD(NOW(),INTERVAL +3 MONTH)
             and r.tenant_id=?");
                 try {
                     $stmt->execute(array($tenant_id));
@@ -482,7 +482,7 @@ include_once("./check_session.php");
                 , date(rd.create_date) as detail_date 
                 FROM requests r JOIN requests_detail rd 
                 ON r.request_id = rd.request_id 
-                WHERE rd.create_date BETWEEN DATE_ADD(NOW(),INTERVAL -1 MONTH ) AND DATE_ADD(NOW(),INTERVAL +3 MONTH) ";
+                WHERE r.is_notification='0' and rd.create_date BETWEEN DATE_ADD(NOW(),INTERVAL -1 MONTH ) AND DATE_ADD(NOW(),INTERVAL +3 MONTH) ";
 
                 if ($userRole == 'landlord') {
                     global $landlord_id;
