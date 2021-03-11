@@ -213,7 +213,7 @@ function makeRentalPropertyIdArray($landlord_id){
     }
 }
 
-function loadTenantAddress()
+function loadTenantAddress() //gets the listing reference name
         {
             global $db_conn;
             global $user_id;
@@ -241,23 +241,33 @@ use PHPMailer\PHPMailer\PHPMailer;
 
 function phpMail() {
     $tenant = loadTenantAddress();
-
+    //For a service request
     if(isset($_POST['submit'])) {
         $mailData['subject'] = 'New Service Request';
         $mailData['reqName'] = selectCodeValue($_POST['reqType']);
+        $mailData['from1'] = 'rentalproject.fanshawe@gmail.com';
+        $mailData['from2'] = 'Rental Buddy';
 
         $mailData['body'] = 'You have a new Service Request from '. $_POST['tenantName'] . ' at ' . $tenant[0] .': <br><br>'. 
         'Request Type: ' . $mailData['reqName'] . '<br><br>'
         . 'Request Content: <br>' . $_POST['reqContent'] . 
         '<br><br><br> *This is an automated message. Do not reply.';
-    }
+    } //for an appointment
     else if(isset($_POST['appointment_submit'])) {
         $mailData['subject'] = 'New Appointment Request';
+        $mailData['from1'] = 'rentalproject.fanshawe@gmail.com';
+        $mailData['from2'] = 'Rental Buddy';
 
         $mailData['body'] = 'You have a new Appointment Request from '. $_POST['tenantName'] . ' at ' . $tenant[0] .': <br><br>'. 
         'Requested Appointment Date: ' . $_POST['datetime'] . '<br><br>'
         . 'Request Content: <br>' . $_POST['reqContent'] . 
         '<br><br><br> *This is an automated message. Do not reply.';
+    } //direct email to landlord
+    else if(isset($_POST['send'])) {
+        $mailData['from1'] = 'rentalproject.fanshawe@gmail.com';//$_POST['landlordEmail'];
+        $mailData['from2'] = 'Rental Buddy';//$_POST['landlordFN'] . " " . $_POST['landlordLN'];
+        $mailData['subject'] = $_POST['emailSubject'];
+        $mailData['body'] = $_POST['emailBody'];
     }
 
     $mail = new PHPMailer;
@@ -268,8 +278,8 @@ function phpMail() {
     $mail->SMTPAuth = true;
     $mail->Username = 'rentalproject.fanshawe@gmail.com';
     $mail->Password = ')(4u]B8kY$-0v;[1agkF';
-    $mail->setFrom('rentalproject.fanshawe@gmail.com', 'Rental Buddy');
-    $mail->addReplyTo('rentalproject.fanshawe@gmail.com', 'Rental Buddy');
+    $mail->setFrom($mailData['from1'], $mailData['from2']);
+    $mail->addReplyTo($mailData['from1'], $mailData['from2']);
     $mail->addAddress('fosterj319@yahoo.com', 'Jordan Foster');
     $mail->Subject = $mailData['subject'];
     $mail->msgHTML(file_get_contents('message.html'), __DIR__);
@@ -277,8 +287,9 @@ function phpMail() {
     //$mail->addAttachment('test.txt');
     if (!$mail->send()) {
         echo 'Mailer Error: ' . $mail->ErrorInfo;
-    } else {
-        echo 'The email message was sent.';
+    } else if(isset($_POST['send'])) { //green alert when direct email to landlord success
+        $message = "<div class=\"alert alert-success\" role=\"alert\">" . 'Your email has been sent.' . "</div>";
+        echo $message;
     }
 }
 
