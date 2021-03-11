@@ -2,7 +2,7 @@
     Title:       common.php
     Application: RentalBuddy
     Purpose:     Common functions and code
-    Author:      T. Kim, G. Blandford, Group 5, INFO-5139-01-21W
+    Author:      T. Kim, G. Blandford, J. Foster Group 5, INFO-5139-01-21W
     Date:        February 10th, 2021 (February 13th, 2021) 
 
     20210213    GPB     Added UnformatPhone (untested) 
@@ -18,6 +18,9 @@
                         Added checkLandlord function : input userID, output landlordID
                         Added makeRentalPropertyIdArray : input landlordId, output properties Array
     20210309    TK      Added checkTenantName : input tenantId, output tenantName
+
+    20210311    JF      Added loadTenantAddress function : input tenant_id, output listing_reference name
+                        Added phpMail function : inserts $mailData and sends email
                           
 -->
 
@@ -213,7 +216,7 @@ function makeRentalPropertyIdArray($landlord_id){
     }
 }
 
-function loadTenantAddress() //gets the listing reference name
+function loadTenantAddress() //gets the listing reference name from tenant_id | JF
         {
             global $db_conn;
             global $user_id;
@@ -239,14 +242,19 @@ function loadTenantAddress() //gets the listing reference name
 
 use PHPMailer\PHPMailer\PHPMailer;
 
-function phpMail() {
+function phpMail() { //Email handler and sender using phpMailer | JF
+    global $user_id;
     $tenant = loadTenantAddress();
+    $tenantId = checkTenantId($user_id);
+    $tenantName = checkTenantName($tenantId);
     //For a service request
     if(isset($_POST['submit'])) {
         $mailData['subject'] = 'New Service Request';
         $mailData['reqName'] = selectCodeValue($_POST['reqType']);
         $mailData['from1'] = 'rentalproject.fanshawe@gmail.com';
         $mailData['from2'] = 'Rental Buddy';
+        $mailData['sendTo'] = $_POST['landlordEmail'];
+        $mailData['sendToName'] = $tenantName;
 
         $mailData['body'] = 'You have a new Service Request from '. $_POST['tenantName'] . ' at ' . $tenant[0] .': <br><br>'. 
         'Request Type: ' . $mailData['reqName'] . '<br><br>'
@@ -257,6 +265,8 @@ function phpMail() {
         $mailData['subject'] = 'New Appointment Request';
         $mailData['from1'] = 'rentalproject.fanshawe@gmail.com';
         $mailData['from2'] = 'Rental Buddy';
+        $mailData['sendTo'] = $_POST['landlordEmail'];
+        $mailData['sendToName'] = $tenantName;
 
         $mailData['body'] = 'You have a new Appointment Request from '. $_POST['tenantName'] . ' at ' . $tenant[0] .': <br><br>'. 
         'Requested Appointment Date: ' . $_POST['datetime'] . '<br><br>'
@@ -264,8 +274,10 @@ function phpMail() {
         '<br><br><br> *This is an automated message. Do not reply.';
     } //direct email to landlord
     else if(isset($_POST['send'])) {
-        $mailData['from1'] = 'rentalproject.fanshawe@gmail.com';//$_POST['landlordEmail'];
+        $mailData['from1'] = 'rentalproject.fanshawe@gmail.com';//$_POST['tenantEmail'];
         $mailData['from2'] = 'Rental Buddy';//$_POST['landlordFN'] . " " . $_POST['landlordLN'];
+        $mailData['sendTo'] = $_POST['landlordEmail'];
+        $mailData['sendToName'] = $_POST['tenantFN'] . " " . $_POST['tenantLN'];
         $mailData['subject'] = $_POST['emailSubject'];
         $mailData['body'] = $_POST['emailBody'];
     }
@@ -280,7 +292,7 @@ function phpMail() {
     $mail->Password = ')(4u]B8kY$-0v;[1agkF';
     $mail->setFrom($mailData['from1'], $mailData['from2']);
     $mail->addReplyTo($mailData['from1'], $mailData['from2']);
-    $mail->addAddress('fosterj319@yahoo.com', 'Jordan Foster');
+    $mail->addAddress('fosterj319@yahoo.com'/*$mailData['sendTo']*/, $mailData['sendToName']);
     $mail->Subject = $mailData['subject'];
     $mail->msgHTML(file_get_contents('message.html'), __DIR__);
     $mail->Body = $mailData['body'];
