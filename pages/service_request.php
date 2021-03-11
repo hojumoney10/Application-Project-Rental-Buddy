@@ -108,6 +108,10 @@ include_once("./check_session.php");
         if (isset($_POST['request']) || isset($_POST['appointment'])) {
             inputPage();
         }
+        // email landlord
+        else if (isset($_POST['email'])) {
+            emailPage();
+        }
         // write function
         else if (isset($_POST['submit'])) {
             if ($_POST['reqType'] != 'Request Type' && $_POST['reqContent'] != '') {
@@ -133,6 +137,17 @@ include_once("./check_session.php");
                 }
                 msgHeader('red');
                 //inputPage();
+            }
+        } //email write function
+        else if (isset($_POST['send'])) {
+            if ($_POST['emailBody'] != '') {
+                phpMail();
+                viewPage();
+            } else {
+                if($_POST['emailBody'] == '') {
+                    $msg = "Please insert an Email body";
+                }
+                msgHeader('red');
             }
         }
         
@@ -681,6 +696,88 @@ include_once("./check_session.php");
         <?php
         }
 
+        function loadLandlordEmail()
+        {
+            global $db_conn;
+            global $user_id;
+            $tenant_id = checkTenantId($user_id);
+            $stmt = $db_conn->prepare('SELECT l.first_name, l.last_name, l.email
+            FROM landlords l
+            JOIN landlord_rental_properties lrp ON l.landlord_id = lrp.landlord_id
+            JOIN leases ls ON lrp.rental_property_id = ls.rental_property_id
+            WHERE l.landlord_id = lrp.landlord_id AND lrp.rental_property_id = ls.rental_property_id AND ls.tenant_id = :tenant_id');
+            try {
+                $stmt->execute(array(":tenant_id" => $tenant_id));
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $tmp = [
+                        $row['first_name'],
+                        $row['last_name'],
+                        $row['email']
+                    ];
+
+                    return $tmp;
+                }
+            } catch (Exception $e) {
+                $db_conn->rollback();
+                echo $e->getMessage();
+            }
+        }
+
+        function emailPage() {
+            global $tenant_id;
+            // load tenant information
+            $tenants = loadTenantsInfo();
+            $landlordEmail = loadLandlordEmail();
+            ?>
+        <form method="POST">
+            <div class="row mb-3">
+                <h3>Email Landlord</h3>
+                <h6>Please check your contact information, if you need, you can change your information in manage page.
+                </h6>
+            </div>
+            <div class="row mb-3">
+                <!-- landlord first_name, last_name is hidden -->
+                <div class="col-sm-10">
+                    <input type="hidden" class="form-control" id="landlordFN" name='landlordFN'
+                        value=<?php echo $landlordEmail[0]; ?>>
+                    <input type="hidden" class="form-control" id="landlordLN" name='landlordLN'
+                        value=<?php echo $landlordEmail[1]; ?>>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="tenantEmail" class="col-sm-2 col-form-label">From</label>
+                <div class="col-sm-10">
+                    <input type="email" class="form-control" id="tenantEmail" name='tenantEmail'
+                        placeholder="<?php echo $tenants[9]; ?>" disabled>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="landlordEmail" class="col-sm-2 col-form-label">To</label>
+                <div class="col-sm-10">
+                    <input type="email" class="form-control" id="landlordEmail" name='landlordEmail'
+                        placeholder="<?php echo $landlordEmail[2]; ?>" disabled>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="emailSubject" class="col-sm-2 col-form-label">Subject</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="emailSubject" name='emailSubject'>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="emailBody" class="col-sm-2 col-form-label">Email Body</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" id="emailBody" name='emailBody' rows="12"></textarea>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary" name="send">Send</button>
+            </div>
+        </form>
+
+        <?php
+        }
+
         function viewPage()
         {
             
@@ -693,7 +790,8 @@ include_once("./check_session.php");
                 $html = "<h1>Your Request History</h1><form method=\"POST\">
         <div class=\"d-flex justify-content-end\">
         <button type=\"submit\" class=\"btn btn-warning\" id=\"appointment\" name=\"appointment\" style=\"margin-right:5px;\">Make Appointment</button>
-        <button type=\"submit\" class=\"btn btn-success\" id=\"request\" name=\"request\">Request Maintenance</button>
+        <button type=\"submit\" class=\"btn btn-success\" id=\"request\" name=\"request\" style=\"margin-right:5px;\">Request Maintenance</button>
+        <button type=\"submit\" class=\"btn btn-secondary btn-crud\" id=\"email\" name=\"email\">Email Landlord</button>
         </div>
         </form>";
                 echo $html;
