@@ -712,7 +712,7 @@ include_once("./check_session.php");
             join codes c 
             on c.code_id = r.request_type_code
             
-            where r.tenant_id=?");
+            where is_notification='0' and r.tenant_id=?");
 
                 try {
                     $html = "<table class='table table-striped table-hover'>
@@ -760,13 +760,14 @@ include_once("./check_session.php");
                 join codes c
                 join rental_properties rp 
                 on c.code_id = r.request_type_code
-                and r.rental_property_id = rp.rental_property_id ";
+                and r.rental_property_id = rp.rental_property_id 
+                where is_notification='0'";
 
                 if ($userRole == 'landlord') {
                     global $landlord_id;
                     $rental_property_ids = makeRentalPropertyIdArray($landlord_id);
                     $in  = str_repeat('?,', count($rental_property_ids) - 1) . '?';
-                    $sql .= "where r.rental_property_id IN ($in)";
+                    $sql .= " and r.rental_property_id IN ($in)";
                 }
                 $stmt = $db_conn->prepare($sql);
 
