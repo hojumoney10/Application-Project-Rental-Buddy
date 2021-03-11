@@ -6,7 +6,7 @@ include_once("./check_session.php");
     Title:       service_request.php
     Application: RentalBuddy
     Purpose:     Handling Service request 
-    Author:      T. Kim, Group 5, INFO-5139-01-21W
+    Author:      T. Kim, J. Foster, Group 5, INFO-5139-01-21W
     Date:        March 7th, 2021 (February 10th, 2021) 
 
     20210307    GPB     Check user logged in & remove login/session_start further down
@@ -696,7 +696,7 @@ include_once("./check_session.php");
         <?php
         }
 
-        function loadLandlordEmail()
+        function loadLandlordEmail() //loads the landlord first_name, last_name and email | JF
         {
             global $db_conn;
             global $user_id;
@@ -723,9 +723,9 @@ include_once("./check_session.php");
             }
         }
 
-        function emailPage() {
+        function emailPage() { //displays the email creation page with tenant and landlord emails | JF
             global $tenant_id;
-            // load tenant information
+            // load tenant and landlord information
             $tenants = loadTenantsInfo();
             $landlordEmail = loadLandlordEmail();
             ?>
@@ -742,6 +742,10 @@ include_once("./check_session.php");
                         value=<?php echo $landlordEmail[0]; ?>>
                     <input type="hidden" class="form-control" id="landlordLN" name='landlordLN'
                         value=<?php echo $landlordEmail[1]; ?>>
+                    <input type="hidden" class="form-control" id="tenantFN" name='tenantFN'
+                        value=<?php echo $tenants[1]; ?>>
+                    <input type="hidden" class="form-control" id="tenantLN" name='tenantLN'
+                        value=<?php echo $tenants[2]; ?>>
                 </div>
             </div>
             <div class="row mb-3">
