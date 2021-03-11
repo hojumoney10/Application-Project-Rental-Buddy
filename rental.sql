@@ -331,6 +331,9 @@ CREATE TABLE `tenants` (
   `date_of_birth` date NOT NULL,
   `gender` varchar(10) NOT NULL,
   `social_insurance_number` varchar(10) DEFAULT NULL,
+  `contact_phone` tinyint(4) NOT NULL DEFAULT 1,
+  `contact_sms` tinyint(4) NOT NULL DEFAULT 1,
+  `contact_email` tinyint(4) NOT NULL DEFAULT 1,
   `status_code` varchar(10) NOT NULL,
   `last_updated` datetime NOT NULL DEFAULT current_timestamp(),
   `last_updated_user_id` varchar(50) NOT NULL
@@ -374,6 +377,35 @@ INSERT INTO `users` (`user_id`, `password`, `email`, `user_role_code`, `status_c
 --
 -- Indexes for dumped tables
 --
+
+CREATE TABLE `notifications` (
+  `notification_id` int NOT NULL,
+  `parent_notification_id` int DEFAULT (0) NULL,
+  `sender_user_id` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `recipient_user_id` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `details` varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `entity_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `entity_type_id` int DEFAULT NULL,
+  `sent_datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `notification_status` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT (_utf8mb4'unread')
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`notification_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `notification_id` int NOT NULL AUTO_INCREMENT;
+COMMIT;
 
 --
 -- Indexes for table `codes`

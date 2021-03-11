@@ -66,8 +66,8 @@ include_once("./pages/check_session.php");
 
   </main><!-- /.container -->
 
-
   <script src="vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="node_modules/bootstrap-icons/font//bootstrap-icons.css" rel="stylesheet">
 
 </body>
 
