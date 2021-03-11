@@ -217,20 +217,16 @@ function loadTenantAddress()
         {
             global $db_conn;
             global $user_id;
-            $stmt = $db_conn->prepare("select t.address_1, t.address_2, t.city, t.province_code, t.postal_code 
-            from tenants t
-            join users u
-            on u.tenant_id = t.tenant_id
-            where u.user_id=?");
+            $tenant_id = checkTenantId($user_id);
+            $stmt = $db_conn->prepare('SELECT rp.listing_reference 
+            FROM rental_properties rp
+            JOIN leases l on rp.rental_property_id = l.rental_property_id
+            WHERE l.rental_property_id = rp.rental_property_id AND l.tenant_id = :tenant_id');
             try {
-                $stmt->execute(array($user_id));
+                $stmt->execute(array(":tenant_id" => $tenant_id));
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     $tmp = [
-                        $row['address_1'],
-                        $row['address_2'],
-                        $row['city'],
-                        $row['province_code'],
-                        $row['postal_code'],
+                        $row['listing_reference']
                     ];
 
                     return $tmp;
@@ -250,7 +246,7 @@ function phpMail() {
         $mailData['subject'] = 'New Service Request';
         $mailData['reqName'] = selectCodeValue($_POST['reqType']);
 
-        $mailData['body'] = 'You have a new Service Request from '. $_POST['tenantName'] . ' at ' . $tenant[0] . " " . $tenant[1] . " " . $tenant[2] . ", " . $tenant[3] . " " . $tenant[4] .': <br><br>'. 
+        $mailData['body'] = 'You have a new Service Request from '. $_POST['tenantName'] . ' at ' . $tenant[0] .': <br><br>'. 
         'Request Type: ' . $mailData['reqName'] . '<br><br>'
         . 'Request Content: <br>' . $_POST['reqContent'] . 
         '<br><br><br> *This is an automated message. Do not reply.';
@@ -258,7 +254,7 @@ function phpMail() {
     else if(isset($_POST['appointment_submit'])) {
         $mailData['subject'] = 'New Appointment Request';
 
-        $mailData['body'] = 'You have a new Appointment Request from '. $_POST['tenantName'] . ' at ' . $tenant[0] . " " . $tenant[1] . " " . $tenant[2] . ", " . $tenant[3] . " " . $tenant[4] .': <br><br>'. 
+        $mailData['body'] = 'You have a new Appointment Request from '. $_POST['tenantName'] . ' at ' . $tenant[0] .': <br><br>'. 
         'Requested Appointment Date: ' . $_POST['datetime'] . '<br><br>'
         . 'Request Content: <br>' . $_POST['reqContent'] . 
         '<br><br><br> *This is an automated message. Do not reply.';
