@@ -284,7 +284,7 @@ function phpMail() { //Email handler and sender using phpMailer | JF
 
     $mail = new PHPMailer;
     $mail->isSMTP();
-    $mail->SMTPDebug = 2;
+    $mail->SMTPDebug = 0; //2 to show debug info
     $mail->Host = 'smtp.gmail.com';
     $mail->Port = 587;
     $mail->SMTPAuth = true;
