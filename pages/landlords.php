@@ -22,6 +22,7 @@ if (!isset($_SESSION['PAGEMODE'])){
         Date:        March 7th, 2021 (February 10th, 2021)
 
         20210307     GPB    Check user logged in
+        20210308     SKC    Added map API functionality
     -->
 
     <title>RentalBuddy - Landlords</title>
@@ -136,6 +137,12 @@ if (!isset($_SESSION['PAGEMODE'])){
             height: 50px;
             vertical-align: middle !important;
         }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 10px;
+        }
     </style>
 
     <!-- Custom styles for this template -->
@@ -230,7 +237,10 @@ if (!isset($_SESSION['PAGEMODE'])){
                     formLandlord();
 
                     // Show linked properties
-                    getLandlordProperties($_SESSION['landlord_id']); 
+                    getLandlordProperties($_SESSION['landlord_id']);
+
+                    // Show linked properties on map
+                    getLandlordPropertiesForMap($_SESSION['landlord_id']); 
 
                 // LIST RECORDS
                 } else {
@@ -286,6 +296,12 @@ if (!isset($_SESSION['PAGEMODE'])){
 
     <!-- Custom JS -->
     <!-- <script src="./js/script.js"></script> -->
+
+    <!-- google map API -->
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQJWK4iJkTx2qKbexRTHTUK8RFtgBrkdY&callback=initMap&libraries=&v=weekly"
+        async
+    ></script>
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

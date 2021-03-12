@@ -4,6 +4,8 @@
     Purpose:     Handles the landlord-related data access code
     Author:      G. Blandford, Group 5, INFO-5139-01-21W
     Date:        February 10th, 2021 (February 10th, 2021) 
+
+    20210308     SKC    Added map API functionality
 -->
 <?php
 
@@ -513,5 +515,144 @@ function saveLandlord()
         // close database connection
         $db_conn = null;
     }
+}
+
+// Get the properties for the landlord, to output on map
+function getLandlordPropertiesForMap($landlord_id)
+{
+    // create database connection
+    $db_conn = connectDB();
+
+    // SQL query
+    $querySQL = "select
+                    rp.rental_property_id
+                    , rp.latitude
+                    , rp.longitude
+                    
+                from landlord_rental_properties as lrp
+                inner join rental_properties rp on rp.rental_property_id = lrp.rental_property_id
+                    
+                where lrp.landlord_id = :landlord_id;";
+
+    $querySQL .= " order by rp.rental_property_id;";
+
+    $data = array(":landlord_id" => $landlord_id);
+
+    // prepare query
+    $stmt = $db_conn->prepare($querySQL);
+
+    // prepare error check
+    if (!$stmt) {
+        echo "<p>Error: " . $db_conn->errorCode() . "<br>Message: " . implode($db_conn->errorInfo()) . "</p><br>";
+        exit(1);
+    }
+?>
+    <div class="container-fluid">
+        <legend class="text-light bg-dark" style="margin-top: 10px">Property Locations</legend>
+        <table id="table-responsive" class="table table-light table-responsive table-striped">
+            <tbody>
+        <?php
+            // execute query in database
+            $status = $stmt->execute($data);
+
+            if ($status) { // no error
+
+                if ($stmt->rowCount() == 1) { // Results for landlord with one property
+
+                    // Display rental properties on map
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                ?>
+                        <tr>
+                            <td id="map">
+                                <script>
+                                    // Initialize and add the map
+                                    function initMap() {
+
+                                        // The map, centered at London ON
+                                        const london = { lat: 42.9849, lng: -81.2452};
+                                        const map = new google.maps.Map(document.getElementById("map"), {
+                                            zoom: 13,
+                                            center: london,
+                                        });
+
+                                        // The location of property
+                                        var property = { lat: <?php echo $row['latitude']; ?>, lng: <?php echo $row['longitude']; ?> };
+                                        console.log(property);
+                                                        
+                                        // The marker, positioned at property
+                                        var marker = new google.maps.Marker({
+                                            position: property,
+                                            map: map,
+                                        });
+
+                                    }
+                                </script>
+                            </td>
+                        </tr>
+                <?php
+                    }
+                ?>
+            </tbody>
+        </table>
+    </div>     
+            <?php
+
+                } else if ($stmt->rowCount() > 1) { // Results for landlord with more than one property
+                ?>
+                    <tr>
+                        <td id="map">                        
+                            <script>
+                                // Initialize and add the map
+                                function initMap() {
+                            
+                                    // The map, centered at London ON
+                                    const london = { lat: 42.9849, lng: -81.2452};
+                                    const map = new google.maps.Map(document.getElementById("map"), {
+                                        zoom: 13,
+                                        center: london,
+                                    });
+    
+                                <?php
+                                    // Display rental properties on map
+                                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                ?>
+                                        // The location of property
+                                        var property = { lat: <?php echo $row['latitude']; ?>, lng: <?php echo $row['longitude']; ?> };
+                                        console.log(property);
+                                        
+                                        // The markers, positioned at properties
+                                        var marker = new google.maps.Marker({
+                                            position: property,
+                                            map: map, 
+                                        });
+
+                                <?php
+                                    }
+                                ?>
+                                }
+                            </script>
+                        </td>
+                    </tr>
+            <?php
+                } else {
+                    // No rental properties found 
+            ?>
+                    <!-- <tr>
+                        <td></td>
+                        <td>No rental properties found.</td>
+                    </tr> -->
+            <?php
+                }
+            } else {
+                // execute error
+                echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
+
+                // close database connection
+                $db_conn = null;
+
+                exit(1);
+            }
+            // close database connection
+            $db_conn = null;
 }
 ?>
