@@ -35,6 +35,7 @@ if (!isset($_SESSION['PAGEMODE'])){
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="node_modules/bootstrap-icons/font//bootstrap-icons.css" rel="stylesheet">
 
     <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -216,22 +217,22 @@ if (!isset($_SESSION['PAGEMODE'])){
                     formUser();
 
                 // EDIT RECORD
-                } else if (isset($_POST['selected']) && strlen($_POST['selected'][0] > 0 ) ) {
-
+                } else if (isset($_POST['selected']) ) {
+                    
+                    
                     // Get Selected user 
                     $_SESSION['user_id'] = $_POST['selected'][0];
-
-                    var_dump($_SESSION['user_id']);
-
+                    
+                    
                     // Get user data
                     getUser();
-
+                    
                     // Show user
                     formUser();
-
-                // LIST RECORDS
+                    
+                    // LIST RECORDS
                 } else {
-
+                    
                     formDisplayUsers(); 
                 }
                 break;
