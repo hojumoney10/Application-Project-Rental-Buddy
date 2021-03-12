@@ -194,7 +194,7 @@ include_once("./check_session.php");
             $events[] = array(
                 'start' => date("Y-m-d"),
                 'end' => date("Y-m-d"),
-                'summary' => '<div id="d-day" class="header"><i class="bi bi-calendar-check"></i> Rent D-day: -'.$interval->days.'</div>'
+                'summary' => '<div id="d-day" class="header"><i class="bi bi-calendar-check"></i> End of lease: -'.$interval->days.'</div>'
             );
         }
 
@@ -247,11 +247,11 @@ include_once("./check_session.php");
                 $startYearMonthDay_str = $startYearMonthDay_str . $paymentDay[0];
 
                 for ($i = 1; $i <= $maxMonth; $i++) {
-
+                    $sum = $paymentDay[1] + $paymentDay[2] + $paymentDay[3];
                     $events[] = array(
                         'start' => $startYearMonthDay_str,
                         'end' => $startYearMonthDay_str,
-                        'summary' => '<div id="payment" class="subject"><i class="bi bi-cash-stack"></i> Payment Day</div><div id="payment" class="content">Rent $' . $paymentDay[1] . "<br>Parking $" . $paymentDay[2] . "<br>Other $" . $paymentDay[3] . '</div>',
+                        'summary' => '<div id="payment" class="subject"><i class="bi bi-cash-stack"></i> Payment Day: $'.$sum.'</div><div id="payment" class="content">Rent $' . $paymentDay[1] . "<br>Parking $" . $paymentDay[2] . "<br>Other $" . $paymentDay[3] . '</div>',
                         'mask' => true
                     );
                     $startYearMonthDay_str = strtotime("$startYearMonthDay_str +1 month");
@@ -405,7 +405,7 @@ include_once("./check_session.php");
                     echo $e->getMessage();
                 }
             } else if ($userRole == 'landlord' || $userRole == 'admin') {
-                $sql = "SELECT request_id, description, date(request_date) as date FROM requests WHERE is_notification='0' and last_updated BETWEEN DATE_ADD(NOW(),INTERVAL -1 MONTH ) AND DATE_ADD(NOW(),INTERVAL +3 MONTH) ";
+                $sql = "SELECT request_id, description, date(request_date) as date FROM requests WHERE is_notification='0'";
 
                 if ($userRole == 'landlord') {
                     global $landlord_id;
@@ -455,7 +455,7 @@ include_once("./check_session.php");
             , date(rd.create_date) as detail_date 
             FROM requests r JOIN requests_detail rd 
             ON r.request_id = rd.request_id 
-            WHERE r.is_notification='0' and rd.create_date BETWEEN DATE_ADD(NOW(),INTERVAL -1 MONTH ) AND DATE_ADD(NOW(),INTERVAL +3 MONTH)
+            WHERE r.is_notification='0'
             and r.tenant_id=?");
                 try {
                     $stmt->execute(array($tenant_id));
@@ -482,7 +482,7 @@ include_once("./check_session.php");
                 , date(rd.create_date) as detail_date 
                 FROM requests r JOIN requests_detail rd 
                 ON r.request_id = rd.request_id 
-                WHERE r.is_notification='0' and rd.create_date BETWEEN DATE_ADD(NOW(),INTERVAL -1 MONTH ) AND DATE_ADD(NOW(),INTERVAL +3 MONTH) ";
+                WHERE r.is_notification='0' ";
 
                 if ($userRole == 'landlord') {
                     global $landlord_id;
