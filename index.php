@@ -10,6 +10,7 @@ include_once("./pages/check_session.php");
     Date:        March 7th, 2021 (January 30th, 2021) 
 
     20210307     GPB     Login checks
+    20210312     GPB     Added bootstrap icons    
 -->
 
 <!doctype html>
@@ -54,7 +55,8 @@ include_once("./pages/check_session.php");
 <body>
   <?php
   //define('_SERVER_PATH_', str_replace(basename(__FILE__), "", realpath(__FILE__)));
-  include 'pages/navigationMenu.php';
+  require('pages/navigationMenu.php');
+
   ?>
 
   <main class="container">

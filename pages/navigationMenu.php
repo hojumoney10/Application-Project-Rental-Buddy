@@ -1,23 +1,33 @@
-<!-- 
-    Title:       navigationMenu.php
-    Application: RentalBuddy
-    Purpose:     Handles navigation for the RentalBuddy site
-    Author:      T. Kim, Group 5, INFO-5139-01-21W
-    Date:        February 16th, 2021 (January 30th, 2021) 
-
-    20210216    GPB     Added rental_properties.php to menu
-    20210217    SKC     Added service_request_tenant.php & lease_info_tenant.php to menu
-    20210219    GPB     Added temporary user selector for admin/landlord/tenant
-    20210220    GPB     Updated all links, and now menus are user-driven
-                        Added leases
-    20210306    THK     Added Calendar(for tenant)
-    20210307    GPB     Added Welcome/Logout
--->
-
 <?php
+// <!-- 
+// Title:       navigationMenu.php
+// Application: RentalBuddy
+// Purpose:     Handles navigation for the RentalBuddy site
+// Author:      T. Kim, Group 5, INFO-5139-01-21W
+// Date:        February 16th, 2021 (January 30th, 2021) 
 
-define('__ROOT__', dirname(__FILE__));
-require_once(__ROOT__ . "/common.php");
+// 20210216    GPB     Added rental_properties.php to menu
+// 20210217    SKC     Added service_request_tenant.php & lease_info_tenant.php to menu
+// 20210219    GPB     Added temporary user selector for admin/landlord/tenant
+// 20210220    GPB     Updated all links, and now menus are user-driven
+//                     Added leases
+// 20210306    THK     Added Calendar(for tenant)
+// 20210307    GPB     Added Welcome/Logout
+// 20210312    GPB     Added Notifications stub and badge
+// -->
+
+define('__PAGES__', dirname(__FILE__));
+require_once(__PAGES__ . "/common.php");
+
+// THIS WORKS;
+$root = dirname(dirname(__FILE__));
+// echo $root;
+
+// //BUT THIS DOESN'T!! WHY??
+// define('__ROOT__', dirname(dirname(__FILE__)));
+// echo __ROOT__;
+
+require($root . "/dal/notifications_dal.php");
 
 session_start();
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['selected-user']) && isset($_POST['btn-select-user'])) {
@@ -98,7 +108,9 @@ $base_URL .= $_SERVER['HTTP_HOST'];
                         <li id="li-notification" class="nav-item">
                             <div id="div-notifications">
                                 <a id="notification-icon" class="nav-link bi-envelope" style="font-size: 1.25rem; padding-top: 3px;" href="#">
-                                <span class="badge bg-danger"><?php echo 23;?></span></a>
+                                <span class="badge bg-danger"><?php $notifications = countNotifications();
+                                                                    echo ($notifications > 0 ? $notifications : "");
+                                                                     ?></span></a>
                             </div>
                         </li>                    
                         <!-- Logout -->

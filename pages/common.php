@@ -1,4 +1,5 @@
-<!-- 
+<?php
+/*
     Title:       common.php
     Application: RentalBuddy
     Purpose:     Common functions and code
@@ -22,12 +23,10 @@
     20210311    JF      Added loadTenantAddress function : input tenant_id, output listing_reference name
                         Added phpMail function : inserts $mailData and sends email
                           
--->
+*/
 
-<?php
 // time and date correction.
 date_default_timezone_set('America/Toronto');
-
 
 // For database connection
 define("DBHOST", "localhost");
@@ -48,7 +47,6 @@ function connectDB()
     catch(Exception $e) {
         echo 'Failed to obtain database handle : '.$e->getMessage();
     }
-
 }
 
 function sanitize_html($arg)
