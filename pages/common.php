@@ -1,4 +1,5 @@
-<!-- 
+<?php
+/*
     Title:       common.php
     Application: RentalBuddy
     Purpose:     Common functions and code
@@ -19,12 +20,10 @@
                         Added makeRentalPropertyIdArray : input landlordId, output properties Array
     20210309    TK      Added checkTenantName : input tenantId, output tenantName
                           
--->
+*/
 
-<?php
 // time and date correction.
 date_default_timezone_set('America/Toronto');
-
 
 // For database connection
 define("DBHOST", "localhost");
@@ -45,7 +44,6 @@ function connectDB()
     catch(Exception $e) {
         echo 'Failed to obtain database handle : '.$e->getMessage();
     }
-
 }
 
 function sanitize_html($arg)
