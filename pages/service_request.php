@@ -587,6 +587,7 @@ include_once("./check_session.php");
             $requestCodes = loadCode('request_type');
             // tenant information load
             $tenants = loadTenantsInfo();
+            $landlordEmail = loadLandlordEmail();
             ?>
         <form method="POST">
             <div class="row mb-3">
@@ -595,12 +596,16 @@ include_once("./check_session.php");
                 </h6>
             </div>
             <div class="row mb-3">
-                <!-- Tenant ID and rental_property_id is hidden -->
+                <!-- Tenant ID, rental_property_id, landlordFN and landlordLN is hidden -->
                 <div class="col-sm-10">
                     <input type="hidden" class="form-control" id="tenantId" name='tenantId'
                         value=<?php echo $tenant_id; ?>>
                     <input type="hidden" class="form-control" id="rentalId" name='rentalId'
                         value=<?php echo $property_id; ?>>
+                    <input type="hidden" class="form-control" id="landlordFN" name='landlordFN'
+                        value=<?php echo $landlordEmail[0]; ?>>
+                    <input type="hidden" class="form-control" id="landlordLN" name='landlordLN'
+                        value=<?php echo $landlordEmail[1]; ?>>
                 </div>
             </div>
             <div class="row mb-3">
