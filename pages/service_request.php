@@ -24,9 +24,10 @@ include_once("./check_session.php");
     <title>RentalBuddy - Service Request</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/starter-template/">
-
+    
     <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="../node_modules/bootstrap-icons/font//bootstrap-icons.css">
     <link rel="stylesheet" href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
 
     <!-- Datetime Picker -->
