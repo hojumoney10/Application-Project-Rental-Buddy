@@ -245,8 +245,6 @@ use PHPMailer\PHPMailer\PHPMailer;
 function phpMail() { //Email handler and sender using phpMailer | JF
     global $user_id;
     $tenant = loadTenantAddress();
-    $tenantId = checkTenantId($user_id);
-    $tenantName = checkTenantName($tenantId);
     //For a service request
     if(isset($_POST['submit'])) {
         $mailData['subject'] = 'New Service Request';
@@ -254,7 +252,7 @@ function phpMail() { //Email handler and sender using phpMailer | JF
         $mailData['from1'] = 'rentalproject.fanshawe@gmail.com';
         $mailData['from2'] = 'Rental Buddy';
         $mailData['sendTo'] = $_POST['landlordEmail'];
-        $mailData['sendToName'] = $tenantName;
+        $mailData['sendToName'] = $_POST['landlordFN'] . " " . $_POST['landlordLN'];
 
         $mailData['body'] = 'You have a new Service Request from '. $_POST['tenantName'] . ' at ' . $tenant[0] .': <br><br>'. 
         'Request Type: ' . $mailData['reqName'] . '<br><br>'
@@ -266,7 +264,7 @@ function phpMail() { //Email handler and sender using phpMailer | JF
         $mailData['from1'] = 'rentalproject.fanshawe@gmail.com';
         $mailData['from2'] = 'Rental Buddy';
         $mailData['sendTo'] = $_POST['landlordEmail'];
-        $mailData['sendToName'] = $tenantName;
+        $mailData['sendToName'] = $_POST['landlordFN'] . " " . $_POST['landlordLN'];
 
         $mailData['body'] = 'You have a new Appointment Request from '. $_POST['tenantName'] . ' at ' . $tenant[0] .': <br><br>'. 
         'Requested Appointment Date: ' . $_POST['datetime'] . '<br><br>'
@@ -275,9 +273,9 @@ function phpMail() { //Email handler and sender using phpMailer | JF
     } //direct email to landlord
     else if(isset($_POST['send'])) {
         $mailData['from1'] = 'rentalproject.fanshawe@gmail.com';//$_POST['tenantEmail'];
-        $mailData['from2'] = 'Rental Buddy';//$_POST['landlordFN'] . " " . $_POST['landlordLN'];
+        $mailData['from2'] = 'Rental Buddy';//$_POST['tenantFN'] . " " . $_POST['tenantLN'];
         $mailData['sendTo'] = $_POST['landlordEmail'];
-        $mailData['sendToName'] = $_POST['tenantFN'] . " " . $_POST['tenantLN'];
+        $mailData['sendToName'] = $_POST['landlordFN'] . " " . $_POST['landlordLN'];
         $mailData['subject'] = $_POST['emailSubject'];
         $mailData['body'] = $_POST['emailBody'];
     }
