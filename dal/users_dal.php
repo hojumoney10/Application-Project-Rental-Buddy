@@ -165,7 +165,7 @@ function getUser() {
         left join tenants t on t.tenant_id = u.tenant_id
         left join landlords l on l.landlord_id = u.landlord_id
 
-        WHERE user_id = :user_id";
+        WHERE u.user_id = :user_id";
 
                     // assign value to :user_id
                     $data = array(":user_id" => $user_id);
@@ -207,7 +207,7 @@ function saveUser() {
     $user_id = $_SESSION['user_id'];
     $rowdata = $_SESSION['rowdata'];
 
-  print_r($user_id);
+  //print_r($user_id);
  // print_r($rowdata);
 
     // create database connection
@@ -293,6 +293,8 @@ function saveUser() {
         
     } else {
 
+        var_dump($_SESSION['user_id']);
+
         // Update
         $querySQL = "UPDATE users AS u
                 SET 
@@ -307,17 +309,18 @@ function saveUser() {
                     , u.last_updated            = now()
                     , u.last_updated_user_id    = :session_user_id
 
-            WHERE u.user_id = :user_id";
+            WHERE u.user_id = :selected_user_id";
 
         // assign data values
-        $data = array(  ":user_id" => $user_id,
+        $data = array(  ":user_id" => $rowdata['user_id'],
                         ":password" => $rowdata['password'],
                         ":email" => $rowdata['email'],
                         ":user_role_code" => $rowdata['user_role_code'],
                         ":status_code" => $rowdata['status_code'],
                         ":tenant_id" => $rowdata['tenant_id'],
                         ":landlord_id" => $rowdata['landlord_id'],
-                        ":session_user_id" => $session_user_id
+                        ":session_user_id" => $session_user_id,
+                        ":selected_user_id" => $_SESSION['user_id']
                     );
 
         // Transaction Start
