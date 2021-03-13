@@ -140,22 +140,19 @@ function getUser() {
     // user
     $user_id = $_SESSION['user_id'];
 
-    var_dump($user_id);
-
     // create database connection
     $db_conn = connectDB();
 
     // SQL query
     $querySQL = "SELECT
-            u.user_id
-            , u.password            
+            u.user_id         
             , u.email
             , u.user_role_code
             , u.status_code
-            , u.tenant_id
-            , trim( concat(t.first_name, ' ', t.last_name ) ) as tenant_name  
-            , u.landlord_id
-            , trim( concat(l.first_name, ' ', l.last_name ) ) as landlord_name  
+            , ifnull(u.tenant_id,  '') as tenant_id
+            , trim( concat(ifnull(salutations.description, ''), ' ', t.first_name, ' ', t.last_name ) ) as tenant_name
+            , ifnull(u.landlord_id,  '') as landlord_id
+            , trim( concat(ifnull(salutations.description, ''), ' ', l.first_name, ' ', l.last_name ) ) as landlord_name
             , u.last_login
             , u.last_updated
             , u.last_updated_user_id
@@ -164,6 +161,10 @@ function getUser() {
 
         left join tenants t on t.tenant_id = u.tenant_id
         left join landlords l on l.landlord_id = u.landlord_id
+        left join codes salutations on salutations.code_value = t.salutation_code and salutations.code_type = 'salutation'
+
+        inner join codes user_role_codes on user_role_codes.code_value = u.user_role_code and user_role_codes.code_type = 'user_role'
+        inner join codes status_codes on status_codes.code_value = u.status_code and status_codes.code_type = 'user_status'
 
         WHERE u.user_id = :user_id";
 
@@ -233,7 +234,7 @@ function saveUser() {
                     , last_updated_user_id
                 ) VALUES (
                         :user_id
-                        , :password
+                        , md5(:user_id)
                         , :email
                         , :user_role_code
                         , :status_code
@@ -244,7 +245,6 @@ function saveUser() {
 
         // assign data values
         $data = array(  ":user_id" => $rowdata['user_id'],
-                        ":password" => $rowdata['password'],
                         ":email" => $rowdata['email'],
                         ":user_role_code" => $rowdata['user_role_code'],
                         ":status_code" => $rowdata['status_code'],
@@ -299,7 +299,6 @@ function saveUser() {
         $querySQL = "UPDATE users AS u
                 SET 
                       u.user_id                 = :user_id
-                    , u.password                = :password
                     , u.email                   = :email
                     , u.user_role_code          = :user_role_code
                     , u.status_code             = :status_code
@@ -313,7 +312,6 @@ function saveUser() {
 
         // assign data values
         $data = array(  ":user_id" => $rowdata['user_id'],
-                        ":password" => $rowdata['password'],
                         ":email" => $rowdata['email'],
                         ":user_role_code" => $rowdata['user_role_code'],
                         ":status_code" => $rowdata['status_code'],
