@@ -214,8 +214,8 @@ function saveUser() {
     // create database connection
     $db_conn = connectDB();
 
-    if ( isset($_SESSION['userdata']) && !empty($_SESSION['userdata'] ) ) {
-        $session_user_id = $_SESSION['userdata']['user_id'];
+    if ( isset($_SESSION['CURRENT_USER']) && !empty($_SESSION['CURRENT_USER'] ) ) {
+        $session_user_id = $_SESSION['CURRENT_USER']['user_id'];
     } else {
         $session_user_id = "admin";
     }
@@ -224,17 +224,17 @@ function saveUser() {
 
         // Add
         $querySQL = "INSERT INTO users (
-                    user_id
-                    , password
-                    , email
-                    , user_role_code
-                    , status_code
-                    , tenant_id
-                    , landlord_id
-                    , last_updated_user_id
+                    `user_id`
+                    , `password`
+                    , `email`
+                    , `user_role_code`
+                    , `status_code`
+                    , `tenant_id`
+                    , `landlord_id`
+                    , `last_updated_user_id`
                 ) VALUES (
                         :user_id
-                        , md5(:user_id)
+                        , :password
                         , :email
                         , :user_role_code
                         , :status_code
@@ -245,11 +245,12 @@ function saveUser() {
 
         // assign data values
         $data = array(  ":user_id" => $rowdata['user_id'],
+                        ":password" => "md5(" . $rowdata['user_id'] . ")",
                         ":email" => $rowdata['email'],
                         ":user_role_code" => $rowdata['user_role_code'],
                         ":status_code" => $rowdata['status_code'],
-                        ":tenant_id" => $rowdata['tenant_id'],
-                        ":landlord_id" => $rowdata['landlord_id'],
+                        ":tenant_id" => ($rowdata['tenant_id'] > "" ? $rowdata['tenant_id'] : null),
+                        ":landlord_id" => ($rowdata['landlord_id'] > "" ? $rowdata['landlord_id'] : null),
                         ":session_user_id" => $session_user_id
                     );
 
@@ -293,8 +294,6 @@ function saveUser() {
         
     } else {
 
-        var_dump($_SESSION['user_id']);
-
         // Update
         $querySQL = "UPDATE users AS u
                 SET 
@@ -315,8 +314,8 @@ function saveUser() {
                         ":email" => $rowdata['email'],
                         ":user_role_code" => $rowdata['user_role_code'],
                         ":status_code" => $rowdata['status_code'],
-                        ":tenant_id" => $rowdata['tenant_id'],
-                        ":landlord_id" => $rowdata['landlord_id'],
+                        ":tenant_id" => ($rowdata['tenant_id'] > "" ? $rowdata['tenant_id'] : null),
+                        ":landlord_id" => ($rowdata['landlord_id'] > "" ? $rowdata['landlord_id'] : null),
                         ":session_user_id" => $session_user_id,
                         ":selected_user_id" => $_SESSION['user_id']
                     );

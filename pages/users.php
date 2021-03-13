@@ -35,7 +35,6 @@ if (!isset($_SESSION['PAGEMODE'])){
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="node_modules/bootstrap-icons/font//bootstrap-icons.css" rel="stylesheet">
 
     <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -287,8 +286,8 @@ if (!isset($_SESSION['PAGEMODE'])){
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <link href="../node_modules/bootstrap-icons/font//bootstrap-icons.css" rel="stylesheet">
+
 </body>
 
 </html>
@@ -300,7 +299,6 @@ function validateUser() {
     $rowdata = $_SESSION['rowdata'];
 
     //$rowdata['user_id'] = $_POST['user-id'];
-    $rowdata['salutation_code'] = $_POST['salutation'];
 
     $err_msgs = [];
 
@@ -460,7 +458,7 @@ function formUser()
                 <!--tenant_id-->
                 <div class="input-group">
                     <label for="tenant-id">Tenant No.</label>
-                    <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 80px" id="tenant-id" name="tenant-id" aria-describedby="tenant-id-help" placeholder="" value="<?php echo $row['tenant_id']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 80px" id="tenant-id" name="tenant-id" aria-describedby="tenant-id-help" placeholder="" value="<?php echo $row['tenant_id']; ?>" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="tenant-id-help" class="form-text text-muted"></small>
 
                     <input type="text" class="form-control" id="tenant-name" name="tenant-name" value="<?php echo $row['tenant_name']; ?>" readonly>
@@ -470,7 +468,7 @@ function formUser()
                 <!--landlord_id-->
                 <div class="input-group">
                     <label for="landlord-id">Landlord No.</label>
-                    <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 80px" id="landlord-id" name="landlord-id" aria-describedby="landlord-id-help" placeholder="" value="<?php echo $row['landlord_id']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 80px" id="landlord-id" name="landlord-id" aria-describedby="landlord-id-help" placeholder="" value="<?php echo $row['landlord_id']; ?>" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="landlord-id-help" class="form-text text-muted"></small>
 
                     <input type="text" class="form-control" id="landlord-name" name="landlord-name" value="<?php echo $row['landlord_name']; ?>" readonly>
