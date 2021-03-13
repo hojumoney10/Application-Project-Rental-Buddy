@@ -217,7 +217,7 @@ if (!isset($_SESSION['PAGEMODE'])){
                     formUser();
 
                 // EDIT RECORD
-                } else if (isset($_POST['selected']) ) {
+                } else if (isset($_POST['selected']) && $_POST['selected'][0]  > "") {
                     
                     
                     // Get Selected user 
@@ -313,18 +313,6 @@ function validateUser() {
 			$err_msgs[] = "A user ID is required";
 		} else if (strlen( $rowdata['user_id'] ) > 50 ){
 			$err_msgs[] = "The user ID exceeds 50 characters";
-		}
-	}
-
-    // Password
-	if( !isset($_POST['password'] ) ) {
-		$err_msgs[] = "The password is required";
-	} else {
-		$rowdata['password'] = $_POST['password'];
-		if (strlen($rowdata['password']) == 0){
-			$err_msgs[] = "A password is required";
-		} else if (strlen( $rowdata['password'] ) > 50 ) {
-			$err_msgs[] = "The password exceeds 50 characters";
 		}
 	}
 
@@ -440,13 +428,6 @@ function formUser()
                     <small id="user-id-help" class="form-text text-muted"></small>
                 </div>
 
-                <!-- password -->
-                <div class="input-group">
-                    <label for="password">password</label>
-                    <input type="password" size="30" maxlength="50" class="form-control" id="password" name="password" aria-describedby="password-help" value="<?php echo $row['password']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="password-help" class="form-text text-muted"></small>
-                </div>
-
                 <!-- Email -->
                 <div class="input-group">
                     <label for="email">Email</label>
@@ -492,7 +473,7 @@ function formUser()
                     <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 80px" id="landlord-id" name="landlord-id" aria-describedby="landlord-id-help" placeholder="" value="<?php echo $row['landlord_id']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="landlord-id-help" class="form-text text-muted"></small>
 
-                    <input type="text" class="form-control" id="landlord-name" name="landlord-name" value="<?php echo $row['landloard_name']; ?>" readonly>
+                    <input type="text" class="form-control" id="landlord-name" name="landlord-name" value="<?php echo $row['landlord_name']; ?>" readonly>
                     <small id="landloard-name-help" class="form-text text-muted"></small>
                 </div>
 
