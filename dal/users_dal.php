@@ -140,27 +140,19 @@ function getUser() {
     // user
     $user_id = $_SESSION['user_id'];
 
-    var_dump($user_id);
-
     // create database connection
     $db_conn = connectDB();
 
     // SQL query
-    //trim( concat(ifnull(t.salutations.description, ''), ' ', t.first_name, ' ', t.last_name ) ) as tenant_name  
-    //trim( concat(ifnull(l.salutations.description, ''), ' ', l.first_name, ' ', l.last_name ) ) as landlord_name 
-    // inner join codes salutations on salutations.code_value = t.salutation_code and salutations.code_type = 'salutation'
-    // inner join codes salutations on salutations.code_value = l.salutation_code and salutations.code_type = 'salutation'
-
     $querySQL = "SELECT
-            u.user_id
-            , u.password            
+            u.user_id         
             , u.email
             , u.user_role_code
             , u.status_code
-            , u.tenant_id
-            , trim( concat(t.first_name, ' ', t.last_name ) ) as tenant_name  
-            , u.landlord_id
-            , trim( concat(l.first_name, ' ', l.last_name ) ) as landlord_name  
+            , ifnull(u.tenant_id,  '') as tenant_id
+            , trim( concat(ifnull(salutations.description, ''), ' ', t.first_name, ' ', t.last_name ) ) as tenant_name
+            , ifnull(u.landlord_id,  '') as landlord_id
+            , trim( concat(ifnull(salutations.description, ''), ' ', l.first_name, ' ', l.last_name ) ) as landlord_name
             , u.last_login
             , u.last_updated
             , u.last_updated_user_id
@@ -169,8 +161,12 @@ function getUser() {
 
         left join tenants t on t.tenant_id = u.tenant_id
         left join landlords l on l.landlord_id = u.landlord_id
+        left join codes salutations on salutations.code_value = t.salutation_code and salutations.code_type = 'salutation'
 
-        WHERE user_id = :user_id";
+        inner join codes user_role_codes on user_role_codes.code_value = u.user_role_code and user_role_codes.code_type = 'user_role'
+        inner join codes status_codes on status_codes.code_value = u.status_code and status_codes.code_type = 'user_status'
+
+        WHERE u.user_id = :user_id";
 
                     // assign value to :user_id
                     $data = array(":user_id" => $user_id);
@@ -212,7 +208,7 @@ function saveUser() {
     $user_id = $_SESSION['user_id'];
     $rowdata = $_SESSION['rowdata'];
 
- // print_r($user_id);
+  //print_r($user_id);
  // print_r($rowdata);
 
     // create database connection
@@ -228,57 +224,32 @@ function saveUser() {
 
         // Add
         $querySQL = "INSERT INTO users (
-                    salutation_code
-                    , first_name
-                    , last_name
-                    , address_1
-                    , address_2
-                    , city
-                    , province_code
-                    , postal_code
-                    , phone
-                    , fax
+                    user_id
+                    , password
                     , email
-                    , date_of_birth
-                    , gender
-                    , social_insurance_number
+                    , user_role_code
                     , status_code
+                    , tenant_id
+                    , landlord_id
                     , last_updated_user_id
                 ) VALUES (
-                        :salutation_code
-                        , :first_name
-                        , :last_name
-                        , :address_1
-                        , :address_2
-                        , :city
-                        , :province_code
-                        , :postal_code
-                        , :phone
-                        , :fax
+                        :user_id
+                        , md5(:user_id)
                         , :email
-                        , :date_of_birth
-                        , :gender
-                        , :social_insurance_number
+                        , :user_role_code
                         , :status_code
+                        , :tenant_id
+                        , :landlord_id
                         , :session_user_id
                 )";
 
         // assign data values
-        $data = array(  ":salutation_code" => $rowdata['salutation_code'],
-                        ":first_name" => $rowdata['first_name'],
-                        ":last_name" => $rowdata['last_name'],
-                        ":address_1" => $rowdata['address_1'],
-                        ":address_2" => $rowdata['address_2'],
-                        ":city" => $rowdata['city'],
-                        ":province_code" => $rowdata['province_code'],
-                        ":postal_code" => $rowdata['postal_code'],
-                        ":phone" => $rowdata['phone'],
-                        ":fax" => $rowdata['fax'],
+        $data = array(  ":user_id" => $rowdata['user_id'],
                         ":email" => $rowdata['email'],
-                        ":date_of_birth" => $rowdata['date_of_birth'],
-                        ":gender" => $rowdata['gender'],
-                        ":social_insurance_number" => $rowdata['social_insurance_number'],
+                        ":user_role_code" => $rowdata['user_role_code'],
                         ":status_code" => $rowdata['status_code'],
+                        ":tenant_id" => $rowdata['tenant_id'],
+                        ":landlord_id" => $rowdata['landlord_id'],
                         ":session_user_id" => $session_user_id
                     );
 
@@ -322,47 +293,32 @@ function saveUser() {
         
     } else {
 
-        // Update
-        $querySQL = "UPDATE users AS t
-                SET 
-                    t.salutation_code           = :salutation_code
-                    , t.first_name              = :first_name
-                    , t.last_name               = :last_name
-                    , t.address_1               = :address_1
-                    , t.address_2               = :address_2
-                    , t.city                    = :city
-                    , t.province_code           = :province_code
-                    , t.postal_code             = :postal_code
-                    , t.phone                   = :phone
-                    , t.fax                     = :fax
-                    , t.email                   = :email
-                    , t.date_of_birth           = :date_of_birth
-                    , t.gender                  = :gender
-                    , t.social_insurance_number = :social_insurance_number
-                    , t.status_code             = :status_code
-                    , t.last_updated            = now()
-                    , t.last_updated_user_id    = :session_user_id
+        var_dump($_SESSION['user_id']);
 
-            WHERE t.user_id = :user_id";
+        // Update
+        $querySQL = "UPDATE users AS u
+                SET 
+                      u.user_id                 = :user_id
+                    , u.email                   = :email
+                    , u.user_role_code          = :user_role_code
+                    , u.status_code             = :status_code
+                    , u.tenant_id               = :tenant_id
+                    , u.landlord_id             = :landlord_id
+                    , u.last_login              = now()
+                    , u.last_updated            = now()
+                    , u.last_updated_user_id    = :session_user_id
+
+            WHERE u.user_id = :selected_user_id";
 
         // assign data values
-        $data = array(  ":user_id" => $user_id,
-                        ":salutation_code" => $rowdata['salutation_code'],
-                        ":first_name" => $rowdata['first_name'],
-                        ":last_name" => $rowdata['last_name'],
-                        ":address_1" => $rowdata['address_1'],
-                        ":address_2" => $rowdata['address_2'],
-                        ":city" => $rowdata['city'],
-                        ":province_code" => $rowdata['province_code'],
-                        ":postal_code" => $rowdata['postal_code'],
-                        ":phone" => $rowdata['phone'],
-                        ":fax" => $rowdata['fax'],
+        $data = array(  ":user_id" => $rowdata['user_id'],
                         ":email" => $rowdata['email'],
-                        ":date_of_birth" => $rowdata['date_of_birth'],
-                        ":gender" => $rowdata['gender'],
-                        ":social_insurance_number" => $rowdata['social_insurance_number'],
+                        ":user_role_code" => $rowdata['user_role_code'],
                         ":status_code" => $rowdata['status_code'],
-                        ":session_user_id" => $session_user_id
+                        ":tenant_id" => $rowdata['tenant_id'],
+                        ":landlord_id" => $rowdata['landlord_id'],
+                        ":session_user_id" => $session_user_id,
+                        ":selected_user_id" => $_SESSION['user_id']
                     );
 
         // Transaction Start

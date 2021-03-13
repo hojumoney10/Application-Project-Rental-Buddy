@@ -2,7 +2,7 @@
 session_start();
 
 //login 
-//include_once("./check_session.php");
+include_once("./check_session.php");
 
 // session_unset();
 $_SESSION['PAGE'] = "users";
@@ -35,6 +35,7 @@ if (!isset($_SESSION['PAGEMODE'])){
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="node_modules/bootstrap-icons/font//bootstrap-icons.css" rel="stylesheet">
 
     <!-- Google Font -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -216,20 +217,22 @@ if (!isset($_SESSION['PAGEMODE'])){
                     formUser();
 
                 // EDIT RECORD
-                } else if (isset($_POST['selected']) && strlen($_POST['selected'][0] > 0 ) ) {
-
+                } else if (isset($_POST['selected']) && $_POST['selected'][0]  > "") {
+                    
+                    
                     // Get Selected user 
                     $_SESSION['user_id'] = $_POST['selected'][0];
-
+                    
+                    
                     // Get user data
                     getUser();
-
+                    
                     // Show user
                     formUser();
-
-                // LIST RECORDS
+                    
+                    // LIST RECORDS
                 } else {
-
+                    
                     formDisplayUsers(); 
                 }
                 break;
@@ -313,18 +316,6 @@ function validateUser() {
 		}
 	}
 
-    // Password
-	if( !isset($_POST['password'] ) ) {
-		$err_msgs[] = "The password is required";
-	} else {
-		$rowdata['password'] = $_POST['password'];
-		if (strlen($rowdata['password']) == 0){
-			$err_msgs[] = "A password is required";
-		} else if (strlen( $rowdata['password'] ) > 50 ) {
-			$err_msgs[] = "The password exceeds 50 characters";
-		}
-	}
-
     // email
 	if( !isset($_POST['email'] ) ) {
 		$err_msgs[] = "An email address is required";
@@ -338,10 +329,10 @@ function validateUser() {
 	}
 
     // user role code
-	if( !isset($_POST['user-role-code'] ) ) {
+	if( !isset($_POST['user-role'] ) ) {
 		$err_msgs[] = "A user role is required";
 	} else {
-		$rowdata['user_role_code'] = $_POST['user-role-code'];
+		$rowdata['user_role_code'] = $_POST['user-role'];
 		if (strlen($rowdata['user_role_code']) == 0){
 			$err_msgs[] = "A user role is required";
 		} else if (strlen($rowdata['user_role_code']) > 10 ){
@@ -437,13 +428,6 @@ function formUser()
                     <small id="user-id-help" class="form-text text-muted"></small>
                 </div>
 
-                <!-- password -->
-                <div class="input-group">
-                    <label for="password">password</label>
-                    <input type="password" size="30" maxlength="50" class="form-control" id="password" name="password" aria-describedby="password-help" value="<?php echo $row['password']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="password-help" class="form-text text-muted"></small>
-                </div>
-
                 <!-- Email -->
                 <div class="input-group">
                     <label for="email">Email</label>
@@ -489,7 +473,7 @@ function formUser()
                     <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 80px" id="landlord-id" name="landlord-id" aria-describedby="landlord-id-help" placeholder="" value="<?php echo $row['landlord_id']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
                     <small id="landlord-id-help" class="form-text text-muted"></small>
 
-                    <input type="text" class="form-control" id="landlord-name" name="landlord-name" value="<?php echo $row['landloard_name']; ?>" readonly>
+                    <input type="text" class="form-control" id="landlord-name" name="landlord-name" value="<?php echo $row['landlord_name']; ?>" readonly>
                     <small id="landloard-name-help" class="form-text text-muted"></small>
                 </div>
 
