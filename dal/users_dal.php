@@ -101,7 +101,7 @@ inner join codes status_codes on status_codes.code_value = u.status_code and sta
                                     <td><?php echo $row["user_role_code_description"]; ?></td>
                                     <td><a href="/pages/tenants.php"><?php echo $row["tenant_name"]; ?></a></td>
                                     <td><a href="/pages/landlords.php"><?php echo $row["landlord_name"]; ?></a></td>
-                                    <td style=" <?php echo ($row["status_code"] === "Active" ? "color: green" : "color: red"); ?>">
+                                    <td style=" <?php echo ($row["status_code"] === "Enabled" ? "color: green" : "color: red"); ?>">
                                         <?php echo $row["status_code"] ?> </td>
                                 </tr>
                             <?php
