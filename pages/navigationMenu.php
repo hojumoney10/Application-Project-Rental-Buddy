@@ -101,8 +101,6 @@ $base_URL .= $_SERVER['HTTP_HOST'];
             if (isset($_SESSION['CURRENT_USER'])) {
             ?>
                 <div style="float: right;">
-
-
                     <ul class="navbar-nav me-auto mb-2 mb-md-0">
                         <!-- Notifications -->
                         <li id="li-notification" class="nav-item">
@@ -119,6 +117,13 @@ $base_URL .= $_SERVER['HTTP_HOST'];
                                 Hello, <?php echo $_SESSION['CURRENT_USER']['user_name']; ?>!
                             </a>
                             <ul class="dropdown-menu me-auto mb-2 mb-md-0" aria-labelledby="navbarDropdownMenuLink2">
+                                <?php
+                                // Check if we are viewing as a tenant or an admin/landlord
+                                    if ($_SESSION['CURRENT_USER']['user_role_code'] == 'tenant') { ?>
+                                        <li><a class="dropdown-item" href="<?php echo $base_URL . "/pages/tenant_profile.php" ?>">My Profile</a></li>
+                                    <?php
+                                    }
+                                    ?>
                                 <li><a class="dropdown-item" href="<?php echo $base_URL . "/pages/logout.php" ?>">Logout</a></li>
                             </ul>
                         </li>

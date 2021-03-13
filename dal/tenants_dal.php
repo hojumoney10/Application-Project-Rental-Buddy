@@ -4,6 +4,9 @@
     Purpose:     Handles the tenant-related data access code
     Author:      J. Foster & S. Jeong, Group 5, INFO-5139-01-21W
     Date:        February 18th, 2021 (February 18th, 2021) 
+
+    20210312    GPB Corrected $session_user_id to use CURRENT_USER
+
 -->
 <?php
 
@@ -207,8 +210,8 @@ function saveTenant() {
     // create database connection
     $db_conn = connectDB();
 
-    if ( isset($_SESSION['userdata']) && !empty($_SESSION['userdata'] ) ) {
-        $session_user_id = $_SESSION['userdata']['user_id'];
+    if ( isset($_SESSION['CURRENT_USER']) && !empty($_SESSION['CURRENT_USER'] ) ) {
+        $session_user_id = $_SESSION['CURRENT_USER']['user_id'];
     } else {
         $session_user_id = "admin";
     }
