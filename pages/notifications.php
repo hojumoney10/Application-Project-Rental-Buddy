@@ -149,26 +149,11 @@ if (!isset($_SESSION['PAGEMODE'])){
     <?php
     // navigation & search bars
     require_once("./navigationMenu.php");
-    // require_once("./search-bar.php");
-    // require_once("./crud-buttons.php");
 
     // data access layer
     require_once("../dal/codes_dal.php");
-    // include("../dal/notifcations_dal.php");
 
     // Check POST ACTIONS first
-    // if ( isset( $_POST['btn-add'] ) && ( $_POST['btn-add'] == "Add") ) { // Add clicked
-    //     $_SESSION['PAGEMODE'] = "ADD";
-    //     $_SESSION['PAGENUM'] = 0;
-
-    // } else if ( isset( $_POST['btn-edit'] ) && ($_POST['btn-edit'] == "Edit") ) { // Edit clicked
-    //     $_SESSION['PAGEMODE'] = "EDIT";
-    //     $_SESSION['PAGENUM'] = 0;
-
-    // } else if ( isset($_POST['btn-delete'] ) && ( $_POST['btn-delete'] == "Delete") ) { //
-    //     $_SESSION['mode'] = "DELETE";
-
-    // } else 
     if ( isset($_POST['btn-view'] ) && ($_POST['btn-view'] == "View") ) {
         $_SESSION['PAGEMODE'] = "VIEW";
         $_SESSION['PAGENUM'] = 0;
@@ -228,29 +213,6 @@ if (!isset($_SESSION['PAGEMODE'])){
                 break;
 
             case 1: // Save
-                // if ( ( isset($_POST['btn-save'] ) ) && ( $_POST['btn-save'] == "Save" ) ) {
-                    
-                //     // Validate
-                //     $err_msgs = validateNotification();
-
-                //     if (count($err_msgs) > 0) {
-
-                //         displayErrors($err_msgs);
-                //         formNotification();
-                //     } else {
-                        
-                //         // Save to database                     
-                //         saveNotification();
-                //         $_SESSION['PAGENUM'] = 0;
-
-                //         // Clear row
-                //         unset($_SESSION['rowdata']);
-
-                //         $_SESSION['PAGEMODE'] = "LIST";
-                //         formDisplayNotifications();
-                //     }
-
-                // } else 
                 if  ( ( isset($_POST['btn-cancel'] ) ) && ( $_POST['btn-cancel'] == "Cancel" || $_POST['btn-cancel'] == "OK" ) ) {
 
                     $_SESSION['PAGEMODE'] = "LIST";
