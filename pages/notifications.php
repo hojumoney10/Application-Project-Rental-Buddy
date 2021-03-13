@@ -16,18 +16,18 @@ if (!isset($_SESSION['PAGEMODE'])){
     <!-- 
         Title:       notifications.php
         Application: RentalBuddy
-        Purpose:     Handles the crud functions of tenants
+        Purpose:     Handles the display/reading of notifications
         Author:      G. Blandford,  Group 5, INFO-5139-01-21W
         Date:        March 11th, 2021 (March 11th, 2021)
     -->
 
-    <title>RentalBuddy - Tenants</title>
+    <title>RentalBuddy - Notifications</title>
 
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="RentalBuddy Tenants">
-    <meta name="author" content="Graham Blandford, J. Foster , S. Jeong">
+    <meta name="description" content="RentalBuddy Notifications">
+    <meta name="author" content="Graham Blandford">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
@@ -69,10 +69,6 @@ if (!isset($_SESSION['PAGEMODE'])){
             font-family: 'Metrophobic', sans-serif;
             font-size: 16px;
         }
-
-        /* nav {
-            margin-top: 20px;
-        } */
 
         .container-crud {
             margin-left: 10px;
@@ -151,29 +147,29 @@ if (!isset($_SESSION['PAGEMODE'])){
 
 <body>
     <?php
-
     // navigation & search bars
     require_once("./navigationMenu.php");
-    require_once("./search-bar.php");
-    require_once("./crud-buttons.php");
+    // require_once("./search-bar.php");
+    // require_once("./crud-buttons.php");
 
     // data access layer
     require_once("../dal/codes_dal.php");
-    require_once("../dal/tenants_dal.php");
+    // include("../dal/notifcations_dal.php");
 
     // Check POST ACTIONS first
-    if ( isset( $_POST['btn-add'] ) && ( $_POST['btn-add'] == "Add") ) { // Add clicked
-        $_SESSION['PAGEMODE'] = "ADD";
-        $_SESSION['PAGENUM'] = 0;
+    // if ( isset( $_POST['btn-add'] ) && ( $_POST['btn-add'] == "Add") ) { // Add clicked
+    //     $_SESSION['PAGEMODE'] = "ADD";
+    //     $_SESSION['PAGENUM'] = 0;
 
-    } else if ( isset( $_POST['btn-edit'] ) && ($_POST['btn-edit'] == "Edit") ) { // Edit clicked
-        $_SESSION['PAGEMODE'] = "EDIT";
-        $_SESSION['PAGENUM'] = 0;
+    // } else if ( isset( $_POST['btn-edit'] ) && ($_POST['btn-edit'] == "Edit") ) { // Edit clicked
+    //     $_SESSION['PAGEMODE'] = "EDIT";
+    //     $_SESSION['PAGENUM'] = 0;
 
-    } else if ( isset($_POST['btn-delete'] ) && ( $_POST['btn-delete'] == "Delete") ) { //
-        $_SESSION['mode'] = "DELETE";
+    // } else if ( isset($_POST['btn-delete'] ) && ( $_POST['btn-delete'] == "Delete") ) { //
+    //     $_SESSION['mode'] = "DELETE";
 
-    } else if ( isset($_POST['btn-view'] ) && ($_POST['btn-view'] == "View") ) {
+    // } else 
+    if ( isset($_POST['btn-view'] ) && ($_POST['btn-view'] == "View") ) {
         $_SESSION['PAGEMODE'] = "VIEW";
         $_SESSION['PAGENUM'] = 0;
 
@@ -184,8 +180,8 @@ if (!isset($_SESSION['PAGEMODE'])){
 
     }
 
-     // var_dump( $_SERVER['REQUEST_METHOD'] );
-     // var_dump( $_SESSION );
+    //  var_dump( $_SERVER['REQUEST_METHOD'] );
+    //  var_dump( $_SESSION );
      // var_dump( $_POST );
      // var_dump( $_GET );
 
@@ -193,7 +189,7 @@ if (!isset($_SESSION['PAGEMODE'])){
     IF ($_SERVER['REQUEST_METHOD'] == 'GET' || $_SESSION['PAGEMODE'] == "LIST" ) {
 
         // Display Tenants
-        formDisplayTenants();
+        formDisplayNotifications();
 
     } else if ( $_SESSION['PAGEMODE'] == "ADD" || $_SESSION['PAGEMODE'] == "EDIT" || $_SESSION['PAGEMODE'] == "VIEW" ) {
 
@@ -206,71 +202,72 @@ if (!isset($_SESSION['PAGEMODE'])){
                 if ($_SESSION['PAGEMODE'] == "ADD") {
 
                     // Empty record
-                    $_SESSION['tenant_id'] = 0;
+                    $_SESSION['notification_id'] = 0;
                     $_SESSION['rowdata'] = array();
 
                     // Show tenant page
-                    formTenant();
+                    formNotification();
 
                 // EDIT RECORD
                 } else if (isset($_POST['selected']) && strlen($_POST['selected'][0] > 0 ) ) {
 
                     // Get Selected tenant 
-                    $_SESSION['tenant_id'] = $_POST['selected'][0];
+                    $_SESSION['notification_id'] = $_POST['selected'][0];
 
-                    // Get tenant data
-                    getTenant();
+                    // Get notification data
+                    getNotification();
 
                     // Show tenant
-                    formTenant();
+                    formNotification();
 
                 // LIST RECORDS
                 } else {
 
-                    formDisplayTenants(); 
+                    formDisplayNotifications(); 
                 }
                 break;
 
             case 1: // Save
-                if ( ( isset($_POST['btn-save'] ) ) && ( $_POST['btn-save'] == "Save" ) ) {
+                // if ( ( isset($_POST['btn-save'] ) ) && ( $_POST['btn-save'] == "Save" ) ) {
                     
-                    // Validate
-                    $err_msgs = validateTenant();
+                //     // Validate
+                //     $err_msgs = validateNotification();
 
-                    if (count($err_msgs) > 0) {
+                //     if (count($err_msgs) > 0) {
 
-                        displayErrors($err_msgs);
-                        formTenant();
-                    } else {
+                //         displayErrors($err_msgs);
+                //         formNotification();
+                //     } else {
                         
-                        // Save to database                     
-                        saveTenant();
-                        $_SESSION['PAGENUM'] = 0;
+                //         // Save to database                     
+                //         saveNotification();
+                //         $_SESSION['PAGENUM'] = 0;
 
-                        // Clear row
-                        unset($_SESSION['rowdata']);
+                //         // Clear row
+                //         unset($_SESSION['rowdata']);
 
-                        $_SESSION['PAGEMODE'] = "LIST";
-                        formDisplayTenants();
-                    }
+                //         $_SESSION['PAGEMODE'] = "LIST";
+                //         formDisplayNotifications();
+                //     }
 
-                } else if  ( ( isset($_POST['btn-cancel'] ) ) && ( $_POST['btn-cancel'] == "Cancel" || $_POST['btn-cancel'] == "OK" ) ) {
+                // } else 
+                if  ( ( isset($_POST['btn-cancel'] ) ) && ( $_POST['btn-cancel'] == "Cancel" || $_POST['btn-cancel'] == "OK" ) ) {
 
                     $_SESSION['PAGEMODE'] = "LIST";
                     $_SESSION['PAGENUM'] = 0;
 
                     // Clear current data
-                    unset($_SESSION['tenant_id']);
+                    unset($_SESSION['notification_id']);
                     unset($_SESSION['rowdata']);
 
-                    formDisplayTenants();
+                    formDisplayNotifications();
                 }
                 break;
             default:
         }
     } else if ($_SESSION['PAGEMODE'] == "LIST") {
 
-        formDisplayTenants();
+        formDisplayNotifications();
     }
 
     // We can do anything here AFTER the form has loaded
@@ -281,217 +278,36 @@ if (!isset($_SESSION['PAGEMODE'])){
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-</body>
+    <link href="../node_modules/bootstrap-icons/font//bootstrap-icons.css" rel="stylesheet">
+ </body>
 
 </html>
 
 <?php
 
-function validateTenant() {
-
-    $rowdata = $_SESSION['rowdata'];
-
-    $rowdata['tenant_id'] = $_POST['tenant-id'];
-    $rowdata['salutation_code'] = $_POST['salutation'];
-
-    $err_msgs = [];
-
-    // First name
-	if( !isset($_POST['first-name'] ) ) {
-		$err_msgs[] = "The first name is required";
-	} else {
-		$rowdata['first_name'] = $_POST['first-name'];
-		if (strlen($rowdata['first_name']) == 0){
-			$err_msgs[] = "A first name is required";
-		} else if (strlen( $rowdata['first_name'] ) > 50 ){
-			$err_msgs[] = "The first name exceeds 50 characters";
-		}
-	}
-
-    // Last name
-	if( !isset($_POST['last-name'] ) ) {
-		$err_msgs[] = "The last name is required";
-	} else {
-		$rowdata['last_name'] = $_POST['last-name'];
-		if (strlen($rowdata['last_name']) == 0){
-			$err_msgs[] = "A last name is required";
-		} else if (strlen( $rowdata['last_name'] ) > 50 ) {
-			$err_msgs[] = "The last name exceeds 50 characters";
-		}
-	}
-
-    // address 1
-	if( !isset($_POST['address-1'] ) ) {
-		$err_msgs[] = "An address is required";
-	} else {
-		$rowdata['address_1'] = $_POST['address-1'];
-		if (strlen($rowdata['address_1']) == 0){
-			$err_msgs[] = "An address is required";
-		} else if (strlen( $rowdata['address_1']) > 50 ){
-			$err_msgs[] = "The address exceeds 50 characters";
-		}
-	}
-
-    // address 2
-	if( isset($_POST['address-2'] ) ) {
-		$rowdata['address_2'] = $_POST['address-2'];
-		if ( strlen($rowdata['address_2'] ) > 50 ) {
-			$err_msgs[] = "The address exceeds 50 characters";
-		}
-	}
-
-    // city
-	if( !isset($_POST['city'] ) ) {
-		$err_msgs[] = "The city is required";
-	} else {
-		$rowdata['city'] = $_POST['city'];
-		if (strlen($rowdata['city']) == 0){
-			$err_msgs[] = "The city is required";
-		} else if (strlen( $rowdata['city']) > 50 ){
-			$err_msgs[] = "The city exceeds 50 characters";
-		}
-	}
-
-    // province code
-	if( !isset($_POST['province'] ) ) {
-		$err_msgs[] = "A province is required";
-	} else {
-		$rowdata['province_code'] = $_POST['province'];
-		if (strlen($rowdata['province_code']) == 0){
-			$err_msgs[] = "A province is required";
-		} else if (strlen($rowdata['province_code']) > 2 ){
-			$err_msgs[] = "The province exceeds 2 characters";
-		}
-	}
-
-    // postal code - use REGEX
-	if( !isset($_POST['postal-code'] ) ) {
-		$err_msgs[] = "A postal code is required";
-	} else {
-		$rowdata['postal_code'] = $_POST['postal-code'];
-        if (strlen($rowdata['postal_code']) == 0){
-			$err_msgs[] = "A postal code is required";
-		} else if ( !preg_match('/^([a-zA-Z]\d[a-zA-Z])\ {0,1}(\d[a-zA-Z]\d)$/', trim($rowdata['postal_code'] ) ) ) {
-			$err_msgs[] = "The postal code is not valid";
-        }
-	}
-
-    // phone
-	if( !isset($_POST['phone'] ) ) {
-		$err_msgs[] = "A phone number is required";
-	} else {
-		$rowdata['phone'] = unformatPhone($_POST['phone']);
-		if (strlen($rowdata['phone']) == 0){
-			$err_msgs[] = "A phone number is required";
-		} else if (strlen( $rowdata['phone']) > 20 ){
-			$err_msgs[] = "The phone number exceeds 20 characters";
-		}
-	}
-
-    // fax
-	if( isset($_POST['phone'] ) ) {
-		$rowdata['fax'] = unformatPhone($_POST['fax']);
-		if (strlen( $rowdata['fax']) > 20 ){
-			$err_msgs[] = "The fax number exceeds 20 characters";
-		}
-	}    
-
-    // email
-	if( !isset($_POST['email'] ) ) {
-		$err_msgs[] = "An email address is required";
-	} else {
-		$rowdata['email'] = $_POST['email'];
-		if (strlen($rowdata['email']) == 0){
-			$err_msgs[] = "An email address is required";
-		} else if (strlen( $rowdata['email']) > 100 ){
-			$err_msgs[] = "The email address exceeds 100 characters";
-		}
-	}
-
-    // date of birth
-    if( !isset($_POST['date-of-birth'] ) ) {
-		$err_msgs[] = "A date of birth is required";
-	} else {
-		$rowdata['date_of_birth'] = $_POST['date-of-birth'];
-		if (strlen($rowdata['date_of_birth']) == 0){
-			$err_msgs[] = "A date of birth is required";
-		} 
-	}
-
-    // gender
-	if( !isset($_POST['gender'] ) ) {
-		$err_msgs[] = "A gender is required";
-	} else {
-		$rowdata['gender'] = $_POST['gender'];
-		if (strlen($rowdata['gender']) == 0){
-			$err_msgs[] = "A gender is required";
-		} else if (strlen( $rowdata['gender']) > 11 ){
-			$err_msgs[] = "The gender exceeds 11 characters";
-		}
-	}
-
-    // social insurance number
-	if( !isset($_POST['social-insurance-number'] ) ) {
-		$err_msgs[] = "A social insurance number is required";
-	} else {
-		$rowdata['social_insurance_number'] = $_POST['social-insurance-number'];
-		if (strlen($rowdata['social_insurance_number']) == 0){
-			$err_msgs[] = "A social insurance number is required";
-		} else if ( !preg_match('/^[\d]{9}$/', trim($rowdata['social_insurance_number'] ) ) ) {
-			$err_msgs[] = "The social insurance number is not valid";
-        }
-	}
-
-    // status code
-	if( !isset($_POST['status-code'] ) ) {
-		$err_msgs[] = "A status is required";
-	} else {
-		$rowdata['status_code'] = $_POST['status-code'];
-		if (strlen($rowdata['status_code']) == 0){
-			$err_msgs[] = "A status is required";
-		} else if (strlen($rowdata['status_code']) > 10 ){
-			$err_msgs[] = "The status exceeds 10 characters";
-		}
-	}
-        
-    $_SESSION['rowdata'] = $rowdata;
-	return $err_msgs;
-}
-
-function formDisplayTenants()
+function formDisplayNotifications()
 {
-
-    $fvalue = "";
-    if (isset($_POST['btn-search']) && isset($_POST['text-search'])) {
-        $_SESSION['text-search'] = trim($_POST['text-search']);
-        $fvalue = $_SESSION['text-search'];
-    } else if (isset($_POST['btn-search-clear'])) {
-        $_SESSION['text-search'] = "";
-        $fvalue = $_SESSION['text-search'];
-    } else if (isset($_SESSION['text-search'])) {
-        $fvalue = $_SESSION['text-search'];
-    }
 ?>
     <form method="POST">
         <?php
 
         // Get Data
-        getTenants();
+        getNotifications();
 
-        // Search Bar
-        getSearch($fvalue);
-
-        // Get Standard CRUD buttons
-        getCRUDButtons();
         ?>
-
-    </form>
+            <div class="container-fluid container-crud">
+                <table>
+                    <tr>
+                        <td><input type="submit" class="btn btn-secondary btn-crud" name="btn-view" value="View"></td>
+                        <!-- <td><input type="submit" class="btn btn-danger btn-crud" name="btn-delete" value="Delete"></td> -->
+                    </tr>
+                </table>
+                </div>   
+        </form>
     </div>
 <?php }
 
-function formTenant()
+function formNotification()
 {
     // Get the data
     $row = $_SESSION['rowdata'];
@@ -513,127 +329,29 @@ function formTenant()
                         default:
                             break;
                     }
-                    ?>Tenant Details</legend>
+                    ?>Notification</legend>
 
-                <!-- Tenant no.-->
+                <!-- From -->
                 <div class="input-group">
-                    <label for="tenant-id">Tenant No.</label>
-                    <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 100px" id="tenant-id" name="tenant-id" aria-describedby="tenant-id-help" placeholder="" value="<?php echo $row['tenant_id']; ?>" readonly>
-                    <small id="tenant-help" class="form-text text-muted"></small>
+                    <label for="sender-user-id">From</label>
+                    <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 100px" id="sender-user-id" name="sender-user-id" aria-describedby="sender-user-id-help" placeholder="" value="<?php echo $row['sender_user_id']; ?>" readonly>
+                    <small id="sender-user-id-help" class="form-text text-muted"></small>
                 </div>
 
-                <!--Salutation -->
+
+                <!-- Details -->
                 <div class="input-group">
-                    <label for="salutation">Salutation</label>
-                    <select class="selectpicker form-control" style="max-width: 100px" id="salutation" name="salutation" aria-describedby="salutation-help" placeholder="Enter salutation" value="<?php echo $row['salutation_code']; ?>"<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                        <?php
-                        getCodes('salutation', $row['salutation_code']);
-                        ?>
-                    </select>
-                    <small id="salutation-help" class="form-text text-muted"></small>
+                    <label for="details">Details</label>
+                    <textarea rows="10" cols="50" style="height:100%;" class="form-control" id="details" name="details" aria-describedby="details-help" placeholder="Notification details" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>><?php echo $row['details']; ?></textarea>
+                    <small id="details-help" class="form-text text-muted"></small>
                 </div>
 
-                <!-- first name -->
+                <!-- Sent date -->
                 <div class="input-group">
-                    <label for="first-name">First Name</label>
-                    <input type="text" size="30" maxlength="50" class="form-control" id="first-name" name="first-name" aria-describedby="first-name-help" placeholder="Enter first name" value="<?php echo $row['first_name']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="first-name-help" class="form-text text-muted"></small>
-                </div>
-
-                <!-- last name -->
-                <div class="input-group">
-                    <label for="last-name">Last Name</label>
-                    <input type="text" size="30" maxlength="50" class="form-control" id="last-name" name="last-name" aria-describedby="last-name-help" placeholder="Enter last name" value="<?php echo $row['last_name']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="last-name-help" class="form-text text-muted"></small>
-                </div>
-
-                <!-- address_1 -->
-                <div class="input-group">
-                    <label for="address-1">Address 1</label>
-                    <input type="text" size="30" maxlength="50" class="form-control" id="address-1" name="address-1" aria-describedby="address-1-help" placeholder="Enter address" value="<?php echo $row['address_1']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="address-1-help" class="form-text text-muted"></small>
-                </div>
-
-                <!-- address_2 -->
-                <div class="input-group">
-                    <label for="address-2">Address 2</label>
-                    <input type="text" size="30" maxlength="50" class="form-control" id="address-2" name="address-2" aria-describedby="address-2-help" placeholder="Enter address, e.g. unit no." value="<?php echo $row['address_2']; ?>"<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="address-2-help" class="form-text text-muted"></small>
-                </div>
-
-                <!-- city -->
-                <div class="input-group">
-                    <label for="city">City</label>
-                    <input type="text" size="30" maxlength="50" class="form-control" id="city" name="city" aria-describedby="city-help" placeholder="Enter city" value="<?php echo $row['city']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="city-help" class="form-text text-muted"></small>
-                </div>
-
-                <!-- province & postal code -->
-                <div class="input-group">
-                    <label for="province">Province/Postal Code</label>
-                    <select class="selectpicker form-control" style="max-width: 220px;" id="province" name="province" aria-describedby="province-help" placeholder="Enter province" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                        <?php
-                        getCodes('province', $row['province_code']);
-                        ?>
-                    </select>
-                    <small id="province-help" class="form-text text-muted"></small>
-
-                    <input type="text" style="max-width: 100px;" class="form-control" id="postal-code" name="postal-code" aria-describedby="postal-help" placeholder="Enter postal code" value="<?php echo $row['postal_code']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="postal-code-help" class="form-text text-muted"></small>
-                </div>
-
-                <!-- phone & fax -->
-                <div class="input-group">
-                    <label for="phone">Phone/Fax</label>
-                    <input type="tel" size="15" maxlength="15" style="max-width: 50%;" class="form-control" id="phone" name="phone" aria-describedby="phone-help" placeholder="Enter main phone number" value="<?php echo formatPhone($row['phone']); ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="phone-code-help" class="form-text text-muted"></small>
-
-                    <input type="tel" size="15" maxlength="15" style="max-width: 50%;" class="form-control" id="fax" name="fax" aria-describedby="fax-help" placeholder="Enter fax number" value="<?php echo formatPhone($row['fax']); ?>"<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="fax-code-help" class="form-text text-muted"></small>
-                </div>
-
-                <!-- email -->
-                <div class="input-group">
-                    <label for="email">Email</label>
-                    <input type="email" size="30" maxlength="50" class="form-control" id="email" name="email" aria-describedby="email-help" placeholder="Enter email address" value="<?php echo $row['email']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="email-help" class="form-text text-muted"></small>
-                </div>
-                
-                <!-- date of birth -->
-                <div class="input-group">
-                    <label for="date-of-birth">Date of Birth</label>
-                    <input type="date" style="max-width: 200px;" class="form-control" id="date-of-birth" name="date-of-birth" aria-describedby="date-of-birth-help" value="<?php echo $row['date_of_birth']; ?>" >
-                    <small id="date-of-birth-help" class="form-text text-muted"></small>
-                </div>
-
-                <!--  gender  -->
-                <div class="input-group">
-                    <label for="gender">Gender</label>
-                    <select class="selectpicker form-control" style="max-width: 100px" id="gender" name="gender" aria-describedby="gender-help" placeholder="Enter gender" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                        <?php
-                        getCodes('gender', $row['gender']);
-                        ?>
-                    </select>
-                    <small id="gender-help" class="form-text text-muted"></small>
-                </div> 
-
-                <!-- social insurance number -->
-                <div class="input-group">
-                    <label for="social-insurance-number">SIN</label>
-                    <input type="text" size="9" maxlength="9" class="form-control" id="social-insurance-number" name="social-insurance-number" aria-describedby="social-insurance-number" placeholder="Enter social insurance number" value="<?php echo $row['social_insurance_number']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="social-insurance-number-help" class="form-text text-muted"></small>
+                    <label for="sent-datetime">Sent</label>
+                    <input type="text" class="form-control" id="sent-datetime" name="sent-datetime" aria-describedby="sent-datetime" placeholder="Sent date and time" value="<?php echo $row['sent_datetime']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <small id="sent-datetime-help" class="form-text text-muted"></small>
                 </div>      
-
-                <!--  status  -->
-                <div class="input-group">
-                    <label for="status-code">Status</label>
-                    <select class="selectpicker form-control" style="max-width: 100px" id="status-code" name="status-code" aria-describedby="status-code-help" placeholder="Enter status" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                        <?php
-                        getCodes('tenant_status', $row['status_code']);
-                        ?>
-                    </select>
-                    <small id="status-code-help" class="form-text text-muted"></small>
-                </div>
 
                 <table>
                     <tr>
