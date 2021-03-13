@@ -9,8 +9,9 @@ include_once("./check_session.php");
     Author:      T. Kim, Group 5, INFO-5139-01-21W
     Date:        March 7th, 2021 (February 10th, 2021) 
 
-    20210307    GPB     Check user logged in & remove login/session_start further down
-
+    20210307     GPB    Check user logged in & remove login/session_start further down
+    20210311     GPB    Added bootstrap icons link
+ 
 -->
 <!doctype html>
 <html lang="en">
@@ -28,6 +29,7 @@ include_once("./check_session.php");
     <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
+    <link href="../node_modules/bootstrap-icons/font//bootstrap-icons.css" rel="stylesheet">
 
     <!-- Datetime Picker -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"

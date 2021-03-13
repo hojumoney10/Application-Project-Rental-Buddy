@@ -107,7 +107,7 @@ $base_URL .= $_SERVER['HTTP_HOST'];
                         <!-- Notifications -->
                         <li id="li-notification" class="nav-item">
                             <div id="div-notifications">
-                                <a id="notification-icon" class="nav-link bi-envelope" style="font-size: 1.25rem; padding-top: 3px;" href="#">
+                                <a id="notification-icon" class="nav-link bi-envelope" style="font-size: 1.25rem; padding-top: 3px;" href="<?php echo $base_URL . "/pages/notifications.php" ?>">
                                 <span class="badge bg-danger"><?php $notifications = countNotifications();
                                                                     echo ($notifications > 0 ? $notifications : "");
                                                                      ?></span></a>
