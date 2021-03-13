@@ -87,7 +87,6 @@ include_once("./check_session.php");
 
         use benhall14\phpCalendar\Calendar as Calendar;
 
-        dump($_POST);
         # create the calendar object
 
         $calendar = new Calendar();
@@ -101,7 +100,6 @@ include_once("./check_session.php");
         //     $msg = "Please login..";
         //     msgHeader('red');
         // }
-        //$userRole = checkUserRoleCode($_SESSION['CURRENT_USER']['user_id']);
 
         $userRole = $_SESSION['CURRENT_USER']['user_role_code'];
         $user_id = $_SESSION['CURRENT_USER']['user_id'];
@@ -110,6 +108,7 @@ include_once("./check_session.php");
             $tenant_id = $_SESSION['CURRENT_USER']['tenant_id'];
             $property_id = checkPropertyId($tenant_id);
             drawCalendarButton();
+            addEvent();
             addDday();
             addRequestHeader();
             addRequestDetail();
@@ -126,28 +125,88 @@ include_once("./check_session.php");
             }
         }
         // if landrord
-        else if ($userRole == 'landlord') {
+        else if ($userRole == 'landlord' && !isset($_POST['eventsubmit'])) {
             $landlord_id = $_SESSION['CURRENT_USER']['landlord_id'];
-            drawCalendarButton();
-            addRequestHeader();
-            addRequestDetail();
-            addPaymentDay();
-            addAppointmentLandlord();
-            if (isset($_POST['timestamp'])) {
-                if (isset($_POST['next'])) {
-                    drawCalendar($_POST['timestamp'], 'next');
-                } else if (isset($_POST['previous'])) {
-                    drawCalendar($_POST['timestamp'], 'previous');
-                }
+            $rental_property_ids = makeRentalPropertyIdArray($landlord_id);
+            if (count($rental_property_ids) == 0) {
+                $msg = "There are no properties held by landlord.";
+                msgHeader("red");
             } else {
+                drawCalendarButton();
+                addEvent();
+                addRequestHeader();
+                addRequestDetail();
+                addPaymentDay();
+                addAppointmentLandlord();
+                if (isset($_POST['timestamp'])) {
+                    if (isset($_POST['next'])) {
+                        drawCalendar($_POST['timestamp'], 'next');
+                    } else if (isset($_POST['previous'])) {
+                        drawCalendar($_POST['timestamp'], 'previous');
+                    }
+                } else {
+                    drawCalendar(strtotime("Now"), 'now');
+                }
+            }
+        }
+        // insert event
+        else if ($userRole == 'landlord' && isset($_POST['eventsubmit'])) {
+            if ($_POST['datetime'] == "" || $_POST['datetime'] == "eventdescription") {
+                $msg = "Please insert date&time or description.";
+                msgHeader('red');
+                $landlord_id = $_SESSION['CURRENT_USER']['landlord_id'];
+                drawCalendarButton();
+                addEvent();
+                addRequestHeader();
+                addRequestDetail();
+                addPaymentDay();
+                addAppointmentLandlord();
                 drawCalendar(strtotime("Now"), 'now');
+            } else {
+                insertEvent();
             }
         } else if ($userRole == 'admin') {
-
             $msg = "Calendar feature is not supported for Administrator account.";
             msgHeader('red');
         }
 
+        function insertEvent()
+        {
+            global $db_conn;
+            global $user_id;
+            global $msg;
+
+            $stmt = $db_conn->prepare("INSERT INTO requests (request_date, rental_property_id, request_type_code, description, status_code, priority_code, appointment_date_time, is_notification, last_updated_user_id) values(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            try {
+                $array = [
+                    date('Y-m-d H:i:s', strtotime($_POST['datetime'])),
+                    $_POST['selectedPropertyId'],
+                    70,
+                    $_POST['eventdescription'],
+                    63,
+                    65,
+                    date('Y-m-d H:i:s', strtotime($_POST['datetime'])),
+                    1,
+                    $user_id
+                ];
+
+                $db_conn->beginTransaction();
+                $stmt->execute($array);
+                $db_conn->commit();
+            } catch (Exception $e) {
+                $db_conn->rollback();
+                echo $e->getMessage();
+            }
+            $msg = "Event has been inserted.";
+            msgHeader('green');
+        ?>
+        <script>
+        setTimeout(function() {
+            location.href = window.location.pathname;
+        }, 1000);
+        </script>
+        <?php
+        }
 
         //Add notification
         //waiting...
@@ -162,7 +221,7 @@ include_once("./check_session.php");
             if ($userRole == 'landlord') {
                 $html .= "<button type=\"button\" class=\"btn btn-primary\" data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"><i class=\"bi bi-calendar-event\"></i> Make event</button>";
 
-                ?>
+            ?>
         <form method="POST">
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                 aria-hidden="true">
@@ -194,11 +253,19 @@ include_once("./check_session.php");
                                 <label for="selectproperty" class="col-sm-4 col-form-label">Select Property</label>
                                 <div class="col-sm-7">
 
-                                    <select id="selectproperty" class="form-select" aria-label="Default select example">
-                                        <option selected>Open this select menu</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
+                                    <select id="selectproperty" class="form-select" aria-label="Select Property"
+                                        name="selectedPropertyId">
+                                        <?php
+                                                global $landlord_id;
+                                                $selectbox = '';
+                                                $rental_property_names = returnRentalPropertyIdAndNameArray($landlord_id);
+                                                foreach ($rental_property_names as $v1) {
+                                                    $selectbox .= '<option value="' . $v1[0] . '">' . $v1[1] . '</option>';
+                                                }
+                                                echo $selectbox;
+                                                unset($selectbox);
+                                                ?>
+
                                     </select>
 
                                 </div>
@@ -207,7 +274,8 @@ include_once("./check_session.php");
                             <div class="row mb-3">
                                 <label for="eventdescription" class="col-sm-4 col-form-label">Event Description</label>
                                 <div class="col-sm-7">
-                                    <textarea rows="3" type="text" class="form-control" id="eventdescription" name='eventdescription'></textarea>
+                                    <textarea rows="3" type="text" class="form-control" id="eventdescription"
+                                        name='eventdescription'></textarea>
                                 </div>
                             </div>
 
@@ -216,6 +284,7 @@ include_once("./check_session.php");
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
                             <button type="submit" name="eventsubmit" class="btn btn-primary">Make Event</button>
                         </div>
                     </div>
@@ -228,6 +297,50 @@ include_once("./check_session.php");
                 </div>
             ";
             echo $html;
+            unset($html);
+        }
+
+        function returnRentalPropertyIdAndNameArray($landlord_id)
+        {
+            $db_conn = connectDB();
+            $stmt = $db_conn->prepare("select l.rental_property_id,
+                                        r.listing_reference 
+                                        from landlord_rental_properties l
+                                        join rental_properties r
+                                        on l.rental_property_id = r.rental_property_id
+                                        where l.landlord_id=?");
+            try {
+
+                $results = [];
+                $stmt->execute(array($landlord_id));
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $tmp = [
+                        $row['rental_property_id'],
+                        $row['listing_reference']
+                    ];
+                    array_push($results, $tmp);
+                }
+                return $results;
+                unset($results);
+            } catch (Exception $e) {
+                $db_conn->rollback();
+                echo $e->getMessage();
+            }
+        }
+
+        function addEvent()
+        {
+            global $events;
+            $eventArr = collectEvent();
+            foreach ($eventArr as &$value) {
+                $events[] = array(
+                    'start' => $value[2],
+                    'end' => $value[2],
+                    'summary' => '<div id="event" class="header"><i class="bi bi-alarm"></i> Event: ' . $value[3] . '</div><div id="event" class="detail">#' . $value[0] . ". " . $value[1] . '</div>',
+                    'mask' => true
+                );
+            }
+            unset($value);
         }
 
 
@@ -363,7 +476,7 @@ include_once("./check_session.php");
             // now
             //$timestamp = strtotime("Now");
             echo $calendar->draw(date('Y-m-d', $stamp), $back_colors[$i]);
-        ?>
+            ?>
 
         <input type="hidden" class="form-control" id="timestamp" name='timestamp' value=<?php echo $stamp; ?>>
         </form>
@@ -401,6 +514,8 @@ include_once("./check_session.php");
             }
         }
 
+
+
         function collectAppointment()
         {
             //for tenant and landlord
@@ -429,7 +544,10 @@ include_once("./check_session.php");
             } else if ($userRole == 'landlord') {
                 global $landlord_id;
                 $rental_property_ids = makeRentalPropertyIdArray($landlord_id);
-                $in  = str_repeat('?,', count($rental_property_ids) - 1) . '?';
+                if (count($rental_property_ids) > 0) {
+                    $in  = str_repeat('?,', count($rental_property_ids) - 1) . '?';
+                }
+
 
                 $sql = "SELECT request_id, 
                 description, 
@@ -508,6 +626,68 @@ include_once("./check_session.php");
                             $row['request_id'],
                             $row['description'],
                             $row['date']
+                        ];
+                        array_push($results, $tmp);
+                    }
+                    return $results;
+                } catch (Exception $e) {
+                    $db_conn->rollback();
+                    echo $e->getMessage();
+                }
+            }
+        }
+
+        function collectEvent()
+        {
+            //for tenant and landlord
+            global $userRole;
+            global $db_conn;
+            global $tenant_id;
+            $results = [];
+
+            if ($userRole == 'tenant') {
+                $rental_pId = checkRentalPropertyId($tenant_id);
+                $stmt = $db_conn->prepare("SELECT request_id, description, date(appointment_date_time) as date, time(appointment_date_time) as time FROM requests WHERE is_notification='1' and request_type_code='70' and rental_property_id=?");
+                try {
+                    $stmt->execute(array($rental_pId));
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        $tmp = [
+                            $row['request_id'],
+                            $row['description'],
+                            $row['date'],
+                            $row['time']
+                        ];
+                        array_push($results, $tmp);
+                    }
+                    return $results;
+                } catch (Exception $e) {
+                    $db_conn->rollback();
+                    echo $e->getMessage();
+                }
+            } else if ($userRole == 'landlord') {
+                global $landlord_id;
+                $rental_property_ids = makeRentalPropertyIdArray($landlord_id);
+                $in  = str_repeat('?,', count($rental_property_ids) - 1) . '?';
+
+                $sql = "SELECT request_id, 
+                description, 
+                date(appointment_date_time) as date, 
+                time(appointment_date_time) as time,
+                tenant_id 
+                FROM requests WHERE is_notification='1' and request_type_code='70' and rental_property_id IN ($in)";
+
+                $stmt = $db_conn->prepare($sql);
+
+                try {
+                    $stmt->execute($rental_property_ids);
+
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        $tmp = [
+                            $row['request_id'],
+                            $row['description'],
+                            $row['date'],
+                            $row['time'],
+                            $row['tenant_id']
                         ];
                         array_push($results, $tmp);
                     }
