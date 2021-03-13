@@ -10,6 +10,7 @@ include_once("./check_session.php");
     Date:        March 7th, 2021, (March 6th, 2021)
 
     20210307     GPB    Check user logged in - removed TK code further down
+    20210312     TK     Added make event function
 -->
 
 <!doctype html>
@@ -26,6 +27,20 @@ include_once("./check_session.php");
     <link rel="stylesheet" href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../vendor/benhall14/php-calendar/html/css/calendar.css">
     <link rel="stylesheet" href="../node_modules/bootstrap-icons/font/bootstrap-icons.css">
+
+    <!-- Datetime Picker -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/css/tempusdominus-bootstrap-4.min.css" />
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js">
+    </script>
+
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
 
@@ -72,6 +87,7 @@ include_once("./check_session.php");
 
         use benhall14\phpCalendar\Calendar as Calendar;
 
+        dump($_POST);
         # create the calendar object
 
         $calendar = new Calendar();
@@ -99,16 +115,15 @@ include_once("./check_session.php");
             addRequestDetail();
             addPaymentDay();
             addAppointmentTenant();
-            if(isset($_POST['timestamp'])){
-                if(isset($_POST['next'])){
+            if (isset($_POST['timestamp'])) {
+                if (isset($_POST['next'])) {
                     drawCalendar($_POST['timestamp'], 'next');
-                }else if(isset($_POST['previous'])){
+                } else if (isset($_POST['previous'])) {
                     drawCalendar($_POST['timestamp'], 'previous');
-                } 
-            }else{
+                }
+            } else {
                 drawCalendar(strtotime("Now"), 'now');
             }
-
         }
         // if landrord
         else if ($userRole == 'landlord') {
@@ -118,13 +133,13 @@ include_once("./check_session.php");
             addRequestDetail();
             addPaymentDay();
             addAppointmentLandlord();
-            if(isset($_POST['timestamp'])){
-                if(isset($_POST['next'])){
+            if (isset($_POST['timestamp'])) {
+                if (isset($_POST['next'])) {
                     drawCalendar($_POST['timestamp'], 'next');
-                }else if(isset($_POST['previous'])){
+                } else if (isset($_POST['previous'])) {
                     drawCalendar($_POST['timestamp'], 'previous');
                 }
-            }else{
+            } else {
                 drawCalendar(strtotime("Now"), 'now');
             }
         } else if ($userRole == 'admin') {
@@ -136,17 +151,81 @@ include_once("./check_session.php");
 
         //Add notification
         //waiting...
-
-
         function drawCalendarButton()
         {
-            $html="
+            global $userRole;
+
+            $html = "
             <form method=\"POST\">
                 <div class=\"d-flex justify-content-between\" style=\"margin-bottom:5px;\">
-                    <button type=\"submit\" name=\"previous\" class=\"btn btn-warning\"><i class=\"bi bi-arrow-left-circle\"></i> Previous</button>    
-                    <button type=\"submit\" name=\"next\" class=\"btn btn-success\">Next <i class=\"bi bi-arrow-right-circle\"></i></button>
+                    <button type=\"submit\" name=\"previous\" class=\"btn btn-warning\"><i class=\"bi bi-arrow-left-circle\"></i> Previous</button>";
+            if ($userRole == 'landlord') {
+                $html .= "<button type=\"button\" class=\"btn btn-primary\" data-bs-toggle=\"modal\" data-bs-target=\"#exampleModal\"><i class=\"bi bi-calendar-event\"></i> Make event</button>";
+
+                ?>
+        <form method="POST">
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Make event</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+
+
+
+                            <div class="row mb-3">
+                                <label for="datetimepicker1" class="col-sm-4 col-form-label">Date and Time</label>
+                                <div class="col-sm-7">
+                                    <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                                        <input type="text" class="form-control datetimepicker-input"
+                                            data-target="#datetimepicker1" name="datetime" />
+                                        <div class="input-group-append" data-target="#datetimepicker1"
+                                            data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="fa fa-calendar"
+                                                    style="padding-top: 7px; padding-bottom:7px"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="selectproperty" class="col-sm-4 col-form-label">Select Property</label>
+                                <div class="col-sm-7">
+
+                                    <select id="selectproperty" class="form-select" aria-label="Default select example">
+                                        <option selected>Open this select menu</option>
+                                        <option value="1">One</option>
+                                        <option value="2">Two</option>
+                                        <option value="3">Three</option>
+                                    </select>
+
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label for="eventdescription" class="col-sm-4 col-form-label">Event Description</label>
+                                <div class="col-sm-7">
+                                    <textarea rows="3" type="text" class="form-control" id="eventdescription" name='eventdescription'></textarea>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" name="eventsubmit" class="btn btn-primary">Make Event</button>
+                        </div>
+                    </div>
                 </div>
-            
+            </div>
+        </form>
+        <?php
+            }
+            $html .= "<button type=\"submit\" name=\"next\" class=\"btn btn-success\">Next <i class=\"bi bi-arrow-right-circle\"></i></button>
+                </div>
             ";
             echo $html;
         }
@@ -184,7 +263,8 @@ include_once("./check_session.php");
             unset($value);
         }
 
-        function addDday(){
+        function addDday()
+        {
             global $events;
             $paymentDay = collectPaymentDay();
             $startDate = new DateTime();
@@ -194,32 +274,34 @@ include_once("./check_session.php");
             $events[] = array(
                 'start' => date("Y-m-d"),
                 'end' => date("Y-m-d"),
-                'summary' => '<div id="d-day" class="header"><i class="bi bi-calendar-check"></i> End of lease: -'.$interval->days.'</div>'
+                'summary' => '<div id="d-day" class="header"><i class="bi bi-calendar-check"></i> End of lease: -' . $interval->days . '</div>'
             );
         }
 
-        function addAppointmentTenant(){
+        function addAppointmentTenant()
+        {
             global $events;
             $appointmentDay = collectAppointment();
             foreach ($appointmentDay as &$value) {
                 $events[] = array(
                     'start' => $value[2],
                     'end' => $value[2],
-                    'summary' => '<div id="appointment" class="header"><i class="bi bi-alarm"></i> Appointment: '.$value[3].'</div><div id="appointment" class="detail">#' . $value[0] . ". " . $value[1] . '</div>',
+                    'summary' => '<div id="appointment" class="header"><i class="bi bi-alarm"></i> Appointment: ' . $value[3] . '</div><div id="appointment" class="detail">#' . $value[0] . ". " . $value[1] . '</div>',
                     'mask' => true
                 );
             }
             unset($value);
         }
 
-        function addAppointmentLandlord(){
+        function addAppointmentLandlord()
+        {
             global $events;
             $appointmentDay = collectAppointment();
             foreach ($appointmentDay as &$value) {
                 $events[] = array(
                     'start' => $value[2],
                     'end' => $value[2],
-                    'summary' => '<div id="appointment" class="header"><i class="bi bi-alarm"></i> Appointment: '.$value[3].'</div><div id="appointment" class="detail">#' . $value[0] . ". " . $value[1] . '<br>with '.checkTenantName($value[4]).'</div>',
+                    'summary' => '<div id="appointment" class="header"><i class="bi bi-alarm"></i> Appointment: ' . $value[3] . '</div><div id="appointment" class="detail">#' . $value[0] . ". " . $value[1] . '<br>with ' . checkTenantName($value[4]) . '</div>',
                     'mask' => true
                 );
             }
@@ -251,7 +333,7 @@ include_once("./check_session.php");
                     $events[] = array(
                         'start' => $startYearMonthDay_str,
                         'end' => $startYearMonthDay_str,
-                        'summary' => '<div id="payment" class="subject"><i class="bi bi-cash-stack"></i> Payment Day: $'.$sum.'</div><div id="payment" class="content">Rent $' . $paymentDay[1] . "<br>Parking $" . $paymentDay[2] . "<br>Other $" . $paymentDay[3] . '</div>',
+                        'summary' => '<div id="payment" class="subject"><i class="bi bi-cash-stack"></i> Payment Day: $' . $sum . '</div><div id="payment" class="content">Rent $' . $paymentDay[1] . "<br>Parking $" . $paymentDay[2] . "<br>Other $" . $paymentDay[3] . '</div>',
                         'mask' => true
                     );
                     $startYearMonthDay_str = strtotime("$startYearMonthDay_str +1 month");
@@ -269,23 +351,23 @@ include_once("./check_session.php");
 
             $stamp = date("Y-m-d", $stamp);
 
-            if($stat =='next'){
+            if ($stat == 'next') {
                 $stamp = strtotime("$stamp +1 month");
-            }else if($stat =='previous'){
+            } else if ($stat == 'previous') {
                 $stamp = strtotime("$stamp -1 month");
-            }else if($stat =='now'){
+            } else if ($stat == 'now') {
                 $stamp = strtotime("now");
             }
-            $back_colors = array('purple','pink', 'orange','yellow','green','grey','blue');
+            $back_colors = array('purple', 'pink', 'orange', 'yellow', 'green', 'grey', 'blue');
             $i = rand(0, count($back_colors));
             // now
             //$timestamp = strtotime("Now");
             echo $calendar->draw(date('Y-m-d', $stamp), $back_colors[$i]);
-            ?>
+        ?>
 
-            <input type="hidden" class="form-control" id="timestamp" name='timestamp' value=<?php echo $stamp; ?>>
+        <input type="hidden" class="form-control" id="timestamp" name='timestamp' value=<?php echo $stamp; ?>>
         </form>
-            <?php
+        <?php
         }
 
 
@@ -319,7 +401,8 @@ include_once("./check_session.php");
             }
         }
 
-        function collectAppointment(){
+        function collectAppointment()
+        {
             //for tenant and landlord
             global $userRole;
             global $db_conn;
@@ -343,7 +426,7 @@ include_once("./check_session.php");
                     $db_conn->rollback();
                     echo $e->getMessage();
                 }
-            }else if($userRole == 'landlord'){
+            } else if ($userRole == 'landlord') {
                 global $landlord_id;
                 $rental_property_ids = makeRentalPropertyIdArray($landlord_id);
                 $in  = str_repeat('?,', count($rental_property_ids) - 1) . '?';
@@ -376,8 +459,6 @@ include_once("./check_session.php");
                     echo $e->getMessage();
                 }
             }
-
-
         }
 
         function collectServiceRequestHeader()

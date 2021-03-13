@@ -659,7 +659,6 @@ include_once("./check_session.php");
                 </div>
                 <?php } else if (isset($_POST['appointment'])) { ?>
                 <div class="col-sm-6">
-                    
                         <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
                             <input type="text" class="form-control datetimepicker-input"
                                 data-target="#datetimepicker1" name="datetime"/>
@@ -667,7 +666,6 @@ include_once("./check_session.php");
                                 <div class="input-group-text"><i class="fa fa-calendar" style="padding-top: 7px; padding-bottom:7px"></i></div>
                             </div>
                         </div>
-                    
                 </div>
                 <script type="text/javascript">
                 $(function() {
