@@ -334,10 +334,16 @@ function formNotification()
                 <!-- From -->
                 <div class="input-group">
                     <label for="sender-user-id">From</label>
-                    <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 100px" id="sender-user-id" name="sender-user-id" aria-describedby="sender-user-id-help" placeholder="" value="<?php echo $row['sender_user_id']; ?>" readonly>
+                    <input type="text" class="form-control" id="sender-user-id" name="sender-user-id" aria-describedby="sender-user-id-help" placeholder="" value="<?php echo $row['sender_user_id']; ?>" readonly>
                     <small id="sender-user-id-help" class="form-text text-muted"></small>
                 </div>
 
+                <!-- Name -->
+                <div class="input-group">
+                    <label for="sender-name">Name</label>
+                    <input type="text" class="form-control" id="sender-name" name="sender-name" aria-describedby="sender-name-help" placeholder="" value="<?php echo $row['sender_name']; ?>" readonly>
+                    <small id="sender-name-help" class="form-text text-muted"></small>
+                </div>
 
                 <!-- Details -->
                 <div class="input-group">

@@ -22,6 +22,7 @@ function getNotifications() {
     $querySQL = "select
             n.notification_id
             , n.sender_user_id
+            , ifnull(ifnull(l.legal_name, concat(t.first_name, ' ', t.last_name) ), n.sender_user_id) as sender_name
             , n.recipient_user_id
             , n.details
             , n.entity_type
@@ -30,6 +31,10 @@ function getNotifications() {
             , n.notification_status
             
         from notifications as n
+        inner join users u on u.user_id = n.sender_user_id
+        left join tenants t on t.tenant_id = u.tenant_id
+        left join landlords l on l.landlord_id = u.landlord_id
+
         where n.recipient_user_id = :session_user_id
         and n.notification_status <> 'deleted'";
 
@@ -55,6 +60,7 @@ function getNotifications() {
                 <tr>
                     <th scope="col"></th>
                     <th scope="col">From</th>
+                    <th scope="col">Name</th>
                     <th scope="col">Details</th>
                     <th scope="col">Sent</th>
                 </tr>
@@ -77,6 +83,7 @@ function getNotifications() {
                     
                     <th><input type="radio" style="max-width:10px;" name="selected[]" value="<?php echo $row['notification_id']; ?>"></th>
                     <td><?php echo $row["sender_user_id"]; ?></td>
+                    <td><?php echo $row["sender_name"]; ?></td>
                     <td style="white-space: nowrap; text-overflow:ellipsis; overflow: hidden; max-width:200px;"><?php echo $row["details"]; ?></td>
                     <td style="max-width: 100px;"><?php echo $row["sent_datetime"]; ?></td>
                 </tr>
@@ -185,6 +192,7 @@ function getNotification()
     $querySQL = "select
                 n.notification_id
                 , n.sender_user_id
+                , ifnull(ifnull(l.legal_name, concat(t.first_name, ' ', t.last_name) ), n.sender_user_id) as sender_name
                 , n.recipient_user_id
                 , n.details
                 , n.entity_type
@@ -193,6 +201,10 @@ function getNotification()
                 , n.notification_status
                 
             from notifications as n
+            inner join users u on u.user_id = n.sender_user_id
+            left join tenants t on t.tenant_id = u.tenant_id
+            left join landlords l on l.landlord_id = u.landlord_id
+
             where n.notification_id = :notification_id";
 
     // assign value to :rental_property_id
