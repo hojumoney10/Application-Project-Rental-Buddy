@@ -206,7 +206,7 @@ include_once("./check_session.php");
             //property id -> user_id
             $recipient = returnTenantUserId($_POST['selectedPropertyId']);
             if(!is_null($recipient)){
-                createNotification(0,$user_id, $recipient,'Please check new event: '.$_POST['eventdescription'],'requests',$lastId);
+                createNotification(0,$user_id, $recipient,'Please check new event: '.$_POST['eventdescription'].' on '.date('Y-m-d H:i:s', strtotime($_POST['datetime'])),'requests',$lastId);
             }
             $msg = "Event has been inserted.";
             msgHeader('green');

@@ -809,7 +809,7 @@ include_once("./check_session.php");
             join codes c 
             on c.code_id = r.request_type_code
             
-            where r.is_notification='0' and r.tenant_id=?");
+            where r.is_notification='0' and r.tenant_id=? order by r.request_id desc");
 
                 try {
                     $html = "<table class='table table-striped table-hover'>
@@ -866,6 +866,7 @@ include_once("./check_session.php");
                     $in  = str_repeat('?,', count($rental_property_ids) - 1) . '?';
                     $sql .= " and r.rental_property_id IN ($in)";
                 }
+                $sql .= " order by r.request_id desc";
                 $stmt = $db_conn->prepare($sql);
 
                 try {
