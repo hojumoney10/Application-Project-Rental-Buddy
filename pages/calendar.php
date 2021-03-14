@@ -61,11 +61,12 @@ include_once("./check_session.php");
 
     <!-- Custom styles for this template -->
     <link href="../css/starter-template.css" rel="stylesheet">
+    
     <?php
     include 'common.php';
     $db_conn = connectDB();
     $msg = "";
-
+    require_once("../dal/notification_dal.php");
     // temporary value///////////////////////
     $tenant_id = '';
     $property_id = '';
