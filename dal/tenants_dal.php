@@ -141,27 +141,28 @@ function getTenant() {
 
     // SQL query
     $querySQL = "SELECT
-            tenant_id
-            , salutation_code            
-            , first_name
-            , last_name
-            , address_1
-            , address_2
-            , city
-            , province_code
-            , postal_code
-            , phone
-            , fax
-            , email
-            , date_of_birth
-            , gender
-            , social_insurance_number
-            , status_code
-            , last_updated
-            , last_updated_user_id
+            t.tenant_id
+            , t.salutation_code            
+            , t.first_name
+            , t.last_name
+            , trim( concat(ifnull(salutations.description, ''), ' ', t.first_name, ' ', t.last_name ) ) as full_name
+            , t.address_1
+            , t.address_2
+            , t.city
+            , t.province_code
+            , t.postal_code
+            , t.phone
+            , t.fax
+            , t.email
+            , t.date_of_birth
+            , t.gender
+            , t.social_insurance_number
+            , t.status_code
+            , t.last_updated
+            , t.last_updated_user_id
 
-        FROM tenants
-
+        FROM tenants t
+        INNER JOIN codes salutations on salutations.code_value = t.salutation_code and salutations.code_type = 'salutation'
         WHERE tenant_id = :tenant_id";
 
                     // assign value to :tenant_id
@@ -198,7 +199,97 @@ function getTenant() {
                     // close database connection
                     $db_conn = null;
                 }
-// Get a landloards
+
+// Save Profile
+function saveTenantProfile() {
+    
+    $tenant_id = $_SESSION['tenant_id'];
+    $rowdata = $_SESSION['rowdata'];
+
+    // create database connection
+    $db_conn = connectDB();
+
+    if ( isset($_SESSION['CURRENT_USER']) && !empty($_SESSION['CURRENT_USER'] ) ) {
+        $session_user_id = $_SESSION['CURRENT_USER']['user_id'];
+    } else {
+        $session_user_id = "admin";
+    }
+    
+    // Update
+    $querySQL = "UPDATE tenants AS t
+            SET 
+                t.contact_phone             = :contact_phone
+                , t.contact_sms             = :contact_sms
+                , t.contact_email           = :contact_email
+                , t.phone                   = :phone
+                , t.fax                     = :fax
+                , t.email                   = :email
+                , t.last_updated            = now()
+                , t.last_updated_user_id    = :session_user_id
+
+        WHERE t.tenant_id = :tenant_id";
+
+    // assign data values
+    $data = array(  ":tenant_id" => $tenant_id,
+                    ":salutation_code" => $rowdata['salutation_code'],
+                    ":first_name" => $rowdata['first_name'],
+                    ":last_name" => $rowdata['last_name'],
+                    ":address_1" => $rowdata['address_1'],
+                    ":address_2" => $rowdata['address_2'],
+                    ":city" => $rowdata['city'],
+                    ":province_code" => $rowdata['province_code'],
+                    ":postal_code" => $rowdata['postal_code'],
+                    ":phone" => $rowdata['phone'],
+                    ":fax" => $rowdata['fax'],
+                    ":email" => $rowdata['email'],
+                    ":date_of_birth" => $rowdata['date_of_birth'],
+                    ":gender" => $rowdata['gender'],
+                    ":social_insurance_number" => $rowdata['social_insurance_number'],
+                    ":status_code" => $rowdata['status_code'],
+                    ":session_user_id" => $session_user_id
+                );
+
+    // Transaction Start
+    $db_conn->beginTransaction(); 
+                        
+        // prepare query
+        $stmt = $db_conn->prepare($querySQL);
+
+        // prepare error check
+        if (!$stmt) {
+
+            echo "<p>Error: " . $db_conn->errorCode() . "<br>Message: " . implode($db_conn->errorInfo()) . "</p><br>";
+            $db_conn->rollback(); // Transaction Rollback
+            exit(1);
+        }
+
+        // execute query in database
+        $status = $stmt->execute($data);
+        
+        if ($status) { 
+            
+            // Nothing to do for an update
+            //$tenant_id = $db_conn->lastInsertId(); // Get tenant_id
+
+        } else {
+            // execute error
+            echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
+            $db_conn->rollback(); // Transaction Rollback
+
+            // close database connection
+            $db_conn = null;
+            
+            exit(1);
+        }
+
+    // Transaction Commit
+    $db_conn->commit();
+
+    // close database connection
+    $db_conn = null;
+} 
+
+// Save Tenant
 function saveTenant() {
     
     $tenant_id = $_SESSION['tenant_id'];
