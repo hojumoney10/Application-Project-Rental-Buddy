@@ -263,8 +263,7 @@ function returnLandlordUserIdUsingLandlordId($landlord_id){
     } catch (Exception $e) {
         $db_conn->rollback();
         echo $e->getMessage();
-    }
-    
+    }   
 }
 
 function loadTenantAddress() //gets the listing reference name from tenant_id | JF
