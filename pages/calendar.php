@@ -66,7 +66,7 @@ include_once("./check_session.php");
     include 'common.php';
     $db_conn = connectDB();
     $msg = "";
-    //require_once("../dal/notification_dal.php");
+
     // temporary value///////////////////////
     $tenant_id = '';
     $property_id = '';
@@ -81,11 +81,13 @@ include_once("./check_session.php");
 
         <?php
 
-        session_start();
+        //session_start();
 
         require '../vendor/autoload.php';
         include 'navigationMenu.php';
-
+        
+        include '../dal/notification_dal.php';        
+        
         use benhall14\phpCalendar\Calendar as Calendar;
 
         # create the calendar object
@@ -194,6 +196,7 @@ include_once("./check_session.php");
                 $db_conn->beginTransaction();
                 $stmt->execute($array);
                 $db_conn->commit();
+                $lastId = $db_conn->lastInsertId();
             } catch (Exception $e) {
                 $db_conn->rollback();
                 echo $e->getMessage();
@@ -201,8 +204,10 @@ include_once("./check_session.php");
 
             // insert notification
             //property id -> user_id
-            //createNotification('',$user_id,);
-
+            $recipient = returnTenantUserId($_POST['selectedPropertyId']);
+            if(!is_null($recipient)){
+                createNotification(0,$user_id, $recipient,'Please check new event: '.$_POST['eventdescription'],'requests',$lastId);
+            }
             $msg = "Event has been inserted.";
             msgHeader('green');
         ?>
@@ -213,6 +218,9 @@ include_once("./check_session.php");
         </script>
         <?php
         }
+
+        
+
 
         //Add notification
         //waiting...

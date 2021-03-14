@@ -255,7 +255,6 @@ function createNotification(
         , $entity_type = ""         // Future use: specify entity if linked to an object
         , $entity_type_id = 0       //              id of the entity object
 ) {
-
     // create database connection
     $db_conn = connectDB();
 
@@ -293,7 +292,7 @@ function createNotification(
     // assign data values
     $data = array(
         ":parent_notification_id" => $parent_notification_id,
-        ":sender_user_id" => $$sender_user_id,
+        ":sender_user_id" => $sender_user_id,
         ":recipient_user_id" => $recipient_user_id,
         ":details" => $details,
         ":entity_type" => $entity_type,
