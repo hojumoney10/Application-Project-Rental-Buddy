@@ -198,6 +198,24 @@ function checkLandlordId($user_id){
     }
 }
 
+function checkRentalPropertyId($tenant_id){
+    $db_conn = connectDB();
+    $stmt = $db_conn->prepare("SELECT rp.rental_property_id 
+    FROM rental_properties rp
+    JOIN leases l on rp.rental_property_id = l.rental_property_id
+    WHERE l.rental_property_id = rp.rental_property_id AND l.tenant_id=?");
+    try {
+        $stmt->execute(array($tenant_id));
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            unset($tenant_id);
+            return $row['rental_property_id'];
+        }
+    } catch (Exception $e) {
+        $db_conn->rollback();
+        echo $e->getMessage();
+    }
+}
+
 function makeRentalPropertyIdArray($landlord_id){
     $db_conn = connectDB();
     $stmt = $db_conn->prepare("select rental_property_id from landlord_rental_properties where landlord_id=?");
@@ -212,6 +230,40 @@ function makeRentalPropertyIdArray($landlord_id){
         $db_conn->rollback();
         echo $e->getMessage();
     }
+}
+
+function returnTenantUserId($rental_property_id){
+    $db_conn = connectDB();
+    $stmt = $db_conn->prepare("SELECT u.user_id 
+    FROM users u
+    JOIN leases l
+    ON u.tenant_id = l.tenant_id
+    where l.rental_property_id=?");
+    try {
+        $stmt->execute(array($rental_property_id));
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            return $row['user_id'];
+        }
+    } catch (Exception $e) {
+        $db_conn->rollback();
+        echo $e->getMessage();
+    }   
+}
+
+function returnLandlordUserIdUsingLandlordId($landlord_id){
+    $db_conn = connectDB();
+    $stmt = $db_conn->prepare("SELECT u.user_id 
+    FROM users u
+    where u.landlord_id=?");
+    try {
+        $stmt->execute(array($landlord_id));
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            return $row['user_id'];
+        }
+    } catch (Exception $e) {
+        $db_conn->rollback();
+        echo $e->getMessage();
+    }   
 }
 
 function loadTenantAddress() //gets the listing reference name from tenant_id | JF
