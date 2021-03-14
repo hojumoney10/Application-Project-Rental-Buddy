@@ -36,6 +36,9 @@ $_SESSION['PAGE'] = "login";
     <!-- jQuery AJAX -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
+    <!-- Custom scripts -->
+    <script src="../js/script.js"></script>
+    
     <!-- Custom style -->
     <link href="../css/style.css" rel="stylesheet">
     <style>
@@ -55,7 +58,9 @@ $_SESSION['PAGE'] = "login";
 
 </head>
 
-<?php
+<body>
+
+    <?php
 
 $error = "";
 
@@ -115,7 +120,11 @@ if (isset($_POST['login']))
            $db_conn = null;
            header("location: ../index.php");
            die();
+       } else {
+           $error = "Login failed";
+
        }
+
    } else {
        // execute error
        echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
@@ -127,10 +136,6 @@ if (isset($_POST['login']))
    // close database connection
    $db_conn = null;    
 }
-?>
-
-<body>
-    <?php
 
     // navigation & search bars
     require_once("./navigationMenu.php");
@@ -163,12 +168,21 @@ if (isset($_POST['login']))
                 </table>
             </fieldset>
         </form>
-    </div>
 
-    <?php echo $error; ?>
+        <div id="div-errors" class="container"></div>
+        <?php if ($error > "") {
+            ?>
+                <script>
+                    showErrors("Login failed");
+                </script>
+            <?php
+        }?>
+            
+    </div>
 
     <!-- Custom JS -->
     <!-- Bootstrap JS -->
     <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="../node_modules/bootstrap-icons/font//bootstrap-icons.css" rel="stylesheet">    
 </body>
 </html>
