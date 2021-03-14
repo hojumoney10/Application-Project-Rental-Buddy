@@ -43,13 +43,6 @@ left join landlords l on l.landlord_id = u.landlord_id
 inner join codes user_role_codes on user_role_codes.code_value = u.user_role_code and user_role_codes.code_type = 'user_role'
 inner join codes status_codes on status_codes.code_value = u.status_code and status_codes.code_type = 'user_status'";
 
-        //need check
-    // if (isset($_SESSION['text-search'])) {
-    //     if ((strlen($_SESSION['text-search']) > 0)) {   
-    //         $querySQL .= " where u.user_id";
-    //     }
-    // }
-
     $querySQL .= " order by u.user_id;";
 
     $text_search = '%' . $_SESSION['text-search'] . '%';
@@ -168,48 +161,110 @@ function getUser() {
 
         WHERE u.user_id = :user_id";
 
-                    // assign value to :user_id
-                    $data = array(":user_id" => $user_id);
+    // assign value to :user_id
+    $data = array(":user_id" => $user_id);
 
-                    // prepare query
-                    $stmt = $db_conn->prepare($querySQL);
+    // prepare query
+    $stmt = $db_conn->prepare($querySQL);
 
-                    // prepare error check
-                    if (!$stmt) {
-                        echo "<p>Error: " . $db_conn->errorCode() . "<br>Message: " . implode($db_conn->errorInfo()) . "</p><br>";
-                        exit(1);
-                    }
+    // prepare error check
+    if (!$stmt) {
+        echo "<p>Error: " . $db_conn->errorCode() . "<br>Message: " . implode($db_conn->errorInfo()) . "</p><br>";
+        exit(1);
+    }
 
-                    // execute query in database
-                    $status = $stmt->execute($data);
+    // execute query in database
+    $status = $stmt->execute($data);
 
-                    if ($status) { // no error
+    if ($status) { // no error
 
-                        if ($stmt->rowCount() > 0) { // Found
+        if ($stmt->rowCount() > 0) { // Found
 
-                            // Store row in the session
-                            $_SESSION['rowdata'] = $stmt->fetch(PDO::FETCH_ASSOC);
-                        }
-                    } else {
-                        // execute error
-                        echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
+            // Store row in the session
+            $_SESSION['rowdata'] = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+    } else {
+        // execute error
+        echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
 
-                        // close database connection
-                        $db_conn = null;
+        // close database connection
+        $db_conn = null;
 
-                        exit(1);
-                    }
-                    // close database connection
-                    $db_conn = null;
-                }
-// Get a Users
-function saveUser() {
+        exit(1);
+    }
+    // close database connection
+    $db_conn = null;
+}
+
+// Save User
+function savePassword() {
     
-    $user_id = $_SESSION['user_id'];
     $rowdata = $_SESSION['rowdata'];
 
-  //print_r($user_id);
- // print_r($rowdata);
+    // create database connection
+    $db_conn = connectDB();
+
+    $session_user_id = $_SESSION['CURRENT_USER']['user_id'];
+    
+    // Update
+    $querySQL = "UPDATE users AS u
+            SET 
+                u.password                = md5(:password)
+                , u.last_updated            = now()
+                , u.last_updated_user_id    = :session_user_id
+
+        WHERE u.user_id = :session_user_id";
+
+    // assign data values
+    $data = array(  ":password" => $rowdata['password'],
+                    ":session_user_id" => $session_user_id
+                );
+
+    // Transaction Start
+    $db_conn->beginTransaction(); 
+                        
+        // prepare query
+        $stmt = $db_conn->prepare($querySQL);
+
+        // prepare error check
+        if (!$stmt) {
+
+            echo "<p>Error: " . $db_conn->errorCode() . "<br>Message: " . implode($db_conn->errorInfo()) . "</p><br>";
+            $db_conn->rollback(); // Transaction Rollback
+            exit(1);
+        }
+
+        // execute query in database
+        $status = $stmt->execute($data);
+        
+        if ($status) { 
+            
+            // Nothing to do for an update
+
+        } else {
+            // execute error
+            echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
+            $db_conn->rollback(); // Transaction Rollback
+
+            // close database connection
+            $db_conn = null;
+            
+            exit(1);
+        }
+
+    // Transaction Commit
+    $db_conn->commit();
+
+    // close database connection
+    $db_conn = null;
+}
+
+// Save User
+function saveUser() {
+    
+
+    $rowdata = $_SESSION['rowdata'];
+    $user_id = $rowdata['user_id'];
 
     // create database connection
     $db_conn = connectDB();
@@ -220,7 +275,11 @@ function saveUser() {
         $session_user_id = "admin";
     }
     
-    if ($user_id == 0) {
+// dump('INSAVEUSER'); 
+// dump($_POST);
+// dump($_SESSION['PAGEMODE']);  
+
+    if ($_SESSION['PAGEMODE'] == 'ADD') {
 
         // Add
         $querySQL = "INSERT INTO users (
@@ -234,7 +293,7 @@ function saveUser() {
                     , `last_updated_user_id`
                 ) VALUES (
                         :user_id
-                        , :password
+                        , md5(:password)
                         , :email
                         , :user_role_code
                         , :status_code
@@ -245,7 +304,7 @@ function saveUser() {
 
         // assign data values
         $data = array(  ":user_id" => $rowdata['user_id'],
-                        ":password" => "md5(" . $rowdata['user_id'] . ")",
+                        ":password" => $rowdata['user_id'],
                         ":email" => $rowdata['email'],
                         ":user_role_code" => $rowdata['user_role_code'],
                         ":status_code" => $rowdata['status_code'],
@@ -294,30 +353,31 @@ function saveUser() {
         
     } else {
 
+// dump('UPDATEUSER'); 
+// dump($_POST);
+// dump($_SESSION['PAGEMODE']);     
+
         // Update
         $querySQL = "UPDATE users AS u
                 SET 
-                      u.user_id                 = :user_id
-                    , u.email                   = :email
+                    u.email                     = :email
                     , u.user_role_code          = :user_role_code
                     , u.status_code             = :status_code
                     , u.tenant_id               = :tenant_id
                     , u.landlord_id             = :landlord_id
-                    , u.last_login              = now()
                     , u.last_updated            = now()
                     , u.last_updated_user_id    = :session_user_id
 
             WHERE u.user_id = :selected_user_id";
 
         // assign data values
-        $data = array(  ":user_id" => $rowdata['user_id'],
-                        ":email" => $rowdata['email'],
+        $data = array(  ":email" => $rowdata['email'],
                         ":user_role_code" => $rowdata['user_role_code'],
                         ":status_code" => $rowdata['status_code'],
                         ":tenant_id" => ($rowdata['tenant_id'] > "" ? $rowdata['tenant_id'] : null),
                         ":landlord_id" => ($rowdata['landlord_id'] > "" ? $rowdata['landlord_id'] : null),
                         ":session_user_id" => $session_user_id,
-                        ":selected_user_id" => $_SESSION['user_id']
+                        ":selected_user_id" => $user_id
                     );
 
         // Transaction Start

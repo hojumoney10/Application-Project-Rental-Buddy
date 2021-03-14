@@ -341,8 +341,6 @@ function formTenant()
 
                 <fieldset id="fieldset-prefs" class="bg-light">
 
-                    <!-- <legend class="bg-light text-dark" style="font-size:18px; margin-bottom: 0; text-align: left;">Contact Preferences</legend> -->
-
                     <!-- contact phone  -->
                     <div class="input-group">
                         <label for="contact-phone">Phone</label>
@@ -370,15 +368,11 @@ function formTenant()
                         <td><input type="submit" class="btn btn-success btn-crud" name="btn-save" value="Save"></td>
 <?php            }
 ?>
-                        <!-- <td>
-                                <input type="submit" class="btn <?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD' ) ? 'btn-secondary' : 'btn-primary'; ?> btn-crud" name="btn-cancel" value="<?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD' ) ? 'Cancel' : 'OK'; ?>">
-                        </td> -->
                     </tr>
                 </table>
             </fieldset>
         </form>
         <!-- empty form for cancel button -->
-        <!-- <form id="form-cancel" hidden><form> -->
 
         <!-- Message area -->
         <div id="div-messages"></div>
