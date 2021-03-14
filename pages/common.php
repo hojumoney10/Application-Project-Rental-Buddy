@@ -247,6 +247,22 @@ function returnTenantUserId($rental_property_id){
     } catch (Exception $e) {
         $db_conn->rollback();
         echo $e->getMessage();
+    }   
+}
+
+function returnLandlordUserIdUsingLandlordId($landlord_id){
+    $db_conn = connectDB();
+    $stmt = $db_conn->prepare("SELECT u.user_id 
+    FROM users u
+    where u.landlord_id=?");
+    try {
+        $stmt->execute(array($landlord_id));
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            return $row['user_id'];
+        }
+    } catch (Exception $e) {
+        $db_conn->rollback();
+        echo $e->getMessage();
     }
     
 }
