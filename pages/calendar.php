@@ -66,7 +66,7 @@ include_once("./check_session.php");
     include 'common.php';
     $db_conn = connectDB();
     $msg = "";
-    require_once("../dal/notification_dal.php");
+    //require_once("../dal/notification_dal.php");
     // temporary value///////////////////////
     $tenant_id = '';
     $property_id = '';
@@ -198,6 +198,11 @@ include_once("./check_session.php");
                 $db_conn->rollback();
                 echo $e->getMessage();
             }
+
+            // insert notification
+            //property id -> user_id
+            //createNotification('',$user_id,);
+
             $msg = "Event has been inserted.";
             msgHeader('green');
         ?>
