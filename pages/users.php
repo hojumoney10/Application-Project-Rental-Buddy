@@ -164,14 +164,26 @@ if (!isset($_SESSION['PAGEMODE'])){
     require_once("../dal/codes_dal.php");
     require_once("../dal/users_dal.php");
 
+// dump('ONPOST'); 
+// dump($_POST);
+// dump($_SESSION['PAGEMODE']);                      
+
     // Check POST ACTIONS first
     if ( isset( $_POST['btn-add'] ) && ( $_POST['btn-add'] == "Add") ) { // Add clicked
         $_SESSION['PAGEMODE'] = "ADD";
         $_SESSION['PAGENUM'] = 0;
 
+// dump('ONPOSTADD'); 
+// dump($_POST);
+// dump($_SESSION['PAGEMODE']);  
+
     } else if ( isset( $_POST['btn-edit'] ) && ($_POST['btn-edit'] == "Edit") ) { // Edit clicked
         $_SESSION['PAGEMODE'] = "EDIT";
         $_SESSION['PAGENUM'] = 0;
+
+// dump('ONPOSTEDIT'); 
+// dump($_POST);
+// dump($_SESSION['PAGEMODE']);  
 
     } else if ( isset($_POST['btn-delete'] ) && ( $_POST['btn-delete'] == "Delete") ) { //
         $_SESSION['mode'] = "DELETE";
@@ -247,7 +259,10 @@ if (!isset($_SESSION['PAGEMODE'])){
                         displayErrors($err_msgs);
                         formUser();
                     } else {
-                        
+    // dump('B4SAVEUSER'); 
+    // dump($_POST);
+    // dump($_SESSION['PAGEMODE']);   
+
                         // Save to database                     
                         saveUser();
                         $_SESSION['PAGENUM'] = 0;
@@ -367,16 +382,16 @@ function validateUser() {
 function formDisplayUsers()
 {
 
-    $fvalue = "";
-    if (isset($_POST['btn-search']) && isset($_POST['text-search'])) {
-        $_SESSION['text-search'] = trim($_POST['text-search']);
-        $fvalue = $_SESSION['text-search'];
-    } else if (isset($_POST['btn-search-clear'])) {
-        $_SESSION['text-search'] = "";
-        $fvalue = $_SESSION['text-search'];
-    } else if (isset($_SESSION['text-search'])) {
-        $fvalue = $_SESSION['text-search'];
-    }
+    // $fvalue = "";
+    // if (isset($_POST['btn-search']) && isset($_POST['text-search'])) {
+    //     $_SESSION['text-search'] = trim($_POST['text-search']);
+    //     $fvalue = $_SESSION['text-search'];
+    // } else if (isset($_POST['btn-search-clear'])) {
+    //     $_SESSION['text-search'] = "";
+    //     $fvalue = $_SESSION['text-search'];
+    // } else if (isset($_SESSION['text-search'])) {
+    //     $fvalue = $_SESSION['text-search'];
+    // }
 ?>
     <form method="POST">
         <?php
@@ -422,7 +437,7 @@ function formUser()
                 <!-- User ID -->
                 <div class="input-group">
                     <label for="user-id">User ID</label>
-                    <input type="text" size="30" maxlength="50" class="form-control" id="user-id" name="user-id" aria-describedby="user-id-help" placeholder="Enter user ID" value="<?php echo $row['user_id']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <input type="text" size="30" maxlength="50" class="form-control" id="user-id" name="user-id" aria-describedby="user-id-help" placeholder="Enter user ID" value="<?php echo $row['user_id']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW' || $_SESSION['PAGEMODE'] == 'EDIT') ? " readonly" : ""?>>
                     <small id="user-id-help" class="form-text text-muted"></small>
                 </div>
 

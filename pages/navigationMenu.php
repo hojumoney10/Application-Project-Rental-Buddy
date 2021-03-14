@@ -124,6 +124,7 @@ $base_URL .= $_SERVER['HTTP_HOST'];
                                     <?php
                                     }
                                     ?>
+                                <li><a class="dropdown-item" href="<?php echo $base_URL . "/pages/change_password.php" ?>">Change Password</a></li>
                                 <li><a class="dropdown-item" href="<?php echo $base_URL . "/pages/logout.php" ?>">Logout</a></li>
                             </ul>
                         </li>
