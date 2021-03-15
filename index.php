@@ -68,8 +68,8 @@ include_once("./pages/check_session.php");
       opacity: 0.65;
     }
 
-    .hero-text h3 {
-      opacity: 2.0;
+    .hero-text:hover {
+      opacity: .8;
     } 
 
   </style>
