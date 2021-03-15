@@ -266,6 +266,25 @@ function returnLandlordUserIdUsingLandlordId($landlord_id){
     }   
 }
 
+function returnTenantUserIdUsingRequestId($request_id){
+    $db_conn = connectDB();
+    $stmt = $db_conn->prepare("
+    SELECT u.user_id
+    FROM users u
+    JOIN requests r
+    ON u.tenant_id = r.tenant_id
+    WHERE r.request_id=?");
+    try {
+        $stmt->execute(array($request_id));
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            return $row['user_id'];
+        }
+    } catch (Exception $e) {
+        $db_conn->rollback();
+        echo $e->getMessage();
+    }   
+}
+
 function loadTenantAddress() //gets the listing reference name from tenant_id | JF
         {
             global $db_conn;
