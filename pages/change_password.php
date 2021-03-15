@@ -284,7 +284,7 @@ function formPassword()
 
         <form class="form form-inline" method="POST" style="padding-right: 30px;">
             <fieldset class="bg-light">
-                <legend class="text-light bg-dark">Tenant Profile</legend>
+                <legend class="text-light bg-dark">Change Password</legend>
 
                 <!-- password -->
                 <div class="input-group">
