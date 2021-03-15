@@ -474,7 +474,7 @@ include_once("./check_session.php");
                 $recipient = returnLandlordUserIdUsingLandlordId($_POST['rentalId']);
                 createNotification(0, $user_id, $recipient, 'Please check new Request: ' . $_POST['reqContent'], 'requests', $lastId);
 
-                $msg = "Request has benn inserted.";
+                $msg = "Request has been inserted.";
                 msgHeader('green');
                 phpMail();
                 viewPage();
@@ -511,7 +511,7 @@ include_once("./check_session.php");
                 $recipient = returnLandlordUserIdUsingLandlordId($_POST['rentalId']);
                 createNotification(0, $user_id, $recipient, 'Please check new Appointment: ' . $_POST['reqContent'], 'requests', $lastId);
 
-                $msg = "Request has benn inserted.";
+                $msg = "Request has been inserted.";
                 msgHeader('green');
                 phpMail();
                 viewPage();
