@@ -204,7 +204,7 @@ if (!isset($_SESSION['PAGEMODE'])){
                 // Show message
                 ?>
                     <script>
-                        showMessages("Changes have been saved.");
+                        showMessages("Password has been updated.");
                     </script>
                 <?php
 
