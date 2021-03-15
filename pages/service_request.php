@@ -252,6 +252,11 @@ include_once("./check_session.php");
                 //update request detail
                 insertRequestDetail($_POST['request_id'], $type . ' is changed to ' . $value);
 
+                //Request ID로 tenant ID 찾기
+                $recipient=returnTenantUserIdUsingRequestId($_POST['request_id']);
+                createNotification(0, $data['userId'], $recipient, 
+                'Request ID: '. $_POST['request_id']. ', ' . $type . ' is changed to ' . $value
+                , '', 0);
                 //viewPage();
             } catch (Exception $e) {
                 $db_conn->rollback();
