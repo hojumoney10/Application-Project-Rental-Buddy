@@ -401,7 +401,7 @@ include_once("./check_session.php");
             $events[] = array(
                 'start' => date("Y-m-d"),
                 'end' => date("Y-m-d"),
-                'summary' => '<div id="d-day" class="header"><i class="bi bi-calendar-check"></i> End of lease: -' . $interval->days . '</div>'
+                'summary' => '<div id="d-day" class="header"><i class="bi bi-calendar-check"></i> End of lease: ' . abs($interval->days) . ' days</div>'
             );
         }
 
