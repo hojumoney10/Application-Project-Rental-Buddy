@@ -45,6 +45,33 @@ include_once("./pages/check_session.php");
         font-size: 3.5rem;
       }
     }
+
+    .hero-image {
+      color: white;
+      background-image: url("/images/sunset-forks.jpg"); /* The image used */
+      background-color: #cccccc; /* Used if the image is unavailable */
+      background-position: center; /* Center the image */
+      height: 700px;
+      background-repeat: no-repeat; /* Do not repeat the image */
+      background-size: cover; /* Resize the background image to cover the entire container */
+      position: relative;
+    }
+
+    .hero-text {
+      text-align: center;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      background-color: black;
+      opacity: 0.65;
+    }
+
+    .hero-text h3 {
+      opacity: 2.0;
+    } 
+
   </style>
 
 
@@ -61,10 +88,21 @@ include_once("./pages/check_session.php");
 
   <main class="container">
 
+
+<!-- 
     <div class="starter-template text-center py-5 px-3">
       <h1>Live Demo!</h1>
       <p class="lead">Please visit our live demo site on AWS.<br> <a href="https://rental.fanshawe21w.tk/"> https://rental.fanshawe21w.tk/ </a><br>Using Travis, AWS Code deploy, and S3, Github's master branch commit is reflected in real time.</p>
+    </div> -->
+
+  <div class="starter-template text-center py-5 px-3 hero-image">
+    <div class="hero-text starter-template text-center py-5 px-3">
+        <h1 style="font-size:50px">Live Demo!</h1>
+        <h3>Please visit our live demo site on AWS:</h3>
+        <a href="https://rental.fanshawe21w.tk/"> https://rental.fanshawe21w.tk/ </a><br>
+        <p>Using Travis, AWS Code deploy, and S3, Github's master branch commit is reflected in real time.</p>
     </div>
+  </div>
 
   </main><!-- /.container -->
 
