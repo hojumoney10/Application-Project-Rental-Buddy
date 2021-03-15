@@ -140,6 +140,11 @@ include_once("./check_session.php");
         } //email write function
         else if (isset($_POST['send'])) {
             if ($_POST['emailBody'] != '') {
+                global $property_id;
+                global $db_conn;
+                $recipient = returnLandlordUserIdUsingLandlordId($property_id);
+                $lastId = $db_conn->lastInsertId();
+                createNotification(0, $user_id, $recipient, 'Please check new Email: ' . $_POST['emailSubject'], '', $lastId);
                 phpMail();
                 viewPage();
             } else {
