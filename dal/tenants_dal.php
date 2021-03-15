@@ -162,7 +162,7 @@ function getTenant() {
             , t.last_updated_user_id
 
         FROM tenants t
-        INNER JOIN codes salutations on salutations.code_value = t.salutation_code and salutations.code_type = 'salutation'
+        left JOIN codes salutations on salutations.code_value = t.salutation_code and salutations.code_type = 'salutation'
         WHERE tenant_id = :tenant_id";
 
                     // assign value to :tenant_id
