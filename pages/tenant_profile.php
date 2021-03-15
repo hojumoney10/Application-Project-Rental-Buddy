@@ -196,7 +196,7 @@ if (!isset($_SESSION['PAGEMODE'])){
 
             } else {
                 // Save to database                     
-                saveTenant();
+                saveTenantProfile();
 
                 // Redisplay tenant
                 formTenant();

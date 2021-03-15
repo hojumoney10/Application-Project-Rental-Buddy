@@ -157,6 +157,9 @@ function getTenant() {
             , t.date_of_birth
             , t.gender
             , t.social_insurance_number
+            , t.contact_phone
+            , t.contact_sms
+            , t.contact_email
             , t.status_code
             , t.last_updated
             , t.last_updated_user_id
@@ -231,21 +234,12 @@ function saveTenantProfile() {
 
     // assign data values
     $data = array(  ":tenant_id" => $tenant_id,
-                    ":salutation_code" => $rowdata['salutation_code'],
-                    ":first_name" => $rowdata['first_name'],
-                    ":last_name" => $rowdata['last_name'],
-                    ":address_1" => $rowdata['address_1'],
-                    ":address_2" => $rowdata['address_2'],
-                    ":city" => $rowdata['city'],
-                    ":province_code" => $rowdata['province_code'],
-                    ":postal_code" => $rowdata['postal_code'],
+                    ":contact_phone" => $rowdata['contact_phone'],
+                    ":contact_sms" => $rowdata['contact_sms'],
+                    ":contact_email" => $rowdata['contact_email'],
                     ":phone" => $rowdata['phone'],
                     ":fax" => $rowdata['fax'],
                     ":email" => $rowdata['email'],
-                    ":date_of_birth" => $rowdata['date_of_birth'],
-                    ":gender" => $rowdata['gender'],
-                    ":social_insurance_number" => $rowdata['social_insurance_number'],
-                    ":status_code" => $rowdata['status_code'],
                     ":session_user_id" => $session_user_id
                 );
 
