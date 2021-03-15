@@ -363,11 +363,7 @@ function formTenant()
     
                 <table>
                     <tr>
-<?php 
-                if ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD') { ?>
                         <td><input type="submit" class="btn btn-success btn-crud" name="btn-save" value="Save"></td>
-<?php            }
-?>
                     </tr>
                 </table>
             </fieldset>
