@@ -301,11 +301,7 @@ function formPassword()
                 </div>
                 <table>
                     <tr>
-<?php 
-                if ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD') { ?>
                         <td><input type="submit" class="btn btn-success btn-crud" name="btn-save" value="Update"></td>
-<?php            }
-?>
                     </tr>
                 </table>
             </fieldset>
