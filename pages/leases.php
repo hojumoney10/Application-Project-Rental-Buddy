@@ -345,7 +345,7 @@ function validateLease() {
             $err_msgs[] = "A payment day is not valid";
         }
 	}
-    // file check
+    // file check.
     if (file_exists($_FILES['document-file']['tmp_name']) || is_uploaded_file($_FILES['document-file']['tmp_name'])){
         $value = false;
         $array_file_extension = array('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf', 'text/plain', 'image/jpeg');
