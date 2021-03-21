@@ -7,10 +7,11 @@ include_once("./check_session.php");
     Application: RentalBuddy
     Purpose:     Handling Service request 
     Author:      T. Kim, J. Foster, Group 5, INFO-5139-01-21W
-    Date:        March 7th, 2021 (February 10th, 2021) 
+    Date:        March 19th, 2021 (February 10th, 2021) 
 
     20210307     GPB    Check user logged in & remove login/session_start further down
     20210311     GPB    Added bootstrap icons link
+    20210319     TK     Added Upload Rental Document feature
  
 -->
 <!doctype html>
@@ -117,16 +118,29 @@ include_once("./check_session.php");
         }
         // write function
         else if (isset($_POST['submit'])) {
-            if ($_POST['reqType'] != 'Request Type' && $_POST['reqContent'] != '') {
-                insertRequest();
-            } else {
-                if ($_POST['reqType'] == 'Request Type') {
-                    $msg = "Please select Request Type";
-                } else if ($_POST['reqContent'] == '') {
-                    $msg = "Please insert Request description";
+            if (file_exists($_FILES['request-file']['tmp_name']) || is_uploaded_file($_FILES['request-file']['tmp_name'])) {
+                if ($_FILES['request-file']['error'] != 0) {
+                    $msg = "Please check your file.";
+                } else {
+                    $msg = "Please check your file extension.";
+                    $array_file_extension = array('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf', 'text/plain', 'image/jpeg');
+                    foreach ($array_file_extension as $extension) {
+                        if ($_FILES['request-file']['type'] == $extension) {
+                            $msg = "";
+                        }
+                    }
                 }
+            }
+            if ($_POST['reqType'] == 'Request Type') {
+                $msg = "Please select Request Type";
+            } else if ($_POST['reqContent'] == '') {
+                $msg = "Please insert Request description";
+            }
+            if ($msg != "") {
                 msgHeader('red');
-                inputPage();
+                //inputPage();
+            } else {
+                insertRequest();
             }
         } // appointment  write function
         else if (isset($_POST['appointment_submit'])) {
@@ -297,7 +311,7 @@ include_once("./check_session.php");
             $tenants = loadTenantsInfo();
 
             $html = "";
-            $stmt = $db_conn->prepare("Select r.request_id, r.request_date, r.rental_property_id, r.tenant_id, c.description as 'typeValue', r.status_code, r.priority_code, r.last_updated, r.description, p.description as 'priorityValue', s.description as 'statusValue', r.appointment_date_time
+            $stmt = $db_conn->prepare("Select r.request_id, r.request_date, r.rental_property_id, r.tenant_id, c.description as 'typeValue', r.status_code, r.priority_code, r.last_updated, r.description, p.description as 'priorityValue', s.description as 'statusValue', r.appointment_date_time, r.file
             
             from requests r 
             join codes c 
@@ -354,17 +368,37 @@ include_once("./check_session.php");
             <?php
                         if (!is_null($row['appointment_date_time'])) {
                         ?>
-             <div class="row">
-            <div class="col-sm ps-4 pe-4">
-                <hr>
-                <p class="fw-bold">Requested the Appointment Date&Time</p>
-            </div>
+            <div class="row">
+                <div class="col-sm ps-4 pe-4">
+                    <hr>
+                    <p class="fw-bold">Requested the Appointment Date&Time</p>
+                </div>
             </div>
             <div class="row">
                 <div class="col-sm ps-4 pe-4 pb-4">
                     <pre><?php echo $row['appointment_date_time'] ?></pre>
                 </div>
             </div>
+            <?php
+                        }
+                        ?>
+            <?php
+                        if (!is_null($row['file'])) {
+                        ?>
+            <div class="row">
+                <div class="col-sm ps-4 pe-4">
+                    <hr>
+                    <p class="fw-bold">Uploaded file</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm ps-4 pe-4 pb-4">
+                    <a href="/request_file/<?php echo $row['file'] ?>">
+                        <?php echo $row['file'] ?></a>
+                </div>
+            </div>
+
+
             <?php
                         }
                         ?>
@@ -480,10 +514,21 @@ include_once("./check_session.php");
 
         function insertRequest()
         {
+            //file upload
+            if (file_exists($_FILES['request-file']['tmp_name']) || is_uploaded_file($_FILES['request-file']['tmp_name'])) {
+                $destination_path = '../request_file/';
+                $FileExt = substr(strrchr($_FILES['request-file']['name'], "."), 1);
+                $FileName = substr($_FILES['request-file']['name'], 0, strlen($_FILES['request-file']['name']) - strlen($FileExt) - 1);
+                $destination_file = $FileName . '_' . time() . '.' . $FileExt;
+                if (!move_uploaded_file($_FILES['request-file']['tmp_name'], $destination_path . $destination_file)) {
+                    echo "<p>Error: File Upload<br>Message: File upload failed.</p><br>";
+                    return;
+                }
+            }
             global $db_conn;
             global $msg;
             global $user_id;
-            $stmt = $db_conn->prepare("INSERT INTO requests (rental_property_id, tenant_id, request_type_code, description, status_code, priority_code, last_updated_user_id) values(?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $db_conn->prepare("INSERT INTO requests (rental_property_id, tenant_id, request_type_code, description, status_code, priority_code, last_updated_user_id, file) values(?, ?, ?, ?, ?, ?, ?, ?)");
             try {
                 $array = [
                     $_POST['rentalId'],
@@ -492,7 +537,8 @@ include_once("./check_session.php");
                     $_POST['reqContent'],
                     '60',
                     '65',
-                    $user_id
+                    $user_id,
+                    $destination_file
                 ];
 
                 $db_conn->beginTransaction();
@@ -633,7 +679,7 @@ include_once("./check_session.php");
             $tenants = loadTenantsInfo();
             $landlordEmail = loadLandlordEmail();
             ?>
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <div class="row mb-3">
                 <h3>Contact Info</h3>
                 <h6>Please check your contact information, if you need, you can change your information in manage page.
@@ -701,6 +747,7 @@ include_once("./check_session.php");
                                 ?>
                     </select>
                 </div>
+
                 <?php } else if (isset($_POST['appointment'])) { ?>
                 <div class="col-sm-6">
                     <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
@@ -730,6 +777,16 @@ include_once("./check_session.php");
                     <textarea class="form-control" id="reqContent" name='reqContent' rows="3"></textarea>
                 </div>
             </div>
+            <?php if (isset($_POST['request'])) { ?>
+            <div class="row mb-3">
+                <label for="formFile" class="col-sm-2 col-form-label">Upload File</label>
+                <div class="col-sm-10">
+                    <input class="form-control" type="file" id="formFile" name="request-file">
+                    <div id="formFile" class="form-text">pdf, docx, txt, and jpeg extension is allowed.</div>
+                </div>
+            </div>
+            <?php } ?>
+
             <div class="d-flex justify-content-end">
                 <?php if (isset($_POST['request'])) { ?>
                 <button type="submit" class="btn btn-primary" name="submit">Request</button>

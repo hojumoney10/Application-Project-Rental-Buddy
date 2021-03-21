@@ -746,7 +746,7 @@ function formLease()
                 <label for="documentfile">Document file</label>
                 <div class='mb-3'>
                 <?php echo ($row['file']) ? "<label class='form-label' style='width:377px'>Uploaded file: <a href='/lease_document_file/".$row['file']."'>".$row['file']."</a></label><br>":"" ?>
-                <?php echo ($_SESSION['PAGEMODE'] == 'ADD'||$_SESSION['PAGEMODE'] == 'EDIT') ? "<label class='form-label' style='width:377px'>pdf, docx, txt extension is allowed.</label>":"" ?>                
+                <?php echo ($_SESSION['PAGEMODE'] == 'ADD'||$_SESSION['PAGEMODE'] == 'EDIT') ? "<label class='form-label' style='width:377px'>pdf, docx, txt, and jpeg extension is allowed.</label>":"" ?>                
                 <input class="form-control" type="file" id="documentfile" name="document-file" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " disabled" : ""?>>
                 </div>
                 
