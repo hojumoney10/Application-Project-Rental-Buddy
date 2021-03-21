@@ -1,18 +1,19 @@
 <?php
 session_start();
 include_once("./check_session.php");
-?>    
-    <!-- 
+?>
+<!-- 
         Title:       leases.php
         Application: RentalBuddy
         Purpose:     Handles the crud functions of landlords
         Author:      G. Blandford, S. Jeong  Group 5, INFO-5139-01-21W
-        Date:        March 7th, 2021 (February 10th, 2021)
+        Date:        March 19th, 2021 (February 10th, 2021)
 
         20210220    GPB     Updated all links, and now menus are user-driven
         20210221    GPB     Added readonly listing ref & tenant name
         20210307    GPB     Check user logged in           
         20210311    GPB     Added bootstrap icons link
+        20210319     TK     Added Upload Rental Document feature
 
     -->
 <?php
@@ -53,96 +54,97 @@ if (!isset($_SESSION['PAGEMODE'])){
 
     <!-- Use internal styles for now -->
     <style>
-        .bd-placeholder-img {
-            font-size: 1.125rem;
-            text-anchor: middle;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            user-select: none;
-        }
+    .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+    }
 
-        @media (min-width: 768px) {
-            .bd-placeholder-img-lg {
-                font-size: 3.5rem;
-            }
+    @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+            font-size: 3.5rem;
         }
+    }
 
-        .backgroundColor {
-            background: lightgray;
-        }
+    .backgroundColor {
+        background: lightgray;
+    }
 
-        .fontColor {
-            color: darkblue;
-        }
+    .fontColor {
+        color: darkblue;
+    }
 
-        body {
-            font-family: 'Metrophobic', sans-serif;
-            font-size: 16px;
-        }
+    body {
+        font-family: 'Metrophobic', sans-serif;
+        font-size: 16px;
+    }
 
-        /* nav {
+    /* nav {
             margin-top: 20px;
         } */
 
-        .container-crud {
-            margin-left: 10px;
-        }
-        .btn-crud {
-            min-width: 100px;
-        }
+    .container-crud {
+        margin-left: 10px;
+    }
 
-        .btn-crud img {
-            color: white;
-        }
+    .btn-crud {
+        min-width: 100px;
+    }
 
-        .form-inline {
-            display: inline-block;
-        }
+    .btn-crud img {
+        color: white;
+    }
 
-        .input-group {
-            margin-bottom: 10px !important;
-        }
+    .form-inline {
+        display: inline-block;
+    }
 
-        .form-group {
-            margin-bottom: 10px !important;
-        }
+    .input-group {
+        margin-bottom: 10px !important;
+    }
 
-        .form-check-inline {
-            margin: 5px 15px;
-        }
+    .form-group {
+        margin-bottom: 10px !important;
+    }
 
-        label {
-            width: 180px;
-            justify-content: left !important;
-        }
+    .form-check-inline {
+        margin: 5px 15px;
+    }
 
-        .label-checkbox {
-            width: 180px !important;
-        }
+    label {
+        width: 180px;
+        justify-content: left !important;
+    }
 
-        input[type=text] {
-            width: 280px;
+    .label-checkbox {
+        width: 180px !important;
+    }
 
-        }
+    input[type=text] {
+        width: 280px;
 
-        select {
-            min-width: 285px;
-        }
+    }
 
-        fieldset {
-            padding: 10px;
-            border-radius: 10px;
-        }
+    select {
+        min-width: 285px;
+    }
 
-        legend {
-            padding-top: 5px;
-            border-radius: 5px;
-            border: 5px;
-            margin-bottom: 20px;
-            text-align: center;
-            height: 50px;
-            vertical-align: middle !important;
-        }
+    fieldset {
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    legend {
+        padding-top: 5px;
+        border-radius: 5px;
+        border: 5px;
+        margin-bottom: 20px;
+        text-align: center;
+        height: 50px;
+        vertical-align: middle !important;
+    }
     </style>
 
     <!-- Custom styles for this template -->
@@ -245,7 +247,6 @@ if (!isset($_SESSION['PAGEMODE'])){
 
             case 1: // Save
                 if ( ( isset($_POST['btn-save'] ) ) && ( $_POST['btn-save'] == "Save" ) ) {
-
                     // Validate
                     $err_msgs = validateLease();
 
@@ -254,7 +255,7 @@ if (!isset($_SESSION['PAGEMODE'])){
                         displayErrors($err_msgs);
                         formLease();
                     } else {
-                        
+
                         // Save to database                     
                         saveLease();
                         $_SESSION['PAGENUM'] = 0;
@@ -344,7 +345,20 @@ function validateLease() {
             $err_msgs[] = "A payment day is not valid";
         }
 	}
+    // file
+    if (file_exists($_FILES['document-file']['tmp_name']) || is_uploaded_file($_FILES['document-file']['tmp_name'])){
+        $value = false;
+        $array_file_extension = array('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf', 'text/plain', 'image/jpeg');
+        foreach($array_file_extension as $extension){
+            if($_FILES['document-file']['type'] == $extension){
+                $value = true;
+            }
+        }
+        unset($extension);
+        $value == false ? $err_msgs[] = 'Please check the file extension.':"";
+            
 
+    }
 
     // payment_frequency_code
 	if( !isset($_POST['payment-frequency-code'] ) ) {
@@ -492,8 +506,8 @@ function formDisplayLeases()
         $fvalue = $_SESSION['text-search'];
     }
 ?>
-    <form method="POST">
-        <?php
+<form method="POST">
+    <?php
 
         // Get Data
         getLeases();
@@ -505,8 +519,8 @@ function formDisplayLeases()
         getCRUDButtons();
         ?>
 
-    </form>
-    </div>
+</form>
+</div>
 <?php }
 
 function formLease()
@@ -515,12 +529,12 @@ function formLease()
     $row = $_SESSION['rowdata'];
 
 ?>
-    <div class="container-fluid">
+<div class="container-fluid">
 
-        <form class="form form-inline" method="POST" style="padding-right: 30px;">
-            <fieldset class="bg-light">
-                <legend class="text-light bg-dark">
-                    <?php
+    <form class="form form-inline" method="POST" style="padding-right: 30px;" enctype="multipart/form-data">
+        <fieldset class="bg-light">
+            <legend class="text-light bg-dark">
+                <?php
                     switch ($_SESSION['PAGEMODE']) {
                         case "VIEW":
                             echo "View ";
@@ -531,170 +545,234 @@ function formLease()
                         default:
                             break;
                     }
-                    ?>Lease Details</legend> <!--check form-->
+                    ?>Lease Details</legend>
+            <!--check form-->
 
-                <!-- Lease no.-->
-                <div class="input-group">
-                    <label for="lease-id">Lease No.</label>
-                    <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 100px" id="lease-id" name="lease-id" aria-describedby="lease-id-help" placeholder="" value="<?php echo $row['lease_id']; ?>" readonly>
-                    <small id="lease-help" class="form-text text-muted"></small>
-                </div>
+            <!-- Lease no.-->
+            <div class="input-group">
+                <label for="lease-id">Lease No.</label>
+                <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 100px" id="lease-id"
+                    name="lease-id" aria-describedby="lease-id-help" placeholder=""
+                    value="<?php echo $row['lease_id']; ?>" readonly>
+                <small id="lease-help" class="form-text text-muted"></small>
+            </div>
 
-                <!--rental_property_id-->
-                <div class="input-group">
-                    <label for="rental-property-id">Rental Property No.</label>
-                    <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 80px" id="rental-property-id" name="rental-property-id" aria-describedby="rental-property-id-help" placeholder="" value="<?php echo $row['rental_property_id']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="rental-property-id-help" class="form-text text-muted"></small>
+            <!--rental_property_id-->
+            <div class="input-group">
+                <label for="rental-property-id">Rental Property No.</label>
+                <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 80px"
+                    id="rental-property-id" name="rental-property-id" aria-describedby="rental-property-id-help"
+                    placeholder="" value="<?php echo $row['rental_property_id']; ?>"
+                    required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                <small id="rental-property-id-help" class="form-text text-muted"></small>
 
-                    <input type="text" class="form-control" id="listing-reference" name="listing-reference" value="<?php echo $row['listing_reference']; ?>" readonly>
-                    <small id="listing-reference-help" class="form-text text-muted"></small>
-                </div>
-                
-                <!--tenant_id-->
-                <div class="input-group">
-                    <label for="tenant-id">Tenant No.</label>
-                    <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 80px" id="tenant-id" name="tenant-id" aria-describedby="tenant-id-help" placeholder="" value="<?php echo $row['tenant_id']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="tenant-id-help" class="form-text text-muted"></small>
+                <input type="text" class="form-control" id="listing-reference" name="listing-reference"
+                    value="<?php echo $row['listing_reference']; ?>" readonly>
+                <small id="listing-reference-help" class="form-text text-muted"></small>
+            </div>
 
-                    <input type="text" class="form-control" id="tenant-name" name="tenant-name" value="<?php echo $row['tenant_name']; ?>" readonly>
-                    <small id="tenant-name-help" class="form-text text-muted"></small>
-                </div>
+            <!--tenant_id-->
+            <div class="input-group">
+                <label for="tenant-id">Tenant No.</label>
+                <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 80px" id="tenant-id"
+                    name="tenant-id" aria-describedby="tenant-id-help" placeholder=""
+                    value="<?php echo $row['tenant_id']; ?>"
+                    required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                <small id="tenant-id-help" class="form-text text-muted"></small>
 
-                <!--start_date-->
-                <div class="input-group">
-                    <label for="start-date">Start Date</label>
-                    <input type="date" style="max-width: 200px;" class="form-control" id="start-date" name="start-date" aria-describedby="start-date-help" value="<?php echo $row['start_date']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="start-date-help" class="form-text text-muted"></small>
-                </div>
+                <input type="text" class="form-control" id="tenant-name" name="tenant-name"
+                    value="<?php echo $row['tenant_name']; ?>" readonly>
+                <small id="tenant-name-help" class="form-text text-muted"></small>
+            </div>
 
-                <!--end_date-->
-                <div class="input-group">
-                    <label for="end-date">End Date</label>
-                    <input type="date" style="max-width: 200px;" class="form-control" id="end-date" name="end-date" aria-describedby="end-date-help" value="<?php echo $row['end_date']; ?>" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="end-date-help" class="form-text text-muted"></small>
-                </div>
+            <!--start_date-->
+            <div class="input-group">
+                <label for="start-date">Start Date</label>
+                <input type="date" style="max-width: 200px;" class="form-control" id="start-date" name="start-date"
+                    aria-describedby="start-date-help" value="<?php echo $row['start_date']; ?>"
+                    required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                <small id="start-date-help" class="form-text text-muted"></small>
+            </div>
 
-                <!--Payment day/Frequency-->
-                <div class="input-group">
-                    <label for="province">Frequency/Day</label>
-                    <select class="selectpicker form-control" style="max-width: 33%;" id="payment-frequency-code" name="payment-frequency-code" aria-describedby="payment-frequency-code-help" placeholder="Enter frequency" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                        <?php
+            <!--end_date-->
+            <div class="input-group">
+                <label for="end-date">End Date</label>
+                <input type="date" style="max-width: 200px;" class="form-control" id="end-date" name="end-date"
+                    aria-describedby="end-date-help" value="<?php echo $row['end_date']; ?>"
+                    <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                <small id="end-date-help" class="form-text text-muted"></small>
+            </div>
+
+            <!--Payment day/Frequency-->
+            <div class="input-group">
+                <label for="province">Frequency/Day</label>
+                <select class="selectpicker form-control" style="max-width: 33%;" id="payment-frequency-code"
+                    name="payment-frequency-code" aria-describedby="payment-frequency-code-help"
+                    placeholder="Enter frequency"
+                    required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <?php
                         getCodes('payment_frequency', $row['payment_frequency_code']);
                         ?>
-                    </select>
-                    <small id="payment-frequency-code-help" class="form-text text-muted"></small>
+                </select>
+                <small id="payment-frequency-code-help" class="form-text text-muted"></small>
 
-                    <input type="text" style="max-width: 33%;" class="form-control" id="payment-day" name="payment-day" aria-describedby="payment-day-help" placeholder="Enter payment day" value="<?php echo $row['payment_day']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="payment-day-help" class="form-text text-muted"></small>
-                </div>
+                <input type="text" style="max-width: 33%;" class="form-control" id="payment-day" name="payment-day"
+                    aria-describedby="payment-day-help" placeholder="Enter payment day"
+                    value="<?php echo $row['payment_day']; ?>"
+                    required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                <small id="payment-day-help" class="form-text text-muted"></small>
+            </div>
 
-                <!--base_rent_amount-->
-                <div class="input-group">
-                    <label for="base-rent-amount">Base Rent</label>
-                    <input type="number" maxlength="10" class="form-control" id="base-rent-amount" name="base-rent-amount" aria-describedby="base-rent-amount-help" placeholder="0.00" value="<?php echo $row['base_rent_amount']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="base-rent-amount-help" class="form-text text-muted"></small>
-                </div>
+            <!--base_rent_amount-->
+            <div class="input-group">
+                <label for="base-rent-amount">Base Rent</label>
+                <input type="number" maxlength="10" class="form-control" id="base-rent-amount" name="base-rent-amount"
+                    aria-describedby="base-rent-amount-help" placeholder="0.00"
+                    value="<?php echo $row['base_rent_amount']; ?>"
+                    required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                <small id="base-rent-amount-help" class="form-text text-muted"></small>
+            </div>
 
-                <!--parking_amount-->
-                <div class="input-group">
-                    <label for="parking-amount">Parking</label>
-                    <input type="number" maxlength="10" class="form-control" id="parking-amount" name="parking-amount" aria-describedby="parking-amount-help" placeholder="0.00" value="<?php echo $row['parking_amount']; ?>" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="parking-amount-help" class="form-text text-muted"></small>
-                </div>
+            <!--parking_amount-->
+            <div class="input-group">
+                <label for="parking-amount">Parking</label>
+                <input type="number" maxlength="10" class="form-control" id="parking-amount" name="parking-amount"
+                    aria-describedby="parking-amount-help" placeholder="0.00"
+                    value="<?php echo $row['parking_amount']; ?>"
+                    <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                <small id="parking-amount-help" class="form-text text-muted"></small>
+            </div>
 
-                <!--other_amount-->
-                <div class="input-group">
-                    <label for="other-amount">Other</label>
-                    <input type="number" maxlength="10" class="form-control" id="other-amount" name="other-amount" aria-describedby="other-amount-help" placeholder="0.00" value="<?php echo $row['other_amount']; ?>"<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="other-amount-help" class="form-text text-muted"></small>
-                </div>
+            <!--other_amount-->
+            <div class="input-group">
+                <label for="other-amount">Other</label>
+                <input type="number" maxlength="10" class="form-control" id="other-amount" name="other-amount"
+                    aria-describedby="other-amount-help" placeholder="0.00" value="<?php echo $row['other_amount']; ?>"
+                    <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                <small id="other-amount-help" class="form-text text-muted"></small>
+            </div>
 
-                <!--payable_to-->
-                <div class="input-group">
-                    <label for="payable-to">Payable To</label>
-                    <input type="text" size="30" maxlength="50" class="form-control" id="payable-to" name="payable-to" aria-describedby="payable-to-help" placeholder="" value="<?php echo $row['payable_to']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="payable-to-help" class="form-text text-muted"></small>
-                </div>
+            <!--payable_to-->
+            <div class="input-group">
+                <label for="payable-to">Payable To</label>
+                <input type="text" size="30" maxlength="50" class="form-control" id="payable-to" name="payable-to"
+                    aria-describedby="payable-to-help" placeholder="" value="<?php echo $row['payable_to']; ?>"
+                    required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                <small id="payable-to-help" class="form-text text-muted"></small>
+            </div>
 
-                <!--deposit_amount-->
-                <div class="input-group">
-                    <label for="deposit-amount">Deposit</label>
-                    <input type="number" size="30" maxlength="10" class="form-control" id="deposit-amount" name="deposit-amount" aria-describedby="deposit-amount-help" placeholder="0.00" value="<?php echo $row['deposit_amount']; ?>" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="deposit-amount-help" class="form-text text-muted"></small>
-                </div>
+            <!--deposit_amount-->
+            <div class="input-group">
+                <label for="deposit-amount">Deposit</label>
+                <input type="number" size="30" maxlength="10" class="form-control" id="deposit-amount"
+                    name="deposit-amount" aria-describedby="deposit-amount-help" placeholder="0.00"
+                    value="<?php echo $row['deposit_amount']; ?>"
+                    required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                <small id="deposit-amount-help" class="form-text text-muted"></small>
+            </div>
 
-                <!--key_deposit-->
-                <div class="input-group">
-                    <label for="key-deposit">Key Deposit</label>
-                    <input type="number" size="30" maxlength="10" class="form-control" id="key-deposit" name="key-deposit" aria-describedby="key-deposit-help" placeholder="0.00" value="<?php echo $row['key_deposit']; ?>" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="key-deposit-help" class="form-text text-muted"></small>
-                </div>
+            <!--key_deposit-->
+            <div class="input-group">
+                <label for="key-deposit">Key Deposit</label>
+                <input type="number" size="30" maxlength="10" class="form-control" id="key-deposit" name="key-deposit"
+                    aria-describedby="key-deposit-help" placeholder="0.00" value="<?php echo $row['key_deposit']; ?>"
+                    <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                <small id="key-deposit-help" class="form-text text-muted"></small>
+            </div>
 
-                <!--payment_type_code-->
-                <div class="input-group">
-                    <label for="payment-type-code">Payment Type</label>
-                    <select class="selectpicker form-control" style="max-width: 200px" id="payment-type-code" name="payment-type-code" aria-describedby="payment-type-code-help" placeholder="Enter payment Type code" value="<?php echo $row['payment_frequency_code']; ?>"<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                        <?php
+            <!--payment_type_code-->
+            <div class="input-group">
+                <label for="payment-type-code">Payment Type</label>
+                <select class="selectpicker form-control" style="max-width: 200px" id="payment-type-code"
+                    name="payment-type-code" aria-describedby="payment-type-code-help"
+                    placeholder="Enter payment Type code" value="<?php echo $row['payment_frequency_code']; ?>"
+                    <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <?php
                         getCodes('payment_type', $row['payment_type_code']);
                         ?>
-                    </select>
-                    <small id="payment-type-code-help" class="form-text text-muted"></small>
-                </div>
+                </select>
+                <small id="payment-type-code-help" class="form-text text-muted"></small>
+            </div>
 
-                <!--include_electricity-->
-                <div class="input-group">
-                    <label for="include-electricity">Electricity</label>
-                    <input type="checkbox" class="form-check-input form-check-input-rental" id="include-electricity" name="include-electricity" <?php echo ($row['include_electricity']) ? "checked" : ""; ?> <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
-                </div>
+            <!--include_electricity-->
+            <div class="input-group">
+                <label for="include-electricity">Electricity</label>
+                <input type="checkbox" class="form-check-input form-check-input-rental" id="include-electricity"
+                    name="include-electricity" <?php echo ($row['include_electricity']) ? "checked" : ""; ?>
+                    <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
+            </div>
 
-                <!--include_heat-->
-                <div class="input-group">
-                    <label for="include-heat">Heat</label>
-                    <input type="checkbox" class="form-check-input form-check-input-rental" id="include-heat" name="include-heat" <?php echo ($row['include_heat']) ? "checked" : ""; ?> <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
-                </div>
+            <!--include_heat-->
+            <div class="input-group">
+                <label for="include-heat">Heat</label>
+                <input type="checkbox" class="form-check-input form-check-input-rental" id="include-heat"
+                    name="include-heat" <?php echo ($row['include_heat']) ? "checked" : ""; ?>
+                    <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
+            </div>
 
-                <!--include_water-->
-                <div class="input-group">
-                    <label for="include-water">Water</label>
-                    <input type="checkbox" class="form-check-input form-check-input-rental" id="include-water" name="include-water" <?php echo ($row['include_water']) ? "checked" : ""; ?> <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
-                </div>
+            <!--include_water-->
+            <div class="input-group">
+                <label for="include-water">Water</label>
+                <input type="checkbox" class="form-check-input form-check-input-rental" id="include-water"
+                    name="include-water" <?php echo ($row['include_water']) ? "checked" : ""; ?>
+                    <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
+            </div>
 
-                <!--insurancy_policy_number-->
-                <div class="input-group">
-                    <label for="insurancy-policy-number">Insurance Policy No.</label>
-                    <input type="text" size="30" maxlength="50" class="form-control" id="insurancy-policy-number" name="insurancy-policy-number" aria-describedby="insurancy-policy-number-help" placeholder="Enter Insurancy Policy Number" value="<?php echo $row['insurancy_policy_number']; ?>" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                    <small id="insurancy-policy-number-help" class="form-text text-muted"></small>
-                </div>
+            <!--insurancy_policy_number-->
+            <div class="input-group">
+                <label for="insurancy-policy-number">Insurance Policy No.</label>
+                <input type="text" size="30" maxlength="50" class="form-control" id="insurancy-policy-number"
+                    name="insurancy-policy-number" aria-describedby="insurancy-policy-number-help"
+                    placeholder="Enter Insurancy Policy Number" value="<?php echo $row['insurancy_policy_number']; ?>"
+                    <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                <small id="insurancy-policy-number-help" class="form-text text-muted"></small>
+            </div>
 
-                <!--status  -->
-                <div class="input-group">
-                    <label for="status-code">Status</label>
-                    <select class="selectpicker form-control" style="max-width: 100px" id="status-code" name="status-code" aria-describedby="status-code-help" placeholder="Enter status" required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
-                        <?php
+            <!--status  -->
+            <div class="input-group">
+                <label for="status-code">Status</label>
+                <select class="selectpicker form-control" style="max-width: 100px" id="status-code" name="status-code"
+                    aria-describedby="status-code-help" placeholder="Enter status"
+                    required<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : ""?>>
+                    <?php
                         getCodes('lease_status', $row['status_code']);
                         ?>
-                    </select>
-                    <small id="status-code-help" class="form-text text-muted"></small>
+                </select>
+                <small id="status-code-help" class="form-text text-muted"></small>
+            </div>
+            
+            <!-- 2021 Mar 19. Add Rental Document T.K -->
+            <div class="input-group">
+                <label for="documentfile">Document file</label>
+                <?php echo ($_SESSION['PAGEMODE'] != 'ADD') ? "<div class='mb-3'><label class='form-label' style='width:377px'>Uploaded file: <a href='/lease_document_file/".$row['file']."'>".$row['file']."</a></label>":"" ?>
+                <?php echo ($_SESSION['PAGEMODE'] == 'ADD') ? "<div class='mb-3'><label class='form-label' style='width:377px'>pdf, docx, txt extension is allowed.</label>":"" ?>                
+                <input class="form-control" type="file" id="documentfile" name="document-file" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " disabled" : ""?>>
                 </div>
+                
+            </div>
 
 
-                <table>
-                    <tr>
-<?php 
+            <table>
+                <tr>
+                    <?php 
                 if ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD') { ?>
-                        <td><input type="submit" class="btn btn-success btn-crud" name="btn-save" value="Save"></td>
-<?php            }
+                    <td><input type="submit" class="btn btn-success btn-crud" name="btn-save" value="Save"></td>
+                    <?php            }
 ?>
-                        <td>
-                                <input type="submit" form="form-cancel" class="btn <?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD' ) ? 'btn-secondary' : 'btn-primary'; ?> btn-crud" name="btn-cancel" value="<?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD' ) ? 'Cancel' : 'OK'; ?>">
-                        </td>
-                    </tr>
-                </table>
-            </fieldset>
-        </form>
-        <!-- empty form for cancel button -->
-        <form id="form-cancel" hidden><form>
-    </div>
+                    <td>
+                        <input type="submit" form="form-cancel"
+                            class="btn <?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD' ) ? 'btn-secondary' : 'btn-primary'; ?> btn-crud"
+                            name="btn-cancel"
+                            value="<?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD' ) ? 'Cancel' : 'OK'; ?>">
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>
+    <!-- empty form for cancel button -->
+    <form id="form-cancel" hidden>
+        <form>
+</div>
 <?php
 }
 ?>

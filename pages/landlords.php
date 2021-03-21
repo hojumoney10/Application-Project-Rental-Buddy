@@ -24,6 +24,7 @@ if (!isset($_SESSION['PAGEMODE'])){
         20210307     GPB    Check user logged in
         20210308     SKC    Added map API functionality
         20210311     GPB    Added bootstrap icons link
+        
     -->
 
     <title>RentalBuddy - Landlords</title>

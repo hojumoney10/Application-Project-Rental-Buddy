@@ -10,6 +10,7 @@
                     Added Start Date / Removed Day
 
     20210312    GPB Corrected $session_user_id to use CURRENT_USER
+    20210319     TK     Added Upload Rental Document feature
 -->
 <?php
 
@@ -40,6 +41,7 @@ function getLeases()
             , l.payment_type_code
             , payment_types.description as payment_type_description
             , status_codes.description as status_code
+            , l.file
             
         from leases l
 
@@ -53,7 +55,7 @@ function getLeases()
         inner join codes status_codes on status_codes.code_value = l.status_code and status_codes.code_type = 'lease_status'
         inner join codes salutations on salutations.code_value = t.salutation_code and salutations.code_type = 'salutation'";
 
-        if (isset($_SESSION['text-search'])) {
+    if (isset($_SESSION['text-search'])) {
         if ((strlen($_SESSION['text-search']) > 0)) {
             $querySQL .= " where l.lease_id";
         }
@@ -74,106 +76,110 @@ function getLeases()
     }
 
 ?>
-    <div class="container-fluid">
-            <legend class="text-light bg-dark" style="margin-top: 10px">Leases</legend>
-            <table id="table-responsive" class="table table-light table-responsive table-striped">
-                <thead class="table-dark">
-                    <!-- <tr>
+<div class="container-fluid">
+    <legend class="text-light bg-dark" style="margin-top: 10px">Leases</legend>
+    <table id="table-responsive" class="table table-light table-responsive table-striped">
+        <thead class="table-dark">
+            <!-- <tr>
                         <th class="text-light bg-dark" scope="row" colspan="6" style="text-align: left; border-radius: 5px;">Leases</th>
                         <th></th>
                     </tr> -->
-                    <tr>
-                        <th scope="col"></th>
-                        <th scope="col">Lease No.</th>
-                        <th scope="col">Property</th>
-                        <th scope="col">Tenant</th>
-                        <!-- <th scope="col">Day</th> -->
-                        <th scope="col">Start Date</th>
-                        <th scope="col">Frequency</th>             
-                        <th scope="col">Total Rent</th>             
-                        <th scope="col">Payment Type</th>
-                        <th scope="col">Status</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody-leases">
-                    <?php
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Lease No.</th>
+                <th scope="col">Property</th>
+                <th scope="col">Tenant</th>
+                <!-- <th scope="col">Day</th> -->
+                <th scope="col">Start Date</th>
+                <th scope="col">Frequency</th>
+                <th scope="col">Total Rent</th>
+                <th scope="col">Payment Type</th>
+                <th scope="col">Document</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody id="tbody-leases">
+            <?php
 
-                    // execute query in database
-                    $status = $stmt->execute($data);
+                // execute query in database
+                $status = $stmt->execute($data);
 
-                    if ($status) { // no error
+                if ($status) { // no error
 
-                        if ($stmt->rowCount() > 0) { // Results!
+                    if ($stmt->rowCount() > 0) { // Results!
 
-                            // Display leases
-                            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        // Display leases
+                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
-                                // lease per row
-                    ?>
-                                <tr>
-                                    <th><input type="radio" style="width:10px;" name="selected[]" value="<?php echo $row['lease_id']; ?>"></th>
-                                    <td><?php echo $row["lease_id"]; ?></td>
+                            // lease per row
+                ?>
+            <tr>
+                <th><input type="radio" style="width:10px;" name="selected[]" value="<?php echo $row['lease_id']; ?>">
+                </th>
+                <td><?php echo $row["lease_id"]; ?></td>
 
-                                    <!-- <td><a href="/pages/rental_properties.php"><?php echo $row["rental_property_id"]; ?></a></td>
+                <!-- <td><a href="/pages/rental_properties.php"><?php echo $row["rental_property_id"]; ?></a></td>
                                     <td><a href="/pages/tenants.php"><?php echo $row["tenant_id"]; ?></a></td> -->
 
-                                    <td><a href="/pages/rental_properties.php"><?php echo $row["listing_reference"]; ?></a></td>
-                                    <td><a href="/pages/tenants.php"><?php echo $row["tenant_name"]; ?></a></td>
+                <td><a href="/pages/rental_properties.php"><?php echo $row["listing_reference"]; ?></a></td>
+                <td><a href="/pages/tenants.php"><?php echo $row["tenant_name"]; ?></a></td>
 
-                                    <!-- <td><?php echo $row["payment_day"]; ?></td> -->
-                                    <!-- <td><?php echo $row["payment_frequency_code"]; ?></td> -->
-                                    <!-- <td><?php echo $row["payment_type_code"]; ?></td> -->
+                <!-- <td><?php echo $row["payment_day"]; ?></td> -->
+                <!-- <td><?php echo $row["payment_frequency_code"]; ?></td> -->
+                <!-- <td><?php echo $row["payment_type_code"]; ?></td> -->
 
-                                    <td><?php echo $row["start_date"]; ?></td>
-                                    <td><?php echo $row["frequency_code_description"]; ?></td>
-                                    <!-- <td><?php echo $row["base_rent_amount"]; ?></td> -->
-                                    <td><?php echo $row["total_amount"]; ?></td>
-                                    <td><?php echo $row["payment_type_description"]; ?></td>
-                                    <td style=" <?php echo ($row["status_code"] === "Active" ? "color: green" : "color: red"); ?>">
-                                        <?php echo $row["status_code"] ?>
-                                    </td>
-                                </tr>
-                            <?php
-                            }
-                            ?>
-                </tbody>
-            </table>
-    </div>
-<?php
-
-                        } else {
-                            // No leases found 
-?>
-    <tr>
-        <td></td>
-        <td>No leases found.</td>
-    </tr>
-<?php
+                <td><?php echo $row["start_date"]; ?></td>
+                <td><?php echo $row["frequency_code_description"]; ?></td>
+                <!-- <td><?php echo $row["base_rent_amount"]; ?></td> -->
+                <td><?php echo $row["total_amount"]; ?></td>
+                <td><?php echo $row["payment_type_description"]; ?></td>
+                <td><?php echo ($row["file"]? "<a href='/lease_document_file/". $row["file"]."'>File</a>":"")?></td>
+                <td style=" <?php echo ($row["status_code"] === "Active" ? "color: green" : "color: red"); ?>">
+                    <?php echo $row["status_code"] ?>
+                </td>
+            </tr>
+            <?php
                         }
+                        ?>
+        </tbody>
+    </table>
+</div>
+<?php
+
                     } else {
-                        // execute error
-                        echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
-
-                        // close database connection
-                        $db_conn = null;
-
-                        exit(1);
+                        // No leases found 
+?>
+<tr>
+    <td></td>
+    <td>No leases found.</td>
+</tr>
+<?php
                     }
+                } else {
+                    // execute error
+                    echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
+
                     // close database connection
                     $db_conn = null;
+
+                    exit(1);
                 }
+                // close database connection
+                $db_conn = null;
+            }
 
-// Get a landloards
-function getLease() {
+            // Get a landloards
+            function getLease()
+            {
 
-    // lease
-    $lease_id = $_SESSION['lease_id'];
+                // lease
+                $lease_id = $_SESSION['lease_id'];
 
-    // create database connection
-    $db_conn = connectDB();
+                // create database connection
+                $db_conn = connectDB();
 
-    // SQL query
-    $querySQL = "select
+                // SQL query
+                $querySQL = "select
             l.lease_id            
             , l.rental_property_id
             , rp.listing_reference
@@ -197,6 +203,7 @@ function getLease() {
             , l.status_code
             , l.last_updated
             , l.last_updated_user_id
+            , l.file
 
         from leases l
         inner join tenants t on t.tenant_id = l.tenant_id
@@ -205,62 +212,75 @@ function getLease() {
         
         where l.lease_id = :lease_id";
 
-                    // assign value to :lease_id
-                    $data = array(":lease_id" => $lease_id);
+                // assign value to :lease_id
+                $data = array(":lease_id" => $lease_id);
 
-                    // prepare query
-                    $stmt = $db_conn->prepare($querySQL);
+                // prepare query
+                $stmt = $db_conn->prepare($querySQL);
 
-                    // prepare error check
-                    if (!$stmt) {
-                        echo "<p>Error: " . $db_conn->errorCode() . "<br>Message: " . implode($db_conn->errorInfo()) . "</p><br>";
-                        exit(1);
+                // prepare error check
+                if (!$stmt) {
+                    echo "<p>Error: " . $db_conn->errorCode() . "<br>Message: " . implode($db_conn->errorInfo()) . "</p><br>";
+                    exit(1);
+                }
+
+                // execute query in database
+                $status = $stmt->execute($data);
+
+                if ($status) { // no error
+
+                    if ($stmt->rowCount() > 0) { // Found
+
+                        // Store row in the session
+                        $_SESSION['rowdata'] = $stmt->fetch(PDO::FETCH_ASSOC);
                     }
+                } else {
+                    // execute error
+                    echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
 
-                    // execute query in database
-                    $status = $stmt->execute($data);
-
-                    if ($status) { // no error
-
-                        if ($stmt->rowCount() > 0) { // Found
-
-                            // Store row in the session
-                            $_SESSION['rowdata'] = $stmt->fetch(PDO::FETCH_ASSOC);
-                        }
-                    } else {
-                        // execute error
-                        echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
-
-                        // close database connection
-                        $db_conn = null;
-
-                        exit(1);
-                    }
                     // close database connection
                     $db_conn = null;
+
+                    exit(1);
                 }
-// Get a landloards
-function saveLease() {
+                // close database connection
+                $db_conn = null;
+            }
+            // Get a landloards
+            function saveLease()
+            {
 
-    $lease_id = $_SESSION['lease_id'];
-    $rowdata = $_SESSION['rowdata'];
+                $lease_id = $_SESSION['lease_id'];
+                $rowdata = $_SESSION['rowdata'];
 
- //print_r($lease_id);
- //print_r($rowdata);
+                //print_r($lease_id);
+                //print_r($rowdata);
+                
+                // TK 20 Mar 2021: Added File upload feature
+                $FileName = null;
+                if (file_exists($_FILES['document-file']['tmp_name']) || is_uploaded_file($_FILES['document-file']['tmp_name'])) {
+                    $destination_path = '../lease_document_file/';
+                    $FileExt = substr(strrchr($_FILES['document-file']['name'], "."), 1);
+                    $FileName = substr($_FILES['document-file']['name'], 0, strlen($_FILES['document-file']['name']) - strlen($FileExt) - 1);
+                    $destination_file = $FileName.'_'.time().'.'.$FileExt;
+                    if (!move_uploaded_file($_FILES['document-file']['tmp_name'], $destination_path . $destination_file)){
+                        echo "<p>Error: File Upload<br>Message: File upload failed.</p><br>";
+                        return;
+                    }
+                }
+                // create database connection
+                $db_conn = connectDB();
 
-    // create database connection
-    $db_conn = connectDB();
+                if (isset($_SESSION['CURRENT_USER']) && !empty($_SESSION['CURRENT_USER'])) {
+                    $session_user_id = $_SESSION['CURRENT_USER']['user_id'];
+                } else {
+                    $session_user_id = "admin";
+                }
 
-    if ( isset($_SESSION['CURRENT_USER']) && !empty($_SESSION['CURRENT_USER'] ) ) {
-        $session_user_id = $_SESSION['CURRENT_USER']['user_id'];
-    } else {
-        $session_user_id = "admin";
-    }
+                if ($lease_id == 0) {
 
-    if ($lease_id == 0) {
-
-        // Add
-        $querySQL = "INSERT into leases (
+                    // Add
+                    $querySQL = "INSERT into leases (
                     rental_property_id
                     , tenant_id
                     , start_date
@@ -280,6 +300,7 @@ function saveLease() {
                     , insurancy_policy_number
                     , status_code
                     , last_updated_user_id
+                    , file
                 ) values (
                         :rental_property_id
                         , :tenant_id
@@ -300,10 +321,12 @@ function saveLease() {
                         , :insurancy_policy_number
                         , :status_code
                         , :session_user_id
+                        , :uploaded_file_name
                 )";
 
-        // assign data values
-        $data = array(  ":rental_property_id" => $rowdata['rental_property_id'],
+                    // assign data values
+                    $data = array(
+                        ":rental_property_id" => $rowdata['rental_property_id'],
                         ":tenant_id" => $rowdata['tenant_id'],
                         ":start_date" => $rowdata['start_date'],
                         ":end_date" => $rowdata['end_date'],
@@ -321,51 +344,51 @@ function saveLease() {
                         ":include_water" => $rowdata['include_water'],
                         ":insurancy_policy_number" => $rowdata['insurancy_policy_number'],
                         ":status_code" => $rowdata['status_code'],
-                        ":session_user_id" => $session_user_id
+                        ":session_user_id" => $session_user_id,
+                        ":uploaded_file_name" => $destination_file
                     );
 
-        // Transaction Start
-       $db_conn->beginTransaction(); 
-                            
-            // prepare query
-            $stmt = $db_conn->prepare($querySQL);
+                    // Transaction Start
+                    $db_conn->beginTransaction();
 
-            // prepare error check
-            if (!$stmt) {
+                    // prepare query
+                    $stmt = $db_conn->prepare($querySQL);
 
-                echo "<p>Error: " . $db_conn->errorCode() . "<br>Message: " . implode($db_conn->errorInfo()) . "</p><br>";
-                $db_conn->rollback(); // Transaction Rollback
-                exit(1);
-            }
+                    // prepare error check
+                    if (!$stmt) {
 
-            // execute query in database
-            $status = $stmt->execute($data);
+                        echo "<p>Error: " . $db_conn->errorCode() . "<br>Message: " . implode($db_conn->errorInfo()) . "</p><br>";
+                        $db_conn->rollback(); // Transaction Rollback
+                        exit(1);
+                    }
 
-            if ($status) { 
+                    // execute query in database
+                    $status = $stmt->execute($data);
 
-                // Should give the identity 
-                $lease_id = $db_conn->lastInsertId(); // Get lease_id
+                    if ($status) {
 
-            } else {
-                // execute error
-                echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
-                $db_conn->rollback(); // Transaction Rollback
+                        // Should give the identity 
+                        $lease_id = $db_conn->lastInsertId(); // Get lease_id
 
-                // close database connection
-                $db_conn = null;
-                exit(1);
-            }
+                    } else {
+                        // execute error
+                        echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
+                        $db_conn->rollback(); // Transaction Rollback
 
-        // Transaction Commit
-        $db_conn->commit();
+                        // close database connection
+                        $db_conn = null;
+                        exit(1);
+                    }
 
-        // close database connection
-        $db_conn = null;
-        
-    } else {
+                    // Transaction Commit
+                    $db_conn->commit();
 
-        // Update
-        $querySQL = "update leases as l
+                    // close database connection
+                    $db_conn = null;
+                } else {
+
+                    // Update
+                    $querySQL = "update leases as l
                 set 
                     l.rental_property_id        = :rental_property_id
                     , l.tenant_id               = :tenant_id
@@ -387,11 +410,13 @@ function saveLease() {
                     , l.status_code             = :status_code
                     , l.last_updated            = now()
                     , l.last_updated_user_id    = :session_user_id
+                    , l.file                    = :uploaded_file_name
 
             where l.lease_id = :lease_id";
 
-        // assign data values
-        $data = array(  ":lease_id" => $lease_id,
+                    // assign data values
+                    $data = array(
+                        ":lease_id" => $lease_id,
                         ":rental_property_id" => $rowdata['rental_property_id'],
                         ":tenant_id" => $rowdata['tenant_id'],
                         ":start_date" => $rowdata['start_date'],
@@ -410,46 +435,47 @@ function saveLease() {
                         ":include_water" => $rowdata['include_water'],
                         ":insurancy_policy_number" => $rowdata['insurancy_policy_number'],
                         ":status_code" => $rowdata['status_code'],
-                        ":session_user_id" => $session_user_id
+                        ":session_user_id" => $session_user_id,
+                        ":uploaded_file_name" => $destination_file
                     );
 
-        // Transaction Start
-       $db_conn->beginTransaction(); 
-                            
-            // prepare query
-            $stmt = $db_conn->prepare($querySQL);
+                    // Transaction Start
+                    $db_conn->beginTransaction();
 
-            // prepare error check
-            if (!$stmt) {
+                    // prepare query
+                    $stmt = $db_conn->prepare($querySQL);
 
-                echo "<p>Error: " . $db_conn->errorCode() . "<br>Message: " . implode($db_conn->errorInfo()) . "</p><br>";
-                $db_conn->rollback(); // Transaction Rollback
-                exit(1);
+                    // prepare error check
+                    if (!$stmt) {
+
+                        echo "<p>Error: " . $db_conn->errorCode() . "<br>Message: " . implode($db_conn->errorInfo()) . "</p><br>";
+                        $db_conn->rollback(); // Transaction Rollback
+                        exit(1);
+                    }
+
+                    // execute query in database
+                    $status = $stmt->execute($data);
+
+                    if ($status) {
+
+                        // Nothing to do for an update
+                        //$lease_id = $db_conn->lastInsertId(); // Get lease_id
+
+                    } else {
+                        // execute error
+                        echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
+                        $db_conn->rollback(); // Transaction Rollback
+
+                        // close database connection
+                        $db_conn = null;
+                        exit(1);
+                    }
+
+                    // Transaction Commit
+                    $db_conn->commit();
+
+                    // close database connection
+                    $db_conn = null;
+                }
             }
-
-            // execute query in database
-            $status = $stmt->execute($data);
-
-            if ($status) { 
-                
-                // Nothing to do for an update
-                //$lease_id = $db_conn->lastInsertId(); // Get lease_id
-
-            } else {
-                // execute error
-                echo "<p>Error: " . $stmt->errorCode() . "<br>Message: " . implode($stmt->errorInfo()) . "</p><br>";
-                $db_conn->rollback(); // Transaction Rollback
-
-                // close database connection
-                $db_conn = null;
-                exit(1);
-            }
-
-        // Transaction Commit
-        $db_conn->commit();
-
-        // close database connection
-        $db_conn = null;
-    }
-}                
 ?>
