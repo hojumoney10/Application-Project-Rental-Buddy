@@ -36,9 +36,22 @@ Taehyung Kim
 
 ## Rental Buddy Deployment Access
 
-Robust Login/Authentication will be handled in Sprint 2. We determined this needed some thought as we have had no solid introduction to AUTH in PHP and this is why we focused on other functionality for Sprint 1.  
-  
-We have provided a simple dropdown to mimic the three types of users of the system; Admin, Landlord & Tenant.  
-The menus represented for the first two users are the same, but the tenant user has specific menu functionality.  
-  
-Further details are provided in the video-walkthough.  
+## Sprint Notes
+
+   ## Sprint 1
+
+   Robust Login/Authentication will be handled in Sprint 2. We determined this needed some thought as we have had no solid introduction to AUTH in PHP and this is why we focused on other functionality for Sprint 1.  
+   
+   We have provided a simple dropdown to mimic the three types of users of the system; Admin, Landlord & Tenant.  
+   The menus represented for the first two users are the same, but the tenant user has specific menu functionality.  
+   
+   Further details are provided in the video-walkthough.  
+
+   ## Sprint 2
+
+   Login functionality added, so Sprint 1 user instructions no longer relevant.
+
+   Users / passwords:
+
+   tenant / tenant
+   landlord / landlord
