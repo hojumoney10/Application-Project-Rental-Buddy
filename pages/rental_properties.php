@@ -24,6 +24,7 @@ if (!isset($_SESSION['PAGEMODE'])) {
         20210307     GPB    Check user logged in
         20210308     SKC    Added map API functionality
         20210311     GPB    Added bootstrap icons link
+        20210404     SKC    Edited lat/lng field to readonly
     -->
 
     <title>RentalBuddy - Rental Properties</title>
@@ -625,10 +626,10 @@ function formRentalProperty($showmodal = 0)
                 <!-- lat & long -->
                 <div class="input-group">
                     <label for="latitude">Lat./Long.</label>
-                    <input type="text" size="15" maxlength="15" style="max-width: 50%;" class="form-control" id="latitude" name="latitude" aria-describedby="latitude-help" placeholder="Enter latitude" value="<?php echo $row['latitude']; ?>"<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
+                    <input type="text" size="15" maxlength="15" style="max-width: 50%;" class="form-control" id="latitude" name="latitude" aria-describedby="latitude-help" placeholder="" value="<?php echo $row['latitude']; ?>" readonly>
                     <small id="latitude-help" class="form-text text-muted"></small>
 
-                    <input type="text" size="15" maxlength="15" style="max-width: 50%;" class="form-control" id="longitude" name="longitude" aria-describedby="longitude-help" placeholder="Enter longitude" value="<?php echo $row['longitude']; ?>"<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
+                    <input type="text" size="15" maxlength="15" style="max-width: 50%;" class="form-control" id="longitude" name="longitude" aria-describedby="longitude-help" placeholder="" value="<?php echo $row['longitude']; ?>" readonly>
                     <small id="longitude-help" class="form-text text-muted"></small>
                 </div>
 
