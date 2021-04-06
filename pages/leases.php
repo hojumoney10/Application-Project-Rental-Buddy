@@ -346,18 +346,22 @@ function validateLease() {
         }
 	}
     // file check.
-    if (file_exists($_FILES['document-file']['tmp_name']) || is_uploaded_file($_FILES['document-file']['tmp_name'])){
+    if(isset($_FILES)){
         $value = false;
-        $array_file_extension = array('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf', 'text/plain', 'image/jpeg');
-        foreach($array_file_extension as $extension){
-            if($_FILES['document-file']['type'] == $extension){
-                $value = true;
+        $array_file_extension = array('docx', 'txt', 'pdf', 'jpeg', 'jpg', 'png');
+            foreach ($_FILES as $eachfile) {
+                // When file exist
+                if ($eachfile['name'] != "") {
+                    if ($eachfile['type'] == "" || $eachfile['tmp_name'] == "" || $eachfile["size"] == 0 || $eachfile['error'] != 0) {
+                        $value == false ? $err_msgs[] = ('Please check the file: '.$eachfile['name']):"";
+                    } else {
+                        $ext = pathinfo(strtolower($eachfile['name']), PATHINFO_EXTENSION);
+                        if (!in_array($ext, $array_file_extension)) {
+                            $value == false ? $err_msgs[] = ('Please check the file extension: '.$eachfile['name']):"";
+                        }
+                    }
+                }
             }
-        }
-        unset($extension);
-        $value == false ? $err_msgs[] = 'Please check the file extension.':"";
-            
-
     }
 
     // payment_frequency_code
@@ -745,8 +749,8 @@ function formLease()
             <div class="input-group">
                 <label for="documentfile">Document file</label>
                 <div class='mb-3'>
-                <?php echo ($row['file']) ? "<label class='form-label' style='width:377px'>Uploaded file: <a href='/lease_document_file/".$row['file']."'>".$row['file']."</a></label><br>":"" ?>
-                <?php echo ($_SESSION['PAGEMODE'] == 'ADD'||$_SESSION['PAGEMODE'] == 'EDIT') ? "<label class='form-label' style='width:377px'>pdf, docx, txt, and jpeg extension is allowed.</label>":"" ?>                
+                <?php echo ($row['file']) ? "<label class='form-label' style='width:377px'>Uploaded file: <a href='/lease_document_file/".$row['file']."' target='_blank'>".$row['file']."</a></label><br>":"" ?>
+                <?php echo ($_SESSION['PAGEMODE'] == 'ADD'||$_SESSION['PAGEMODE'] == 'EDIT') ? "<label class='form-label' style='width:377px'>pdf, docx, txt, png and jpeg extension is allowed.</label>":"" ?>                
                 <input class="form-control" type="file" id="documentfile" name="document-file" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " disabled" : ""?>>
                 </div>
                 

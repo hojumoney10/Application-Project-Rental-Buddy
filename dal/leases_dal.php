@@ -133,7 +133,7 @@ function getLeases()
                 <!-- <td><?php echo $row["base_rent_amount"]; ?></td> -->
                 <td><?php echo $row["total_amount"]; ?></td>
                 <td><?php echo $row["payment_type_description"]; ?></td>
-                <td><?php echo ($row["file"]? "<a href='/lease_document_file/". $row["file"]."'>File</a>":"")?></td>
+                <td><?php echo ($row["file"]? "<a href='/lease_document_file/". $row["file"]."' target='_blank'>File</a>":"")?></td>
                 <td style=" <?php echo ($row["status_code"] === "Active" ? "color: green" : "color: red"); ?>">
                     <?php echo $row["status_code"] ?>
                 </td>
@@ -258,16 +258,20 @@ function getLeases()
                 
                 // TK 20 Mar 2021: Added File upload feature
                 $FileName = null;
-                if (file_exists($_FILES['document-file']['tmp_name']) || is_uploaded_file($_FILES['document-file']['tmp_name'])) {
-                    $destination_path = '../lease_document_file/';
-                    $FileExt = substr(strrchr($_FILES['document-file']['name'], "."), 1);
-                    $FileName = substr($_FILES['document-file']['name'], 0, strlen($_FILES['document-file']['name']) - strlen($FileExt) - 1);
-                    $destination_file = $FileName.'_'.time().'.'.$FileExt;
-                    if (!move_uploaded_file($_FILES['document-file']['tmp_name'], $destination_path . $destination_file)){
-                        echo "<p>Error: File Upload<br>Message: File upload failed.</p><br>";
-                        return;
+                $destination_path = '../lease_document_file/';
+
+                foreach ($_FILES as $eachfile) {
+                    if($eachfile['tmp_name']!=""){
+                        $FileExt = substr(strrchr($eachfile['name'], "."), 1);
+                        $FileName = substr($eachfile['name'], 0, strlen($eachfile['name']) - strlen($FileExt) - 1);
+                        $destination_file = $FileName . '_' . time() . '.' . $FileExt;
+                        if (!move_uploaded_file($eachfile['tmp_name'], $destination_path . $destination_file)) {
+                            echo "<p>Error: File Upload<br>Message: File upload failed.</p><br>";
+                            return;
+                        }
                     }
                 }
+
                 // create database connection
                 $db_conn = connectDB();
 
