@@ -144,6 +144,7 @@ include_once("./check_session.php");
                     }
                 }
             }
+            
             if (file_exists($_FILES['request-file3']['tmp_name']) || is_uploaded_file($_FILES['request-file3']['tmp_name'])) {
                 if ($_FILES['request-file3']['error'] != 0) {
                     $msg = "Please check your file.";
