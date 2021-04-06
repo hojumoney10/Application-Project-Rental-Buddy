@@ -136,8 +136,10 @@ include_once("./check_session.php");
 
             if ($_POST['reqType'] == 'Request Type') {
                 $msg = "Please select Request Type";
+                msgHeader('red');
             } else if ($_POST['reqContent'] == '') {
                 $msg = "Please insert Request description";
+                msgHeader('red');
             } else if(count($errArray)>0){
                 $msg ="There is an error in the file: ";
                 foreach($errArray as $fileN){
@@ -400,7 +402,7 @@ include_once("./check_session.php");
                             ?>
             <div class="row">
                 <div class="col-sm ps-4 pe-4 pb-4" style="padding-bottom:2px !important">
-                    <a href="/request_file/<?php echo $file ?>">
+                    <a href="/request_file/<?php echo $file ?>" target="_blank">
                         <?php echo $file ?></a>
                 </div>
             </div>
