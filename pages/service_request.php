@@ -118,14 +118,40 @@ include_once("./check_session.php");
         }
         // write function
         else if (isset($_POST['submit'])) {
-            if (file_exists($_FILES['request-file']['tmp_name']) || is_uploaded_file($_FILES['request-file']['tmp_name'])) {
-                if ($_FILES['request-file']['error'] != 0) {
+            if (file_exists($_FILES['request-file1']['tmp_name']) || is_uploaded_file($_FILES['request-file1']['tmp_name'])) {
+                if ($_FILES['request-file1']['error'] != 0) {
                     $msg = "Please check your file.";
                 } else {
                     $msg = "Please check your file extension.";
                     $array_file_extension = array('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf', 'text/plain', 'image/jpeg');
                     foreach ($array_file_extension as $extension) {
-                        if ($_FILES['request-file']['type'] == $extension) {
+                        if ($_FILES['request-file1']['type'] == $extension) {
+                            $msg = "";
+                        }
+                    }
+                }
+            }
+            if (file_exists($_FILES['request-file2']['tmp_name']) || is_uploaded_file($_FILES['request-file2']['tmp_name'])) {
+                if ($_FILES['request-file2']['error'] != 0) {
+                    $msg = "Please check your file.";
+                } else {
+                    $msg = "Please check your file extension.";
+                    $array_file_extension = array('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf', 'text/plain', 'image/jpeg');
+                    foreach ($array_file_extension as $extension) {
+                        if ($_FILES['request-file2']['type'] == $extension) {
+                            $msg = "";
+                        }
+                    }
+                }
+            }
+            if (file_exists($_FILES['request-file3']['tmp_name']) || is_uploaded_file($_FILES['request-file3']['tmp_name'])) {
+                if ($_FILES['request-file3']['error'] != 0) {
+                    $msg = "Please check your file.";
+                } else {
+                    $msg = "Please check your file extension.";
+                    $array_file_extension = array('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf', 'text/plain', 'image/jpeg');
+                    foreach ($array_file_extension as $extension) {
+                        if ($_FILES['request-file3']['type'] == $extension) {
                             $msg = "";
                         }
                     }
@@ -309,6 +335,7 @@ include_once("./check_session.php");
             global $property_id;
 
             $tenants = loadTenantsInfo();
+            $filearray = loadFilesInfo($reqId);
 
             $html = "";
             $stmt = $db_conn->prepare("Select r.request_id, r.request_date, r.rental_property_id, r.tenant_id, c.description as 'typeValue', r.status_code, r.priority_code, r.last_updated, r.description, p.description as 'priorityValue', s.description as 'statusValue', r.appointment_date_time, r.file
@@ -363,8 +390,6 @@ include_once("./check_session.php");
                 </div>
 
             </div>
-
-
             <?php
                         if (!is_null($row['appointment_date_time'])) {
                         ?>
@@ -383,7 +408,7 @@ include_once("./check_session.php");
                         }
                         ?>
             <?php
-                        if (!is_null($row['file'])) {
+                        if (count($filearray) > 0) {
                         ?>
             <div class="row">
                 <div class="col-sm ps-4 pe-4">
@@ -391,15 +416,17 @@ include_once("./check_session.php");
                     <p class="fw-bold">Uploaded file</p>
                 </div>
             </div>
+            <?php
+                            foreach ($filearray as $file) {
+                            ?>
             <div class="row">
-                <div class="col-sm ps-4 pe-4 pb-4">
-                    <a href="/request_file/<?php echo $row['file'] ?>">
-                        <?php echo $row['file'] ?></a>
+                <div class="col-sm ps-4 pe-4 pb-4" style="padding-bottom:2px !important">
+                    <a href="/request_file/<?php echo $file ?>">
+                        <?php echo $file ?></a>
                 </div>
             </div>
-
-
             <?php
+                            }
                         }
                         ?>
             <div class="row">
@@ -514,21 +541,45 @@ include_once("./check_session.php");
 
         function insertRequest()
         {
+            $destinations = array();
             //file upload
-            if (file_exists($_FILES['request-file']['tmp_name']) || is_uploaded_file($_FILES['request-file']['tmp_name'])) {
+            if (file_exists($_FILES['request-file1']['tmp_name']) || is_uploaded_file($_FILES['request-file1']['tmp_name'])) {
                 $destination_path = '../request_file/';
-                $FileExt = substr(strrchr($_FILES['request-file']['name'], "."), 1);
-                $FileName = substr($_FILES['request-file']['name'], 0, strlen($_FILES['request-file']['name']) - strlen($FileExt) - 1);
+                $FileExt = substr(strrchr($_FILES['request-file1']['name'], "."), 1);
+                $FileName = substr($_FILES['request-file1']['name'], 0, strlen($_FILES['request-file1']['name']) - strlen($FileExt) - 1);
                 $destination_file = $FileName . '_' . time() . '.' . $FileExt;
-                if (!move_uploaded_file($_FILES['request-file']['tmp_name'], $destination_path . $destination_file)) {
+                if (!move_uploaded_file($_FILES['request-file1']['tmp_name'], $destination_path . $destination_file)) {
                     echo "<p>Error: File Upload<br>Message: File upload failed.</p><br>";
                     return;
                 }
+                array_push($destinations, $destination_file);
+            }
+            if (file_exists($_FILES['request-file2']['tmp_name']) || is_uploaded_file($_FILES['request-file2']['tmp_name'])) {
+                $destination_path = '../request_file/';
+                $FileExt = substr(strrchr($_FILES['request-file2']['name'], "."), 1);
+                $FileName = substr($_FILES['request-file2']['name'], 0, strlen($_FILES['request-file2']['name']) - strlen($FileExt) - 1);
+                $destination_file = $FileName . '_' . time() . '.' . $FileExt;
+                if (!move_uploaded_file($_FILES['request-file2']['tmp_name'], $destination_path . $destination_file)) {
+                    echo "<p>Error: File Upload<br>Message: File upload failed.</p><br>";
+                    return;
+                }
+                array_push($destinations, $destination_file);
+            }
+            if (file_exists($_FILES['request-file3']['tmp_name']) || is_uploaded_file($_FILES['request-file3']['tmp_name'])) {
+                $destination_path = '../request_file/';
+                $FileExt = substr(strrchr($_FILES['request-file3']['name'], "."), 1);
+                $FileName = substr($_FILES['request-file3']['name'], 0, strlen($_FILES['request-file3']['name']) - strlen($FileExt) - 1);
+                $destination_file = $FileName . '_' . time() . '.' . $FileExt;
+                if (!move_uploaded_file($_FILES['request-file3']['tmp_name'], $destination_path . $destination_file)) {
+                    echo "<p>Error: File Upload<br>Message: File upload failed.</p><br>";
+                    return;
+                }
+                array_push($destinations, $destination_file);
             }
             global $db_conn;
             global $msg;
             global $user_id;
-            $stmt = $db_conn->prepare("INSERT INTO requests (rental_property_id, tenant_id, request_type_code, description, status_code, priority_code, last_updated_user_id, file) values(?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $db_conn->prepare("INSERT INTO requests (rental_property_id, tenant_id, request_type_code, description, status_code, priority_code, last_updated_user_id) values(?, ?, ?, ?, ?, ?, ?)");
             try {
                 $array = [
                     $_POST['rentalId'],
@@ -537,14 +588,29 @@ include_once("./check_session.php");
                     $_POST['reqContent'],
                     '60',
                     '65',
-                    $user_id,
-                    $destination_file
+                    $user_id
                 ];
 
                 $db_conn->beginTransaction();
                 $stmt->execute($array);
-                $db_conn->commit();
                 $lastId = $db_conn->lastInsertId();
+                $db_conn->commit();
+                // Insert into Document Table
+                if (count($destinations) > 0) {
+                    foreach ($destinations as $fileInfo) {
+                        dump($fileInfo);
+                        $stmt = $db_conn->prepare("INSERT INTO documents (tenant_id, request_id, filename, last_updated_user_id) values(?, ?, ?, ?)");
+                        $array = [
+                            $_POST['tenantId'],
+                            $lastId,
+                            $fileInfo,
+                            $user_id
+                        ];
+                        $db_conn->beginTransaction();
+                        $stmt->execute($array);
+                        $db_conn->commit();
+                    }
+                }
 
                 // insert notification
                 $recipient = returnLandlordUserIdUsingLandlordId($_POST['rentalId']);
@@ -634,6 +700,25 @@ include_once("./check_session.php");
             }
             unset($msg);
             unset($header);
+        }
+        function loadFilesInfo($req_id)
+        {
+            global $db_conn;
+            global $user_id;
+            $stmt = $db_conn->prepare("select filename 
+            from documents
+            where status_code='active' and request_id=?");
+            try {
+                $tmp = array();
+                $stmt->execute(array($req_id));
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    array_push($tmp, $row['filename']);
+                }
+                return $tmp;
+            } catch (Exception $e) {
+                $db_conn->rollback();
+                echo $e->getMessage();
+            }
         }
         function loadTenantsInfo()
         {
@@ -779,9 +864,23 @@ include_once("./check_session.php");
             </div>
             <?php if (isset($_POST['request'])) { ?>
             <div class="row mb-3">
-                <label for="formFile" class="col-sm-2 col-form-label">Upload File</label>
+                <label for="formFile1" class="col-sm-2 col-form-label">Upload File 1</label>
                 <div class="col-sm-10">
-                    <input class="form-control" type="file" id="formFile" name="request-file">
+                    <input class="form-control" type="file" id="formFile1" name="request-file1">
+                    <div id="formFile" class="form-text">pdf, docx, txt, and jpeg extension is allowed.</div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="formFile2" class="col-sm-2 col-form-label">Upload File 2</label>
+                <div class="col-sm-10">
+                    <input class="form-control" type="file" id="formFile2" name="request-file2">
+                    <div id="formFile" class="form-text">pdf, docx, txt, and jpeg extension is allowed.</div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label for="formFile3" class="col-sm-2 col-form-label">Upload File 3</label>
+                <div class="col-sm-10">
+                    <input class="form-control" type="file" id="formFile3" name="request-file3">
                     <div id="formFile" class="form-text">pdf, docx, txt, and jpeg extension is allowed.</div>
                 </div>
             </div>
