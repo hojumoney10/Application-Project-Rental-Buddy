@@ -118,54 +118,32 @@ include_once("./check_session.php");
         }
         // write function
         else if (isset($_POST['submit'])) {
-            if (file_exists($_FILES['request-file1']['tmp_name']) || is_uploaded_file($_FILES['request-file1']['tmp_name'])) {
-                if ($_FILES['request-file1']['error'] != 0) {
-                    $msg = "Please check your file.";
-                } else {
-                    $msg = "Please check your file extension.";
-                    $array_file_extension = array('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf', 'text/plain', 'image/jpeg');
-                    foreach ($array_file_extension as $extension) {
-                        if ($_FILES['request-file1']['type'] == $extension) {
-                            $msg = "";
+            $array_file_extension = array('docx', 'txt', 'pdf', 'jpeg', 'jpg', 'png');
+            $errArray = array();
+            foreach ($_FILES as $eachfile) {
+                // When file exist
+                if ($eachfile['name'] != "") {
+                    if ($eachfile['type'] == "" || $eachfile['tmp_name'] == "" || $eachfile["size"] == 0 || $eachfile['error'] != 0) {
+                        array_push($errArray, $eachfile['name']);
+                    } else {
+                        $ext = pathinfo(strtolower($eachfile['name']), PATHINFO_EXTENSION);
+                        if (!in_array($ext, $array_file_extension)) {
+                            array_push($errArray, $eachfile['name']);
                         }
                     }
                 }
             }
-            if (file_exists($_FILES['request-file2']['tmp_name']) || is_uploaded_file($_FILES['request-file2']['tmp_name'])) {
-                if ($_FILES['request-file2']['error'] != 0) {
-                    $msg = "Please check your file.";
-                } else {
-                    $msg = "Please check your file extension.";
-                    $array_file_extension = array('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf', 'text/plain', 'image/jpeg');
-                    foreach ($array_file_extension as $extension) {
-                        if ($_FILES['request-file2']['type'] == $extension) {
-                            $msg = "";
-                        }
-                    }
-                }
-            }
-            
-            if (file_exists($_FILES['request-file3']['tmp_name']) || is_uploaded_file($_FILES['request-file3']['tmp_name'])) {
-                if ($_FILES['request-file3']['error'] != 0) {
-                    $msg = "Please check your file.";
-                } else {
-                    $msg = "Please check your file extension.";
-                    $array_file_extension = array('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf', 'text/plain', 'image/jpeg');
-                    foreach ($array_file_extension as $extension) {
-                        if ($_FILES['request-file3']['type'] == $extension) {
-                            $msg = "";
-                        }
-                    }
-                }
-            }
+
             if ($_POST['reqType'] == 'Request Type') {
                 $msg = "Please select Request Type";
             } else if ($_POST['reqContent'] == '') {
                 $msg = "Please insert Request description";
-            }
-            if ($msg != "") {
+            } else if(count($errArray)>0){
+                $msg ="There is an error in the file: ";
+                foreach($errArray as $fileN){
+                    $msg .= $fileN. " ";
+                }
                 msgHeader('red');
-                //inputPage();
             } else {
                 insertRequest();
             }
@@ -544,39 +522,20 @@ include_once("./check_session.php");
         {
             $destinations = array();
             //file upload
-            if (file_exists($_FILES['request-file1']['tmp_name']) || is_uploaded_file($_FILES['request-file1']['tmp_name'])) {
-                $destination_path = '../request_file/';
-                $FileExt = substr(strrchr($_FILES['request-file1']['name'], "."), 1);
-                $FileName = substr($_FILES['request-file1']['name'], 0, strlen($_FILES['request-file1']['name']) - strlen($FileExt) - 1);
-                $destination_file = $FileName . '_' . time() . '.' . $FileExt;
-                if (!move_uploaded_file($_FILES['request-file1']['tmp_name'], $destination_path . $destination_file)) {
-                    echo "<p>Error: File Upload<br>Message: File upload failed.</p><br>";
-                    return;
+            $destination_path = '../request_file/';
+            foreach ($_FILES as $eachfile) {
+                if($eachfile['tmp_name']!=""){
+                    $FileExt = substr(strrchr($eachfile['name'], "."), 1);
+                    $FileName = substr($eachfile['name'], 0, strlen($eachfile['name']) - strlen($FileExt) - 1);
+                    $destination_file = $FileName . '_' . time() . '.' . $FileExt;
+                    if (!move_uploaded_file($eachfile['tmp_name'], $destination_path . $destination_file)) {
+                        echo "<p>Error: File Upload<br>Message: File upload failed.</p><br>";
+                        return;
+                    }
+                    array_push($destinations, $destination_file);
                 }
-                array_push($destinations, $destination_file);
             }
-            if (file_exists($_FILES['request-file2']['tmp_name']) || is_uploaded_file($_FILES['request-file2']['tmp_name'])) {
-                $destination_path = '../request_file/';
-                $FileExt = substr(strrchr($_FILES['request-file2']['name'], "."), 1);
-                $FileName = substr($_FILES['request-file2']['name'], 0, strlen($_FILES['request-file2']['name']) - strlen($FileExt) - 1);
-                $destination_file = $FileName . '_' . time() . '.' . $FileExt;
-                if (!move_uploaded_file($_FILES['request-file2']['tmp_name'], $destination_path . $destination_file)) {
-                    echo "<p>Error: File Upload<br>Message: File upload failed.</p><br>";
-                    return;
-                }
-                array_push($destinations, $destination_file);
-            }
-            if (file_exists($_FILES['request-file3']['tmp_name']) || is_uploaded_file($_FILES['request-file3']['tmp_name'])) {
-                $destination_path = '../request_file/';
-                $FileExt = substr(strrchr($_FILES['request-file3']['name'], "."), 1);
-                $FileName = substr($_FILES['request-file3']['name'], 0, strlen($_FILES['request-file3']['name']) - strlen($FileExt) - 1);
-                $destination_file = $FileName . '_' . time() . '.' . $FileExt;
-                if (!move_uploaded_file($_FILES['request-file3']['tmp_name'], $destination_path . $destination_file)) {
-                    echo "<p>Error: File Upload<br>Message: File upload failed.</p><br>";
-                    return;
-                }
-                array_push($destinations, $destination_file);
-            }
+
             global $db_conn;
             global $msg;
             global $user_id;
@@ -599,7 +558,6 @@ include_once("./check_session.php");
                 // Insert into Document Table
                 if (count($destinations) > 0) {
                     foreach ($destinations as $fileInfo) {
-                        dump($fileInfo);
                         $stmt = $db_conn->prepare("INSERT INTO documents (tenant_id, request_id, filename, last_updated_user_id) values(?, ?, ?, ?)");
                         $array = [
                             $_POST['tenantId'],
@@ -868,21 +826,21 @@ include_once("./check_session.php");
                 <label for="formFile1" class="col-sm-2 col-form-label">Upload File 1</label>
                 <div class="col-sm-10">
                     <input class="form-control" type="file" id="formFile1" name="request-file1">
-                    <div id="formFile" class="form-text">pdf, docx, txt, and jpeg extension is allowed.</div>
+                    <div id="formFile" class="form-text">pdf, docx, txt, png, jpg and jpeg extension is allowed.</div>
                 </div>
             </div>
             <div class="row mb-3">
                 <label for="formFile2" class="col-sm-2 col-form-label">Upload File 2</label>
                 <div class="col-sm-10">
                     <input class="form-control" type="file" id="formFile2" name="request-file2">
-                    <div id="formFile" class="form-text">pdf, docx, txt, and jpeg extension is allowed.</div>
+                    <div id="formFile" class="form-text">pdf, docx, txt, png, jpg and jpeg extension is allowed.</div>
                 </div>
             </div>
             <div class="row mb-3">
                 <label for="formFile3" class="col-sm-2 col-form-label">Upload File 3</label>
                 <div class="col-sm-10">
                     <input class="form-control" type="file" id="formFile3" name="request-file3">
-                    <div id="formFile" class="form-text">pdf, docx, txt, and jpeg extension is allowed.</div>
+                    <div id="formFile" class="form-text">pdf, docx, txt, png, jpg and jpeg extension is allowed.</div>
                 </div>
             </div>
             <?php } ?>
