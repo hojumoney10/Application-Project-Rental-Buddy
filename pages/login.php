@@ -54,6 +54,9 @@ $_SESSION['PAGE'] = "login";
 
     // Auto Mock Generator and symfony
     require_once("../vendor/autoload.php");
+
+    //
+    require_once("../dal/vacancy_rental_dal.php");
     ?>
 
 </head>
@@ -180,6 +183,15 @@ if (isset($_POST['login']))
             
     </div>
 
+    <div>
+    <form method="POST">
+        <?php
+            get_vacancyRentalProperties();
+        ?>
+    </form>
+    </div>
+    
+    
     <!-- Custom JS -->
     <!-- Bootstrap JS -->
     <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

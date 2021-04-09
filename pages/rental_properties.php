@@ -1,6 +1,5 @@
 <?php
 session_start();
-include_once("./check_session.php");
 
 // session_unset();
 $_SESSION['PAGE'] = "rental_properties";
@@ -25,6 +24,7 @@ if (!isset($_SESSION['PAGEMODE'])) {
         20210308     SKC    Added map API functionality
         20210311     GPB    Added bootstrap icons link
         20210404     SKC    Edited lat/lng field to readonly
+        20210408     SKC    Edited file upload functionality for property photo
     -->
 
     <title>RentalBuddy - Rental Properties</title>
@@ -76,9 +76,9 @@ if (!isset($_SESSION['PAGEMODE'])) {
             font-size: 16px;
         }
 
-        /* nav {
+        nav {
             margin-top: 20px;
-        } */
+        }
 
         .container-crud {
             margin-left: 10px;
@@ -126,7 +126,7 @@ if (!isset($_SESSION['PAGEMODE'])) {
 
         }
 
-        input-group select  {
+        select {
             min-width: 285px;
         }
 
@@ -143,12 +143,6 @@ if (!isset($_SESSION['PAGEMODE'])) {
             text-align: center;
             height: 50px;
             vertical-align: middle !important;
-        }
-
-        #map {
-            height: 400px;
-            width: 100%;
-            margin-top: 10px;
         }
     </style>
 
@@ -193,20 +187,8 @@ if (!isset($_SESSION['PAGEMODE'])) {
     } else if (isset($_POST['btn-cancel']) && ($_POST['btn-cancel'] == "Cancel")) {
         $_SESSION['PAGENUM'] = 0;
         $_SESSION['PAGEMODE'] = "LIST";
-    } else if (isset($_POST['btn-save']) && ($_POST['btn-save'] == "Save")) { // Save clicked
-        // Just let it through
-    } else if ( isset($_POST['btn-search-landlords']) && ($_POST['btn-search-landlords'] == "...") 
-                || isset($_POST['btn-select-landlord']) && ($_POST['btn-select-landlord'] == "Select") ) {
-                // We have either called or closed the modal
     } else {
-        $_SESSION['PAGENUM'] = 0;
-        $_SESSION['PAGEMODE'] = "LIST";
     }
-
-    // var_dump( $_SERVER['REQUEST_METHOD'] );
-    // dump( $_SESSION );
-    // var_dump( $_POST );
-    // var_dump( $_GET );
 
     // $_ POSTing or $_GETting?
     if ($_SERVER['REQUEST_METHOD'] == 'GET' || $_SESSION['PAGEMODE'] == "LIST") {
@@ -282,25 +264,6 @@ if (!isset($_SESSION['PAGEMODE'])) {
 
                     formDisplayRentalProperties();
                 }
-                
-                // Display a modal if we're searching landlords
-                if (isset($_POST['btn-search-landlords']) && ($_POST['btn-search-landlords'] == "...")) {
-                    
-                    // We need to store the variables
-                    // so let's call validate without error display
-                    validateRentalProperty();
-                                        
-                    // Redisplay Property
-                    formRentalProperty(1);
-
-                } else if (isset($_POST['btn-select-landlord']) && ($_POST['btn-select-landlord'] == "Select")) {
-
-                    if (isset($_POST['selected']) ) {
-                        $_SESSION['rowdata']['landlord_id'] = $_POST['selected'][0];
-                    }
-                    formRentalProperty();
-                }
-                
                 break;
             default:
         }
@@ -315,18 +278,10 @@ if (!isset($_SESSION['PAGEMODE'])) {
     <!-- Custom JS -->
     <!-- <script src="./js/script.js"></script> -->
 
-    <!-- google map API -->
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQJWK4iJkTx2qKbexRTHTUK8RFtgBrkdY&callback=initMap&libraries=&v=weekly"
-      async
-    ></script>
-
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <link href="../node_modules/bootstrap-icons/font//bootstrap-icons.css" rel="stylesheet">
-
-    <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script> -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 </body>
 
 </html>
@@ -335,16 +290,13 @@ if (!isset($_SESSION['PAGEMODE'])) {
 
 function validateRentalProperty()
 {
+
     $rowdata = $_SESSION['rowdata'];
 
     $rowdata['rental_property_id'] = $_POST['rental-property-id'];
 
-    $err_msgs = [];
 
-    // landlord must have been selected
-    if (!isset($rowdata['landlord_id'])) {
-        $err_msgs[] = "A landlord must be selected";
-    } 
+    $err_msgs = [];
 
     // listing reference
     if (!isset($_POST['listing-reference'])) {
@@ -469,8 +421,8 @@ function validateRentalProperty()
         $err_msgs[] = "The number of parking spaces is required";
     } else {
         $rowdata['number_parking_spaces'] = $_POST['number-parking-spaces'];
-        if ($rowdata['number_parking_spaces'] < 0 || $rowdata['number_parking_spaces'] > 99 ) {
-            $err_msgs[] = "The number of parking spaces must be between 0 and 99";
+        if ($rowdata['number_parking_spaces'] < 1 || $rowdata['number_parking_spaces'] > 99 ) {
+            $err_msgs[] = "The number of bedrooms must be between 1 and 99";
         } 
     }    
 
@@ -501,6 +453,25 @@ function validateRentalProperty()
             $err_msgs[] = "A status is required";
         } else if (strlen($rowdata['status_code']) > 10) {
             $err_msgs[] = "The status exceeds 10 characters";
+        }
+    }
+
+    // photo
+    if(isset($_FILES)){
+        $value = false;
+        $array_file_extension = array('jpeg', 'jpg', 'png');
+        foreach ($_FILES as $eachPhoto) {
+            // When photo exist
+            if ($eachPhoto['name'] != "") {
+                if ($eachPhoto['type'] == "" || $eachPhoto['tmp_name'] == "" || $eachPhoto["size"] == 0 || $eachPhoto['error'] != 0) {
+                    $value == false ? $err_msgs[] = ('Please check the file: '.$eachPhoto['name']):"";
+                } else {
+                    $ext = pathinfo(strtolower($eachPhoto['name']), PATHINFO_EXTENSION);
+                    if (!in_array($ext, $array_file_extension)) {
+                        $value == false ? $err_msgs[] = ('Please check the file extension: '.$eachPhoto['name']):"";
+                    }
+                }
+            }
         }
     }
 
@@ -538,7 +509,7 @@ function formDisplayRentalProperties() {
     </div>
 <?php }
 
-function formRentalProperty($showmodal = 0)
+function formRentalProperty()
 {
     // Get the data
     $row = $_SESSION['rowdata'];
@@ -546,7 +517,7 @@ function formRentalProperty($showmodal = 0)
 ?>
     <div class="container-fluid">
 
-        <form class="form form-inline" method="POST" style="padding-right: 30px;">
+        <form class="form form-inline" method="POST" style="padding-right: 30px;" enctype="multipart/form-data">
             <fieldset class="bg-light">
                 <legend class="text-light bg-dark">
                     <?php
@@ -562,21 +533,11 @@ function formRentalProperty($showmodal = 0)
                     }
                     ?>Rental Property Details</legend>
 
-                <!-- rental_property_id & landlord name-->
+                <!-- rental_property_id.-->
                 <div class="input-group">
-                    <label for="rental-property-id">Property No./Landlord</label>
+                    <label for="rental-property-id">Property No.</label>
                     <input type="text" size="10" maxlength="10" class="form-control" style="max-width: 100px" id="rental-property-id" name="rental-property-id" aria-describedby="rental-property-id-help" placeholder="" value="<?php echo $row['rental_property_id']; ?>" readonly>
                     <small id="rental-property-id-help" class="form-text text-muted"></small>
-
-                    <input type="text" size="30" maxlength="50" 
-                            class="form-control" 
-                            id="landlord-legal-name" name="landlord-legal-name" 
-                            value="<?php 
-                                        echo getLandlordName($row['landlord_id']); ?>"
-                            readonly
-                            required
-                            immediate="false">
-                    <button type="submit" class="btn btn-danger" id="btn-search-landlords" name="btn-search-landlords" value="..." <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " disabled" : "" ?>>...</button>
                 </div>
 
                 <!-- listing reference -->
@@ -626,10 +587,10 @@ function formRentalProperty($showmodal = 0)
                 <!-- lat & long -->
                 <div class="input-group">
                     <label for="latitude">Lat./Long.</label>
-                    <input type="text" size="15" maxlength="15" style="max-width: 50%;" class="form-control" id="latitude" name="latitude" aria-describedby="latitude-help" placeholder="" value="<?php echo $row['latitude']; ?>" readonly>
+                    <input type="text" size="15" maxlength="15" style="max-width: 50%;" class="form-control" id="latitude" name="latitude" aria-describedby="latitude-help" placeholder="Enter latitude" value="<?php echo $row['latitude']; ?>"<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
                     <small id="latitude-help" class="form-text text-muted"></small>
 
-                    <input type="text" size="15" maxlength="15" style="max-width: 50%;" class="form-control" id="longitude" name="longitude" aria-describedby="longitude-help" placeholder="" value="<?php echo $row['longitude']; ?>" readonly>
+                    <input type="text" size="15" maxlength="15" style="max-width: 50%;" class="form-control" id="longitude" name="longitude" aria-describedby="longitude-help" placeholder="Enter longitude" value="<?php echo $row['longitude']; ?>"<?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
                     <small id="longitude-help" class="form-text text-muted"></small>
                 </div>
 
@@ -695,6 +656,17 @@ function formRentalProperty($showmodal = 0)
                     <small id="status-code-help" class="form-text text-muted"></small>
                 </div>
 
+                <!-- picture -->
+                <div class="input-group">
+                    <label for="photo">Photo</label>
+                    <div id="photoDiv">
+                        <?php echo ($row['photo']) ? "<label class='form-label' style='width:377px'>Uploaded file: <a href='/rental_property_photo/".$row['photo']."' target='_blank'>".$row['photo']."</a></label><br>":"" ?>
+                        <?php echo ($_SESSION['PAGEMODE'] == 'ADD' || $_SESSION['PAGEMODE'] == 'EDIT') ? "<label class='form-label' style='width:377px'>png and jpeg extension is allowed.</label>":"" ?>
+                        <input class="form-control" type="file" id="photo" name="photo" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " disabled" : ""?>>
+                    </div>
+                    <small id="photo-help" class="form-text text-muted"></small>
+                </div>
+
                 <!-- map -->
                 <div class="input-group">
                     <label for="map">Property Location</label>
@@ -733,47 +705,6 @@ function formRentalProperty($showmodal = 0)
                     </tr>
                 </table>
             </fieldset>
-
-<?php
-        if ($showmodal) {
-?>
-            <!-- Modal show landlords  -->
-            <div class="modal fade" id="show-landlords-modal" tabindex="-1" role="dialog" style="max-height: 80%">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="select-landlord-modal-label">Select Landlord</h5>
-                            <button type="button" class="btn btn-secondary close" data-bs-dismiss="modal" aria-label="Cancel">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body" id="show-landlords-modal-body">
-                            <?php
-                                showLandlords();
-                            ?>
-                        </div>
-                        <div class="modal-footer">
-                            <input type="submit" class="btn btn-secondary" name="btn-select-landlord" value="Select"
-                               >
-                            </input>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <script type="text/javascript">
-                $(function(){
-                    //instantiate your content as modal
-                    $('#show-landlords-modal').modal({
-                        //modal options here, like keyboard: false for e.g.
-                    });
-
-                    //show the modal when dom is ready
-                    $('#show-landlords-modal').modal('show');
-                });
-            </script>  
-<?php
-        }
-?>
         </form>
         <!-- empty form for cancel button -->
         <form id="form-cancel" hidden>

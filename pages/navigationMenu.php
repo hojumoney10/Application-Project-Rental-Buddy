@@ -14,6 +14,7 @@
 // 20210306    THK     Added Calendar(for tenant)
 // 20210307    GPB     Added Welcome/Logout
 // 20210312    GPB     Added Notifications stub and badge
+// 20210312    SLJ     Added Contact
 // -->
 
 define('__PAGES__', dirname(__FILE__));
@@ -94,6 +95,9 @@ $base_URL .= $_SERVER['HTTP_HOST'];
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo $base_URL . "/pages/calendar.php" ?>">Calendar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?php echo $base_URL . "/pages/contact.php" ?>">Contact</a>
                     </li>
                 <?php
                 }
