@@ -18,7 +18,17 @@ if (!isset($_SESSION['PAGEMODE'])) {
         Application: RentalBuddy
         Purpose:     Handles the crud functions of rental_properties
         Author:      G. Blandford,  Group 5, INFO-5139-01-21W
+<<<<<<< Updated upstream
         Date:        February 15th, 2021 (February 15th, 2021)
+=======
+        Date:        March 7th, 2021 (February 15th, 2021)
+
+        20210307     GPB    Check user logged in
+        20210308     SKC    Added map API functionality
+        20210311     GPB    Added bootstrap icons link
+        20210404     SKC    Edited lat/lng field to readonly
+        20210408     SKC    Edited file upload functionality for property photo
+>>>>>>> Stashed changes
     -->
 
     <title>RentalBuddy - Rental Properties</title>
@@ -450,6 +460,25 @@ function validateRentalProperty()
         }
     }
 
+    // photo
+    if(isset($_FILES)){
+        $value = false;
+        $array_file_extension = array('jpeg', 'jpg', 'png');
+        foreach ($_FILES as $eachPhoto) {
+            // When photo exist
+            if ($eachPhoto['name'] != "") {
+                if ($eachPhoto['type'] == "" || $eachPhoto['tmp_name'] == "" || $eachPhoto["size"] == 0 || $eachPhoto['error'] != 0) {
+                    $value == false ? $err_msgs[] = ('Please check the file: '.$eachPhoto['name']):"";
+                } else {
+                    $ext = pathinfo(strtolower($eachPhoto['name']), PATHINFO_EXTENSION);
+                    if (!in_array($ext, $array_file_extension)) {
+                        $value == false ? $err_msgs[] = ('Please check the file extension: '.$eachPhoto['name']):"";
+                    }
+                }
+            }
+        }
+    }
+
     $_SESSION['rowdata'] = $rowdata;
     return $err_msgs;
 }
@@ -492,7 +521,7 @@ function formRentalProperty()
 ?>
     <div class="container-fluid">
 
-        <form class="form form-inline" method="POST" style="padding-right: 30px;">
+        <form class="form form-inline" method="POST" style="padding-right: 30px;" enctype="multipart/form-data">
             <fieldset class="bg-light">
                 <legend class="text-light bg-dark">
                     <?php
@@ -631,6 +660,47 @@ function formRentalProperty()
                     <small id="status-code-help" class="form-text text-muted"></small>
                 </div>
 
+<<<<<<< Updated upstream
+=======
+                <!-- picture -->
+                <div class="input-group">
+                    <label for="photo">Photo</label>
+                    <div id="photoDiv">
+                        <?php echo ($row['photo']) ? "<label class='form-label' style='width:377px'>Uploaded file: <a href='/rental_property_photo/".$row['photo']."' target='_blank'>".$row['photo']."</a></label><br>":"" ?>
+                        <?php echo ($_SESSION['PAGEMODE'] == 'ADD' || $_SESSION['PAGEMODE'] == 'EDIT') ? "<label class='form-label' style='width:377px'>png and jpeg extension is allowed.</label>":"" ?>
+                        <input class="form-control" type="file" id="photo" name="photo" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " disabled" : ""?>>
+                    </div>
+                    <small id="photo-help" class="form-text text-muted"></small>
+                </div>
+
+                <!-- map -->
+                <div class="input-group">
+                    <label for="map">Property Location</label>
+                    <script>
+                        // Initialize and add the map
+                        function initMap() {
+
+                            // The location of property
+                            var property = { lat: <?php echo $row['latitude']; ?>, lng: <?php echo $row['longitude']; ?> };
+
+                            // The map, centered at property
+                            const map = new google.maps.Map(document.getElementById("map"), {
+                                zoom: 16,
+                                center: property,
+                            });
+
+                            // The marker, positioned at property
+                            var marker = new google.maps.Marker({
+                                position: property,
+                                map: map,
+                            });
+
+                        }
+                    </script>
+                    <div id="map"></div>
+                </div>
+
+>>>>>>> Stashed changes
                 <table>
                     <tr>
                         <?php

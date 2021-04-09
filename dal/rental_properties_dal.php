@@ -4,6 +4,12 @@
     Purpose:     Handles the rental ptoperty-related data access code
     Author:      G. Blandford, Group 5, INFO-5139-01-21W
     Date:        February 15th, 2021 (February 15th, 2021) 
+<<<<<<< Updated upstream
+=======
+
+    20210404     SKC    Edited map API functionality to retrieve lat/lng from address
+    20210408     SKC    Edited file upload functionality for property photo
+>>>>>>> Stashed changes
 -->
 <?php
 
@@ -168,6 +174,7 @@ function getRentalProperty() {
             , rp.insurance_required 
 
             , rp.status_code
+            , rp.photo
             , rp.last_updated
             , rp.last_updated_user_id
 
@@ -216,6 +223,22 @@ function saveRentalProperty() {
     $rental_property_id = $_SESSION['rental_property_id'];
     $rowdata = $_SESSION['rowdata'];
 
+    $photoName = null;
+    $destination_path = '../rental_property_photo/';
+
+    foreach ($_FILES as $eachPhoto) {
+        if($eachPhoto['tmp_name']!=""){
+            $photoExt = substr(strrchr($eachPhoto['name'], "."), 1);
+            $photoName = substr($eachPhoto['name'], 0, strlen($eachPhoto['name']) - strlen($photoExt) - 1);
+            $destination_photo = $photoName . '_' . time() . '.' . $photoExt;
+
+            if (!move_uploaded_file($eachPhoto['tmp_name'], $destination_path . $destination_photo)) {
+                echo "<p>Error: File Upload<br>Message: File upload failed.</p><br>";
+                return;
+            }
+        }
+    }
+
     // create database connection
     $db_conn = connectDB();
 
@@ -245,6 +268,7 @@ function saveRentalProperty() {
                         , smoking_allowed
                         , insurance_required 
                         , status_code
+                        , photo
                         , last_updated_user_id
                 ) values (
                         :listing_reference
@@ -263,6 +287,7 @@ function saveRentalProperty() {
                         , :smoking_allowed
                         , :insurance_required 
                         , :status_code
+                        , :uploaded_photo_name
                         , :session_user_id
                 )";
 
@@ -283,6 +308,7 @@ function saveRentalProperty() {
                         ":smoking_allowed" => $rowdata['smoking_allowed'],
                         ":insurance_required" => $rowdata['insurance_required'],
                         ":status_code" => $rowdata['status_code'],
+                        ":uploaded_photo_name" => $destination_photo,
                         ":session_user_id" => $session_user_id
                     );
 
@@ -349,6 +375,7 @@ function saveRentalProperty() {
                     , rp.status_code             = :status_code
                     , rp.last_updated            = now()
                     , rp.last_updated_user_id    = :session_user_id
+                    , rp.photo                   = :uploaded_photo_name
 
             where rp.rental_property_id = :rental_property_id";
 
@@ -370,6 +397,7 @@ function saveRentalProperty() {
                         ":smoking_allowed" => $rowdata['smoking_allowed'],
                         ":insurance_required" => $rowdata['insurance_required'],
                         ":status_code" => $rowdata['status_code'],
+                        ":uploaded_photo_name" => $destination_photo,
                         ":session_user_id" => $session_user_id
                     );
        // Transaction Start
