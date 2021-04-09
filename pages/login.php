@@ -15,6 +15,8 @@ $_SESSION['PAGE'] = "login";
         Purpose:     Handles login
         Author:      G. Blandford,  Group 5, INFO-5094-01-21W
         Date:        March 1st, 2021 (March 1st, 2021)
+
+        20210409     SLJ    Added vacancy rental properties list
     -->
 
     <title>Employee Project - Login</title>

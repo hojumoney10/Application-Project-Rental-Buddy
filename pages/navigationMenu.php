@@ -5,12 +5,25 @@
     Description: Menu file. 
 -->
 
+<<<<<<< Updated upstream
 <!-- 
     Title:       navigationMenu.php
     Application: RentalBuddy
     Purpose:     Handles navigation for the RentalBuddy site
     Author:      T. Kim, Group 5, INFO-5139-01-21W
     Date:        February 16th, 2021 (January 30th, 2021) 
+=======
+// 20210216    GPB     Added rental_properties.php to menu
+// 20210217    SKC     Added service_request_tenant.php & lease_info_tenant.php to menu
+// 20210219    GPB     Added temporary user selector for admin/landlord/tenant
+// 20210220    GPB     Updated all links, and now menus are user-driven
+//                     Added leases
+// 20210306    THK     Added Calendar(for tenant)
+// 20210307    GPB     Added Welcome/Logout
+// 20210312    GPB     Added Notifications stub and badge
+// 20210409    SLJ     Added Contact
+// -->
+>>>>>>> Stashed changes
 
     20210216    GPB     Added rental_properties.php to menu
 -->

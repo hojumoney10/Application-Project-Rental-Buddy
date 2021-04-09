@@ -4,12 +4,12 @@
     Purpose:     Handles the rental ptoperty-related data access code
     Author:      G. Blandford, Group 5, INFO-5139-01-21W
     Date:        February 15th, 2021 (February 15th, 2021) 
-<<<<<<< Updated upstream
 =======
 
     20210404     SKC    Edited map API functionality to retrieve lat/lng from address
     20210408     SKC    Edited file upload functionality for property photo
->>>>>>> Stashed changes
+
+=======
 -->
 <?php
 

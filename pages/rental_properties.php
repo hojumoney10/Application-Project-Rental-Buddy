@@ -28,6 +28,9 @@ if (!isset($_SESSION['PAGEMODE'])) {
         20210311     GPB    Added bootstrap icons link
         20210404     SKC    Edited lat/lng field to readonly
         20210408     SKC    Edited file upload functionality for property photo
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     -->
 
@@ -660,8 +663,6 @@ function formRentalProperty()
                     <small id="status-code-help" class="form-text text-muted"></small>
                 </div>
 
-<<<<<<< Updated upstream
-=======
                 <!-- picture -->
                 <div class="input-group">
                     <label for="photo">Photo</label>
@@ -700,7 +701,6 @@ function formRentalProperty()
                     <div id="map"></div>
                 </div>
 
->>>>>>> Stashed changes
                 <table>
                     <tr>
                         <?php
