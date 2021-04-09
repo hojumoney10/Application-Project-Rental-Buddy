@@ -41,6 +41,7 @@ function getTenantPayment() {
 
         from tenant_payments as tp
         inner join tenants t on t.tenant_id = tp.tenant_id
+        left join codes salutations on salutations.code_value = t.salutation_code and salutations.code_type = 'salutation'
 
         where tp.tenant_payment_id = :tenant_payment_id";
 
@@ -60,7 +61,6 @@ function getTenantPayment() {
     $status = $stmt->execute($data);
 
     if ($status) { // no error
-
         if ($stmt->rowCount() > 0) { // Found
 
             // Store row in the session
@@ -277,8 +277,9 @@ function getTenantName($tenant_id) {
             trim( concat(ifnull(salutations.description, ''), ' ', t.first_name, ' ', t.last_name ) ) as tenant_name
 
        from tenants t
+       left join codes salutations on salutations.code_value = t.salutation_code and salutations.code_type = 'salutation'
 
-       where l.tenant_id = :tenant_id";
+       where t.tenant_id = :tenant_id";
 
    // assign value to :tenant_id
    $data = array(":tenant_id" => $tenant_id);

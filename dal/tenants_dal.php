@@ -276,9 +276,9 @@ function getTenantPayments($tenant_id)
                             ?>
                                         <tr>
                                             <th><input type="radio" style="width:10px;" name="selected[]" value="<?php echo $row['tenant_payment_id']; ?>"></th>
-                                            <!-- <td><?php echo $row["tenant_payment_id"]; ?></td> -->
+                                            <td><?php echo $row["tenant_payment_id"]; ?></td>
                                             <td><?php echo $row["description"]; ?></td>
-                                            <td><?php echo $row["payment_date"]; ?></td>
+                                            <td><?php echo formatDate($row["payment_date"]); ?></td>
                                             <td><?php echo $row["payment_type_code"]; ?></td>
                                             <td><?php echo $row["payment_amount"]; ?></td>
                                             <td style=" <?php

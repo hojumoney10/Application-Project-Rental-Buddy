@@ -22,6 +22,8 @@
 
     20210311    JF      Added loadTenantAddress function : input tenant_id, output listing_reference name
                         Added phpMail function : inserts $mailData and sends email
+
+    20210405    GPB     Added formatDate function, returns value using global APP_DATE_FORMAT 
                           
 */
 
@@ -33,6 +35,9 @@ define("DBHOST", "localhost");
 define("DBDB",   "rental");
 define("DBUSER", "rental");
 define("DBPW",   "SScAGAMfi4g0gwgp");
+
+// Date format for app
+define ("APP_DATE_FORMAT", "Y-m-d");
 
 //Connect to database using PDO method
 function connectDB()
@@ -97,6 +102,12 @@ function format_date($time)
             return $c . $v . ' ago';
         }
     }
+}
+
+// Return date in application specific format
+function formatDate($datetime) {
+    $d = new DateTime($datetime);
+    return $d->format(APP_DATE_FORMAT);
 }
 
 // put code number, return code value
