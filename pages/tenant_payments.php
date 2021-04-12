@@ -188,6 +188,8 @@ if (!isset($_SESSION['PAGEMODE'])) {
         $_SESSION['PAGEMODE'] = "LIST";
     } else if (isset($_POST['btn-save']) && ($_POST['btn-save'] == "Save")) { // Save clicked
         // Just let it through
+    } else if (isset($_POST['btn-download']) && ($_POST['btn-download'] == "Download")) {
+        downloadPayments();
     } else {
         $_SESSION['PAGENUM'] = 0;
         $_SESSION['PAGEMODE'] = "LIST";
@@ -497,10 +499,41 @@ function formDisplayTenantPayments() {
         // Get Standard CRUD buttons
         getCRUDButtons();
         ?>
-
+        <input value="Download" type="submit" name="btn-download" class="btn btn-primary" style="position:relative; left:330px; top:-39px; background-color:#3b3a3a; color:white; border-color:#3b3a3a;"></input>
     </form>
     </div>
 <?php }
+
+//When download is clicked and posted
+function downloadPayments() {
+    $content = "";
+    $fieldNames = ['Payment ID: ', 'Payment Type: ', 'Description: ', 'Payment Date/Time: ', 'Payment Due: ', 'Discount Code: ', 'Discount: ', 'Payment Amount: ',
+    'Card Holder: ', 'Card Number: ', 'Card Expiry: ', 'Card CVV: ', 'Status: '];
+    $i = 0;
+    foreach($_SESSION['paymentData'] as $payData) {
+        foreach($payData as $field) {
+            $content .= $fieldNames[$i]. '"\t"' . $field. '"\r\n"';
+            $i++;
+        }
+        $content .= '"\r\n\r\n"';
+        $i = 0;
+    }
+    $content = strip_tags($content);
+    //Uses Javascript to write and download payment history as csv | does not save to server only local
+    echo "<script>
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent('$content'));
+    element.setAttribute('download', 'PaymentHistory.csv');
+  
+    element.style.display = 'none';
+    document.body.appendChild(element);
+  
+    element.click();
+  
+    document.body.removeChild(element);
+  
+  </script>";
+}
 
 function formTenantPayment($showmodal = 0)
 {
@@ -570,7 +603,7 @@ function formTenantPayment($showmodal = 0)
                     <!-- cardholder name -->
                     <div class="input-group">
                         <label for="cardholder-name">Name</label>
-                        <input type="text" size="30" maxlength="50" class="form-control" id="cardholder-name" name="cardholder-name" aria-describedby="cardholder-name-help" placeholder="Enter cardholder name" value="<?php echo $row['cardholder_name']; ?>" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
+                        <input type="text" size="30" maxlength="50" class="form-control" id="cardholder-name" name="cardholder-name" aria-describedby="cardholder-name-help" placeholder="Enter cardholder name" value="<?php echo $row['card_holder']; ?>" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
                         <small id="cardholder-name-help" class="form-text text-muted"></small>
                     </div>
 
