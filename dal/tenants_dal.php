@@ -273,6 +273,10 @@ function getTenantPayments($tenant_id)
                                     // Display rental properties
                                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                         // Rental property per row
+                                        if(!isset($payArray)) {
+                                            $payArray = array();
+                                        }
+                                        array_push($payArray, $row);
                             ?>
                                         <tr>
                                             <th><input type="radio" style="width:10px;" name="selected[]" value="<?php echo $row['tenant_payment_id']; ?>"></th>
@@ -289,6 +293,8 @@ function getTenantPayments($tenant_id)
                                         </tr>
                                     <?php
                                     }
+                                    /*Set session array for csv generation in tenant_payments.php*/
+                                    $_SESSION['paymentData'] = $payArray;
                                     ?>
                         </tbody>
                     </table>
