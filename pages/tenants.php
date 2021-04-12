@@ -638,6 +638,11 @@ function formTenant()
                     <small id="status-code-help" class="form-text text-muted"></small>
                 </div>
 
+                <?php if($_SESSION['PAGEMODE'] == 'VIEW') { ?>
+                <div>
+                    <?php getTenantPayments($row["tenant_id"]); /*display Tenant payments*/ ?>
+                </div>
+                    <?php } ?>
                 <table>
                     <tr>
 <?php 
