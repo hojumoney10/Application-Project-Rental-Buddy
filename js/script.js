@@ -53,7 +53,7 @@ function showHideCC() {
 
 function formatCC() {
 
-    cardNumber = document.getElementById('card-number').value;
+    cardNumber = $gel('card-number').value;
 
     let fCC = cardNumber.replace(/\D/g,'');
     if (fCC == "") {
@@ -61,6 +61,31 @@ function formatCC() {
     }
 
     fCC = fCC.substr( 0, 4) + "-" + fCC.substr(4, 4) + "-" + fCC.substr(8, 4) + "-" + fCC.substr(12, 4);
-    document.getElementById('card-number').value = fCC;
+    $gel('card-number').value = fCC;
 }
 
+function showPaymentDiscount() {
+
+    // Get the Discount value
+    let e = $gel('discount-coupon-code');
+    let discountRate = e.options[e.selectedIndex].getAttribute('data-discount');
+
+    if (discountRate == 0) {
+        return;
+    } 
+
+    // Apply it to the rent
+    let due = $gel('payment-due').value;
+    let discountVal = due * (discountRate / 100);
+    let amount = (due - discountVal);
+
+    // Update UI
+    $gel('discount').value = discountVal.toFixed(2);
+    $gel('payment-amount').value = amount.toFixed(2);
+
+}
+
+// Helper
+function $gel(e) {
+    return document.getElementById(e);
+}

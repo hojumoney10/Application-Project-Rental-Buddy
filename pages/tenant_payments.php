@@ -423,6 +423,11 @@ function validateTenantPayment()
     // payment_due
     $rowdata['payment_due'] = $_POST['payment-due'];
 
+    // discount type code
+    if (isset($_POST['discount-coupon-code'])) {
+        $rowdata['discount_coupon_code'] = $_POST['discount-coupon-code'];
+    }
+        
     // discount
 	if ( !isset($_POST['discount'] ) ) {
 		$rowdata['discount'] = 0;
@@ -619,8 +624,8 @@ function formTenantPayment($showmodal = 0) {
 
                 <!-- discount code & value -->
                 <div class="input-group">
-                    <label for="discount-coupon-code">Discount</label>
-                    <select class="selectpicker form-control" style="max-width: 220px;" id=discount-coupon-code" name="discount-coupon-code" aria-describedby="discount-coupon-code-help" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
+                    <label for="discount-coupon-code">Less Discount</label>
+                    <select class="selectpicker form-control" style="max-width: 220px;" id="discount-coupon-code" name="discount-coupon-code" aria-describedby="discount-coupon-code-help" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?> onchange="showPaymentDiscount();">
                         <option disabled selected></option>
                         <?php
                         getCodes('discount_code', $row['discount_coupon_code']);
