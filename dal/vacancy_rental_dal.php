@@ -78,7 +78,7 @@ function get_vacancyRentalProperties()
 ?>
     <br><br><br>
     <div class="container-fluid">
-            <legend class="text-light bg-secondary" style="margin-top: 10px">Vacancy Rental Properity</legend>
+            <legend class="text-light bg-secondary" style="margin-top: 10px">Vacancy Rental Property</legend>
             <div class="row" id="contactCard">
                     <?php
 
