@@ -28,6 +28,11 @@ include_once("./check_session.php");
     <link rel="stylesheet" href="../vendor/benhall14/php-calendar/html/css/calendar.css">
     <link rel="stylesheet" href="../node_modules/bootstrap-icons/font/bootstrap-icons.css">
 
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Metrophobic&display=swap" rel="stylesheet">
+
     <!-- Datetime Picker -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
@@ -56,6 +61,17 @@ include_once("./check_session.php");
         .bd-placeholder-img-lg {
             font-size: 3.5rem;
         }
+    }
+
+    body {
+        font-family: 'Metrophobic', sans-serif;
+        font-size: 16px;
+    }
+
+    .btn {
+        font-family: 'Metrophobic', sans-serif;
+        font-size: 16px;
+        min-width: 100px;
     }
     </style>
 

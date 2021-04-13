@@ -15,6 +15,7 @@
 // 20210307    GPB     Added Welcome/Logout
 // 20210312    GPB     Added Notifications stub and badge
 // 20210312    SLJ     Added Contact
+// 20210412    GPB     Don't show Calendar for admin user
 // -->
 
 define('__PAGES__', dirname(__FILE__));
@@ -93,9 +94,13 @@ $base_URL .= $_SERVER['HTTP_HOST'];
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo $base_URL . "/pages/users.php" ?>">Users</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo $base_URL . "/pages/calendar.php" ?>">Calendar</a>
-                    </li>
+                    <?php 
+                    if ($_SESSION['CURRENT_USER']['user_role_code'] != 'admin') {?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo $base_URL . "/pages/calendar.php" ?>">Calendar</a>
+                        </li>
+                    <?php
+                    }?>
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo $base_URL . "/pages/contact.php" ?>">Contact</a>
                     </li>
