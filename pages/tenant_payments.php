@@ -186,7 +186,7 @@ if (!isset($_SESSION['PAGEMODE'])) {
     } else if (isset($_POST['btn-cancel']) && ($_POST['btn-cancel'] == "Cancel")) {
         $_SESSION['PAGENUM'] = 0;
         $_SESSION['PAGEMODE'] = "LIST";
-    } else if (isset($_POST['btn-save']) && ($_POST['btn-save'] == "Save")) { // Save clicked
+    } else if (isset($_POST['btn-save']) && ($_POST['btn-save'] == "Pay")) { // Save clicked
         // Just let it through
     } else if (isset($_POST['btn-download']) && ($_POST['btn-download'] == "Download")) {
         downloadPayments();
@@ -246,7 +246,7 @@ if (!isset($_SESSION['PAGEMODE'])) {
                 break;
 
             case 1: // Save
-                if ((isset($_POST['btn-save'])) && ($_POST['btn-save'] == "Save")) {
+                if ((isset($_POST['btn-save'])) && ($_POST['btn-save'] == "Pay")) {
 
                     // Validate
                     $err_msgs = validateTenantPayment();
@@ -602,9 +602,9 @@ function formTenantPayment($showmodal = 0)
 
                     <!-- cardholder name -->
                     <div class="input-group">
-                        <label for="cardholder-name">Name</label>
-                        <input type="text" size="30" maxlength="50" class="form-control" id="cardholder-name" name="cardholder-name" aria-describedby="cardholder-name-help" placeholder="Enter cardholder name" value="<?php echo $row['card_holder']; ?>" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
-                        <small id="cardholder-name-help" class="form-text text-muted"></small>
+                        <label for="card-holder">Name</label>
+                        <input type="text" size="30" maxlength="50" class="form-control" id="card-holder" name="card-holder" aria-describedby="card-holder-help" placeholder="Enter card holder name" value="<?php echo $row['card_holder']; ?>" <?php echo ($_SESSION['PAGEMODE'] == 'VIEW') ? " readonly" : "" ?>>
+                        <small id="card-holder-help" class="form-text text-muted"></small>
                     </div>
 
                     <!-- card number -->
@@ -670,7 +670,7 @@ function formTenantPayment($showmodal = 0)
                     <tr>
                         <?php
                         if ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD') { ?>
-                            <td><input type="submit" class="btn btn-success btn-crud" name="btn-save" value="Save"></td>
+                            <td><input type="submit" class="btn btn-success btn-crud" name="btn-save" value="Pay"></td>
                         <?php            }
                         ?>
                         <td><input type="submit" form="form-cancel" class="btn <?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD') ? 'btn-secondary' : 'btn-primary'; ?> btn-crud" name="btn-cancel" value="<?php echo ($_SESSION['PAGEMODE'] == 'EDIT' || $_SESSION['PAGEMODE'] == 'ADD') ? 'Cancel' : 'OK'; ?>"></td>
