@@ -27,7 +27,7 @@ function get_vacancyRentalProperties()
             , rp.latitude 
             , rp.longitude 
             , rp.number_bedrooms 
-            , rp.property_type_code 
+            , property_types.description as property_type_code
             , rp.parking_space_type_code 
             , rp.number_parking_spaces
             , rp.rental_duration_code 
@@ -93,17 +93,17 @@ function get_vacancyRentalProperties()
                             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                 // Rental property per row
                     ?>
-                                <div class="card" style="width: 18rem;">
+                                <div class="card" style="width: 20rem;">
                                     <div style="height:45%;">
                                         <img style="margin:auto;" src=<?php echo "../rental_property_photo/" . $row["photo"];?> class="card-img-top" alt="...">
                                     </div>
                                     <div class="card-body">
-                                        <h5 style="height:50px;" class="card-title"><?php echo $row["address"]; ?></h5>
+                                        <h5 style="height:50px;" class="card-title"><address><?php echo $row["address"]; ?></address></h5>
                                         <p style="height:50px;" class="card-text">
-                                            Bedrooms Num: <?php echo $row["number_bedrooms"]; ?><br>
+                                            Bedrooms: <?php echo $row["number_bedrooms"]; ?><br>
                                             Type: <?php echo $row["property_type_code"]; ?><br>
                                         </p>
-                                        <p>CONTACT TO: <br><?php echo $row["landlord_email"]; ?></p>
+                                        <p>Contact:<a href = "mailto: <?php echo 'mailto:' . $row["landlord_email"]; ?>"> <?php echo 'mailto:' . $row["landlord_email"]; ?></a></p>
                                     </div>
                                 </div>  
                             <?php
