@@ -4,6 +4,8 @@
 // Author:      G. Blandford,  Group 5, INFO-5139-01-21W
 // Date:        March 14th, 2021 (March 14th, 2021)
 
+// 20210413 GPB Added showHideCC for credit card details
+
 function showMessages(msgs) {
 
     if (msgs === undefined) {
@@ -35,3 +37,30 @@ function showErrors(errs) {
 
     setTimeout(function () { showErrors(); }, 3000);
 }
+
+function showHideCC() {
+
+    e = document.getElementById('payment-type-code');
+    if (e != undefined) {
+        paymentCode = e.value;        
+        if (paymentCode == 'debitcredit') {
+            document.getElementById('fieldset-card').style.display='inherit';
+        } else {
+            document.getElementById('fieldset-card').style.display='none';
+        }
+    }
+}
+
+function formatCC() {
+
+    cardNumber = document.getElementById('card-number').value;
+
+    let fCC = cardNumber.replace(/\D/g,'');
+    if (fCC == "") {
+        return fCC;
+    }
+
+    fCC = fCC.substr( 0, 4) + "-" + fCC.substr(4, 4) + "-" + fCC.substr(8, 4) + "-" + fCC.substr(12, 4);
+    document.getElementById('card-number').value = fCC;
+}
+
