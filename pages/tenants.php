@@ -640,7 +640,7 @@ function formTenant()
 
                 <?php if($_SESSION['PAGEMODE'] == 'VIEW') { ?>
                 <div>
-                    <?php getTenantPayments($row["tenant_id"]); /*display Tenant payments*/ ?>
+                    <?php getTenantPayments($row["tenant_id"], false); /*display Tenant payments*/ ?>
                 </div>
                     <?php } ?>
                 <table>

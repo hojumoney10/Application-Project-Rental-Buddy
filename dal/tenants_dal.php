@@ -206,7 +206,7 @@ function getTenant()
 }
 
 // Get the payments for a tenant
-function getTenantPayments($tenant_id)
+function getTenantPayments($tenant_id, $show_selector = true)
 {
         // create database connection
         $db_conn = connectDB();
@@ -251,7 +251,7 @@ function getTenantPayments($tenant_id)
                     <table id="table-responsive" class="table table-light table-responsive table-striped">
                         <thead class="table-dark">
                             <tr>
-                                <th></th>
+                                <?php if ($show_selector) { echo '<th></th>'; } ?>
                                 <th scope="col">No.</th>
                                 <th scope="col">Description</th>
                                 <th scope="col">Payment Date</th>
@@ -279,7 +279,11 @@ function getTenantPayments($tenant_id)
                                         array_push($payArray, $row);
                             ?>
                                         <tr>
-                                            <th><input type="radio" style="width:10px;" name="selected[]" value="<?php echo $row['tenant_payment_id']; ?>"></th>
+                                        <?php 
+                                            if ($show_selector) { 
+                                                echo '<th><input type="radio" style="width:10px;" name="selected[]" value="' .$row['tenant_payment_id'] . '"></th>';
+                                            } 
+                                        ?>
                                             <td><?php echo $row["tenant_payment_id"]; ?></td>
                                             <td><?php echo $row["description"]; ?></td>
                                             <td><?php echo formatDate($row["payment_date"]); ?></td>
