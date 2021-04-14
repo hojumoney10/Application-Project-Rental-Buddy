@@ -506,16 +506,23 @@ function formDisplayTenantPayments() {
 
 //When download is clicked and posted
 function downloadPayments() {
-    $content = "";
-    $fieldNames = ['Payment ID: ', 'Payment Type: ', 'Description: ', 'Payment Date/Time: ', 'Payment Due: ', 'Discount Code: ', 'Discount: ', 'Payment Amount: ',
-    'Card Holder: ', 'Card Number: ', 'Card Expiry: ', 'Card CVV: ', 'Status: '];
+    $content;
+    $fieldNames = ['Payment ID', 'Payment Type', 'Description', 'Payment Date/Time', 'Payment Due', 'Discount Code', 'Discount', 'Payment Amount',
+    'Card Holder', 'Status'];
+
+    foreach($fieldNames as $names) {
+        $content .= $names . '","';
+    }
+    $content .= '"\r\n"';
+
     $i = 0;
     foreach($_SESSION['paymentData'] as $payData) {
+        array_splice($payData, 9, 3);
         foreach($payData as $field) {
-            $content .= $fieldNames[$i]. '"\t"' . $field. '"\r\n"';
+            $content .= $field . '","';
             $i++;
         }
-        $content .= '"\r\n\r\n"';
+        $content .= '"\r\n"';
         $i = 0;
     }
     $content = strip_tags($content);
