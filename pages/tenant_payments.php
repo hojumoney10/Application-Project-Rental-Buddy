@@ -489,7 +489,7 @@ function formDisplayTenantPayments() {
         // Get Standard CRUD buttons
         getCRUDButtons();
         ?>
-        <input value="Download" type="submit" name="btn-download" class="btn btn-primary" style="position:relative; left:330px; top:-39px; background-color:#3b3a3a; color:white; border-color:#3b3a3a;"></input>
+        <input value="Download" type="submit" name="btn-download" class="btn btn-primary" style="position:relative; left:231px; top:-39px; background-color:#3b3a3a; color:white; border-color:#3b3a3a;"></input>
     </form>
     </div>
 <?php 
