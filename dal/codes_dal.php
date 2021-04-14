@@ -4,6 +4,8 @@
     Purpose:     Handles the codes table data access code
     Author:      G. Blandford, Group 5, INFO-5139-01-21W
     Date:        February 10th, 2021 (February 10th, 2021) 
+
+    20210413    GPB Added getDiscountValue()
 -->
 <?php
 
@@ -11,7 +13,7 @@
 define('__ROOT__', dirname(__FILE__));
 require_once("../pages/common.php");
 
-// Get landloards
+// Get codes
 function getCodes($code_type, $current_value = "") {
 
         
@@ -25,6 +27,7 @@ function getCodes($code_type, $current_value = "") {
                 , codes.description
                 , codes.is_default
                 , codes.css_styling
+                , codes.data_value_numeric
         from codes
                 
         where codes.code_type = :code_type
@@ -61,6 +64,9 @@ function getCodes($code_type, $current_value = "") {
                                                                     echo $row['css_styling'];
                                                                  };
                                                             ?>"
+                                                            data-discount="<?php 
+                                                                echo $row['data_value_numeric'];                                             
+                                                            ?>"
                         
             <?php
                 if ($row['code_value'] == $current_value) {
@@ -82,4 +88,37 @@ function getCodes($code_type, $current_value = "") {
 	}
 }
 
+// Get codes
+function getDiscountValue($code_value) {
+       
+    // connect
+    $dbc = connectDB();
+    
+    $qry = "select
+                codes.data_value_numeric
+        from codes
+                
+        where codes.code_type = 'discount_code'
+        and codes.code_value = :code_value
+        and codes.is_enabled = 1";
+    
+    $stmt = $dbc->prepare($qry);
+    if (!$stmt){
+        echo "<p>Error in display prepare: ".$dbc->errorCode()."</p>\n<p>Message ".implode($dbc->errorInfo())."</p>\n";
+        exit(1);
+    }
+    
+    // set data, doing this way handles SQL injections
+    $data = array(":code_value" => $code_value);
+    
+    $status = $stmt->execute($data);
+    $discount = 0;
+
+    if ($status) {
+        if ($stmt->rowCount() > 0) {
+           $discount = $stmt->fetch(PDO::FETCH_ASSOC)['data_value_numeric'];
+        }
+    }
+    return $discount;
+}
 ?>

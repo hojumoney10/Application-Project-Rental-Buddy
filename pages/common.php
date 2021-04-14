@@ -24,7 +24,8 @@
                         Added phpMail function : inserts $mailData and sends email
 
     20210405    GPB     Added formatDate function, returns value using global APP_DATE_FORMAT 
-                          
+    20210413    GPB     Added formatCC/unformatCC: Credit card formatting 
+                    
 */
 
 // time and date correction.
@@ -84,6 +85,24 @@ function unformatPhone($phone)
     return $uPhone; 
 }
 
+// Format credit card
+function formatCC($cc) {
+    $fCC = trim($cc);
+    if ($fCC == "") {
+        return $fCC;
+    }
+
+    $fCC = substr($fCC, 0, 4) . "-" . substr($fCC, 4, 4) . "-" . substr($fCC, 8, 4) . "-" . substr($fCC, 12, 4);
+    return $fCC;
+}
+
+// Unformat credit card
+function unformatCC($cc)
+{
+    // Only returns characters
+    $uCC = preg_replace('/[^0-9]+/', '', $cc);
+    return $uCC; 
+}
 // Calculate Time difference 
 function format_date($time)
 {
