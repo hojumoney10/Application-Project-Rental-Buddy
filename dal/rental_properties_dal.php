@@ -287,17 +287,6 @@ function saveRentalProperty() {
                         , :uploaded_photo_name
                         , :session_user_id
                 )";
-        
-        // get full address for property's lat/lng
-        $address = $rowdata['address_1'] . " " . $rowdata['city'] . " " . $rowdata['province_code'];
-        $address = str_replace(" ", "+", $address);
-
-        $json = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?address=$address&key=AIzaSyDQJWK4iJkTx2qKbexRTHTUK8RFtgBrkdY");
-        $json = json_decode($json);
-
-        // assign variables for property's lat/lng to insert
-        $property_lat = $json->{'results'}[0]->{'geometry'}->{'location'}->{'lat'};
-        $property_lng = $json->{'results'}[0]->{'geometry'}->{'location'}->{'lng'};
 
         // assign data values
         $data = array(  ":listing_reference" => $rowdata['listing_reference'],
@@ -306,8 +295,8 @@ function saveRentalProperty() {
                         ":city" => $rowdata['city'],
                         ":province_code" => $rowdata['province_code'],
                         ":postal_code" => $rowdata['postal_code'],
-                        ":latitude" => $property_lat,
-                        ":longitude" => $property_lng,
+                        ":latitude" => $rowdata['latitude'],
+                        ":longitude" => $rowdata['longitude'],
                         ":number_bedrooms" => $rowdata['number_bedrooms'],
                         ":property_type_code" => $rowdata['property_type_code'],
                         ":parking_space_type_code" => $rowdata['parking_space_type_code'],
@@ -387,17 +376,6 @@ function saveRentalProperty() {
 
             where rp.rental_property_id = :rental_property_id";
 
-        // get full address for property's lat/lng
-        $address = $rowdata['address_1'] . " " . $rowdata['city'] . " " . $rowdata['province_code'];
-        $address = str_replace(" ", "+", $address);
-
-        $json = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?address=$address&key=AIzaSyDQJWK4iJkTx2qKbexRTHTUK8RFtgBrkdY");
-        $json = json_decode($json);
-
-        // assign variables for property's lat/lng to insert
-        $property_lat = $json->{'results'}[0]->{'geometry'}->{'location'}->{'lat'};
-        $property_lng = $json->{'results'}[0]->{'geometry'}->{'location'}->{'lng'};
-
         // assign data values
         $data = array(  ":rental_property_id" => $rental_property_id,
                         ":listing_reference" => $rowdata['listing_reference'],
@@ -406,8 +384,8 @@ function saveRentalProperty() {
                         ":city" => $rowdata['city'],
                         ":province_code" => $rowdata['province_code'],
                         ":postal_code" => $rowdata['postal_code'],
-                        ":latitude" => $property_lat,
-                        ":longitude" => $property_lng,
+                        ":latitude" => $rowdata['latitude'],
+                        ":longitude" => $rowdata['longitude'],
                         ":number_bedrooms" => $rowdata['number_bedrooms'],
                         ":property_type_code" => $rowdata['property_type_code'],
                         ":parking_space_type_code" => $rowdata['parking_space_type_code'],
