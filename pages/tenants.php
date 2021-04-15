@@ -22,6 +22,7 @@ if (!isset($_SESSION['PAGEMODE'])){
 
         20210307     GPB    Check user logged in
         20210311     GPB    Added bootstrap icons link
+        20210415     GPB    Added Payments to EDIT also
 
     -->
 
@@ -638,7 +639,7 @@ function formTenant()
                     <small id="status-code-help" class="form-text text-muted"></small>
                 </div>
 
-                <?php if($_SESSION['PAGEMODE'] == 'VIEW') { ?>
+                <?php if($_SESSION['PAGEMODE'] == 'VIEW' || $_SESSION['PAGEMODE'] == 'EDIT') { ?>
                 <div>
                     <?php getTenantPayments($row["tenant_id"], false); /*display Tenant payments*/ ?>
                 </div>
