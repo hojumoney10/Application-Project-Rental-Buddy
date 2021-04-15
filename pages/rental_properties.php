@@ -214,6 +214,7 @@ if (!isset($_SESSION['PAGEMODE'])) {
     // var_dump( $_POST );
     // var_dump( $_GET );
 
+
     // $_ POSTing or $_GETting?
     if ($_SERVER['REQUEST_METHOD'] == 'GET' || $_SESSION['PAGEMODE'] == "LIST") {
 
@@ -531,6 +532,8 @@ function validateRentalProperty()
         }
     }
         
+dump($_FILES);
+
     $_SESSION['rowdata'] = $rowdata;
     return $err_msgs;
 }
@@ -573,7 +576,7 @@ function formRentalProperty($showmodal = 0)
 ?>
     <div class="container-fluid">
 
-        <form class="form form-inline" method="POST" style="padding-right: 30px;">
+        <form class="form form-inline" method="POST" style="padding-right: 30px;" enctype="multipart/form-data">
             <fieldset class="bg-light">
                 <legend class="text-light bg-dark">
                     <?php
