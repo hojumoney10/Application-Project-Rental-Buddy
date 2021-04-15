@@ -50,7 +50,9 @@ for($i = 0; $i < count($payDay); $i++) {
 
 for($i = 0; $i < count($tenantIdDue); $i++) {
     $recipient = getUserId($tenantIdDue[$i]);
-    createNotification(0, "landlord", $recipient, 'Rent due on ' . $dates[$i], " ", 0);
+    if(is_null($recipient) == false) {
+        createNotification(0, "landlord", $recipient, 'Rent due on ' . $dates[$i], " ", 0);
+    }
 }
 
 function paymentDays() {
