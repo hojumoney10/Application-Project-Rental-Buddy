@@ -1,6 +1,6 @@
 <?php
 session_start();
-include_once("./check_session.php");
+// include_once("./check_session.php");
 
 
 ?>
@@ -13,7 +13,9 @@ include_once("./check_session.php");
         Application: RentalBuddy
         Purpose:     contact page
         Author:      S. Jeong,  Group 5, INFO-5139-01-21W
-        Date:        April 7th, 2021     
+        Date:        April 7th, 2021   
+
+        20210417    GPB Added Clickable links for Phone/Email and styling 
     -->
 
     <title>RentalBuddy - Contact</title>
@@ -72,6 +74,7 @@ include_once("./check_session.php");
         .container-crud {
             margin-left: 10px;
         }
+
         .btn-crud {
             min-width: 100px;
         }
@@ -135,24 +138,24 @@ include_once("./check_session.php");
             margin-top: 10px;
         }
 
-        .col-sm{
-            text-align:center;
-            background-color:#F0F0F0;
+        .col-sm {
+            text-align: center;
+            background-color: #F0F0F0;
         }
 
-        .imagecard{
+        .imagecard {
             width: 100px;
-            margin-left:auto;
-            margin-right:auto;
-            margin-top:20%;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20%;
         }
 
-        .contactDetail{
-            margin-top:15%;
-            margin-bottom:15%;
+        .contactDetail {
+            margin-top: 15%;
+            margin-bottom: 15%;
         }
 
-        #contactCard{
+        #contactCard {
             width: 90%;
             margin: auto;
         }
@@ -185,10 +188,7 @@ include_once("./check_session.php");
     <!-- <script src="./js/script.js"></script> -->
 
     <!-- google map API -->
-    <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQJWK4iJkTx2qKbexRTHTUK8RFtgBrkdY&callback=initMap&libraries=&v=weekly"
-        async
-    ></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQJWK4iJkTx2qKbexRTHTUK8RFtgBrkdY&callback=initMap&libraries=&v=weekly" async></script>
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="../vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -202,31 +202,69 @@ include_once("./check_session.php");
             <div class="col-sm">
                 <img src="../images/headset.png" class="imagecard" alt="call"><br>
                 <div class="contactDetail">
-                    <h4>CALL US</h4><br>
-                    <p>+1(234) 567-891 <br>+1(234) 567-198</p>
+                    <h4>By Phone</h4><br>
+
+                    Business Hours: <a href="tel:(519)-456-7890">(519)-456-7890</a><br>
+                    Emergencies: <a href="tel:(226)-456-7890">(226)-456-7890</a>
                 </div>
             </div>
             <div class="col-sm">
                 <img src="../images/email.png" class="imagecard" alt="email"><br>
                 <div class="contactDetail">
-                    <h4>E-MAIL</h4><br>
-                    <p>RentalBuddy@contact.ca</p>
+                    <h4>By E-mail</h4><br>
+                    <a href="mailto:admin@rentalbuddy.ca">admin@rentalbuddy.ca</a>
                 </div>
             </div>
             <div class="col-sm">
                 <img src="../images/map.png" class="imagecard" alt="address"><br>
                 <div class="contactDetail">
-                    <h4>LOCATION</h4><br>
-                    <p>#1211, 121 Main Street <br>LONDON, ON, CANADA <br>N3Y 3E8</p>
+                    <h4>Location</h4><br>
+                    <address>
+                        Suite #1211<br>
+                        121 Main Street<br>
+                        London, Ontario<br>
+                        Canada<br>
+                        N3Y 3E8<br>
+                    </address>
                 </div>
             </div>
             <div class="col-sm">
                 <img src="../images/wall-clock.png" class="imagecard" alt="worktime"><br>
-                <div class="contactDetail">
-                    <h4>BUSINESS HOURS</h4><br>
-                    <p>Mon - Sat : 10am ~ 8pm<br>
-                    Sun : closed</p>
-                </div>
+                <div class="contactDetail" >
+                    <h4>Hours of Operation</h4><br>
+                    <div style="padding-left: 50px;">
+                    <table>
+                        <tr >
+                            <td>Monday: </td>
+                            <td>10:00 - 20:00</td>
+                        </tr>
+                        <tr>
+                            <td>Tuesday: </td>
+                            <td>Closed</td>
+                        </tr>
+                        <tr>
+                            <td>Wednesday: </td>
+                            <td>10:00 - 20:00</td>
+                        </tr>
+                        <tr>
+                            <td>Thursday: </td>
+                            <td>10:00 - 20:00</td>
+                        </tr>
+                        <tr>
+                            <td>Friday: </td>
+                            <td>10:00 - 17:00</td>
+                        </tr>
+                        <tr>
+                            <td>Saturday: </td>
+                            <td>10:00 - 13:00</td>
+                        </tr>
+                        <tr>
+                            <td>Sunday: </td>
+                            <td>Closed</td>
+                        </tr>
+                    </table>
+                    </div>
+                  </div>
             </div>
         </div>
     </div>
@@ -234,4 +272,3 @@ include_once("./check_session.php");
 </body>
 
 </html>
-
