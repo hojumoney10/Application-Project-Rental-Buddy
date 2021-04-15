@@ -11,7 +11,7 @@ include_once("./check_session.php");
 
     20210307     GPB    Check user logged in & remove login/session_start further down
     20210311     GPB    Added bootstrap icons link
-    20210319     TK     Added Upload Rental Document feature
+    20210319     TK     Added Upload Rental Document feature 
  
 -->
 <!doctype html>
