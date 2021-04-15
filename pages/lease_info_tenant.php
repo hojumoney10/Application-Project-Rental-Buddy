@@ -142,6 +142,10 @@
                         <p><?php echo ($row["file"]? "<a href='/lease_document_file/". $row["file"]."' target='_blank'>File</a>":"")?>
                         </p>
                     </div>
+                    <div class="col-sm ps-4"></div>
+                <div class="col-sm ps-4"></div>
+                <div class="col-sm ps-4"></div>
+                <div class="col-sm ps-4"></div>
                 </div>
         <?php } ?>
             <div class="row">
