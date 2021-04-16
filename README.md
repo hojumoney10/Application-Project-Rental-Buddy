@@ -55,3 +55,16 @@ Taehyung Kim
 
    tenant / tenant
    landlord / landlord
+
+   ## Sprint 3
+
+   ## Re: G-5-US-58: I want to find the geolocation code from the street address of the property
+
+   We were unable to deliver this user story as the code that was submitted didn't fulfill the requirements that
+   we as a team had identified in our sprint/scrum meetings. To compound matters, the development of the feature had
+   been undertaken on very old versions of the files (due to not pulling from GIT for some time), and we also lost some Sprint 2 features. We WERE able to rebuild the lost features, but after desperate late attempts to implement a solution, we were ultimately not frutiful.
+
+   We are however proud of the product and we have operated very well as a cohesive team over the course of this semester. We hope that the application that we have presented demonstrates that.
+   
+   Thanks Oscar!
+
